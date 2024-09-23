@@ -13,8 +13,12 @@
         android:theme="@style/Theme.SideChefProject"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
-            android:exported="true">
+            android:name=".login.createAccount"
+            android:exported="false" />
+        <activity
+            android:name=".login.MainActivity"
+            android:exported="true"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -2,4 +2,6 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="chefblack">#131313</color>
+    <color name="orangebtn">#FB8C00</color>
 </resources>

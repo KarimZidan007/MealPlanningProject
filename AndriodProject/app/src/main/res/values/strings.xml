@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">SideChefProject</string>
+    <string name="createaccount">Create Account</string>
+    <string name="snackingtime">Discover New Meals</string>
+    <string name="cook">Cooking App</string>
+    <string name="d">Dinner</string>
+    <string name="oror">" ـــــــــــــــــــــــــــــــــــــــــــــ or ـــــــــــــــــــــــــــــــــــــــــــــ"</string>
+    <string name="sign">Sign in</string>
 </resources>
