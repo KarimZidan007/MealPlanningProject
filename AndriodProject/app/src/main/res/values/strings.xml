@@ -8,4 +8,5 @@
     <string name="sign">Sign in</string>
     <string name="remember">Remember Me</string>
     <string name="signup">Sign Up</string>
+    <string name="signin">Sign In</string>
 </resources>

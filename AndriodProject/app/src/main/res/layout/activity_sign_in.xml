@@ -8,7 +8,7 @@
     android:layout_height="852dp"
     android:gravity="left|top"
     android:orientation="vertical"
-    android:layout_marginTop="100dp"> <!-- Added margin here -->
+    android:layout_marginTop="100dp">
 
     <TextView
         android:id="@+id/static1"
@@ -21,7 +21,7 @@
         android:includeFontPadding="false"
         android:maxLines="1"
         android:singleLine="true"
-        android:text="Create an account"
+        android:text="Hi, Welcome Back! "
         android:textColor="#FF131313"
         android:textSize="24sp" />
 
@@ -36,7 +36,7 @@
         android:includeFontPadding="false"
         android:maxLines="1"
         android:singleLine="true"
-        android:text="Start cooking like a chef right now"
+        android:text="Hello again, you've been missed!"
         android:textColor="#FF131313"
         android:textSize="14sp" />
 
@@ -82,7 +82,7 @@
         <EditText
             android:id="@+id/emailE"
             android:layout_width="300dp"
-            android:layout_height="54dp"
+            android:layout_height="55dp"
             android:gravity="left|center_vertical"
             android:hint="user@gmail.com"
             android:includeFontPadding="false"
@@ -139,7 +139,7 @@
         <ImageView
             android:id="@+id/showpassSignup"
             android:layout_width="25dp"
-            android:layout_height="29dp"
+            android:layout_height="37dp"
             android:clickable="true"
             android:focusable="true"
             android:scaleType="centerInside"
@@ -176,7 +176,7 @@
             android:layout_marginLeft="50dp"
             android:layout_marginRight="50dp"
             android:backgroundTint="@color/orangebtn"
-            android:text="@string/signup"
+            android:text="@string/signin"
             android:textColor="@color/chefblack"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -188,15 +188,16 @@
         android:layout_height="match_parent">
 
         <LinearLayout
-            android:id="@+id/lastLayout"
-            android:layout_width="413dp"
-            android:layout_height="57dp"
+            android:id="@+id/layoutSt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginVertical="115dp"
             android:orientation="horizontal"
-            app:layout_constraintStart_toStartOf="parent">
+            app:layout_constraintStart_toStartOf="parent"
+            tools:layout_editor_absoluteY="16dp">
 
             <TextView
-                android:id="@+id/statictexxt"
+                android:id="@+id/staticT"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="100dp"
@@ -204,12 +205,12 @@
                 android:includeFontPadding="false"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:text="Already have an account? "
+                android:text="Don't have an account? "
                 android:textColor="#FF131313"
                 android:textSize="14dp" />
 
             <TextView
-                android:id="@+id/SignInTextView"
+                android:id="@+id/SignUpTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="39dp"
                 android:clickable="true"
@@ -219,7 +220,7 @@
                 android:maxLines="1"
                 android:onClick="onSignInClick"
                 android:singleLine="true"
-                android:text="Sign In"
+                android:text="Sign Up"
                 android:textColor="@color/orangebtn"
                 android:textSize="14dp"
                 android:textStyle="bold" />

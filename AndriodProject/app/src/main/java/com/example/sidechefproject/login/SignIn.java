@@ -13,29 +13,26 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.sidechefproject.R;
 
-public class createAccount extends AppCompatActivity {
+public class SignIn extends AppCompatActivity {
     EditText passwordEditText;
     ImageView eyeImageView;
-    TextView clickableSignIn;
+    TextView clickableSignUp ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_create_account);
-         passwordEditText = findViewById(R.id.passSignin);
-         eyeImageView = findViewById(R.id.showpassSignup);
-        //handle the password state (visible or not)
+        setContentView(R.layout.activity_sign_in);
+        eyeImageView = findViewById(R.id.showpassSignup);
+        passwordEditText = findViewById(R.id.passSignin);
         eyeImageView.setOnClickListener(new View.OnClickListener() {
             boolean isPasswordVisible = false;
-
-
             @Override
             public void onClick(View v) {
                 if (isPasswordVisible) {
                     // Hide password
                     passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
                     passwordEditText.setSelection(passwordEditText.getText().length());
-                    eyeImageView.setImageResource(R.drawable.ic_eye); // Set image to closed eye icon
+                    eyeImageView.setImageResource(R.drawable.ic_eye);
                 } else {
                     // Show password
                     passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
@@ -45,14 +42,13 @@ public class createAccount extends AppCompatActivity {
                 isPasswordVisible = !isPasswordVisible;
             }
         });
-        clickableSignIn = findViewById(R.id.SignInTextView);
-        clickableSignIn.setOnClickListener(new View.OnClickListener() {
+        clickableSignUp = findViewById(R.id.SignUpTextView);
+        clickableSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent signInIntent = new Intent(createAccount.this ,SignIn.class);
-                startActivity(signInIntent);
+                Intent createAccountOut = new Intent(SignIn.this ,createAccount.class);
+                startActivity(createAccountOut);
             }
         });
-
     }
 }
