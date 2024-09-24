@@ -1,4 +1,4 @@
-package com.example.sidechefproject.login;
+package com.example.sidechefproject.login.Login;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -53,6 +53,5 @@ public class createAccount extends AppCompatActivity {
                 startActivity(signInIntent);
             }
         });
-
     }
 }
