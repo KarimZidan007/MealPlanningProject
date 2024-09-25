@@ -10,6 +10,8 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public class MealsRemoteDataSource {
     public static final String BASE_URL = "https://www.themealdb.com/api/json/v1/1/";
@@ -27,8 +29,8 @@ public class MealsRemoteDataSource {
          service = retrofit.create(mealsServices.class);
     }
 
-    public void getDataOverNetwork(NetworkCallback networkCallback) {
-        Call<mealsResponse> call = service.getMeals();
+    public void getRandomMeal(NetworkCallback networkCallback) {
+        Call<mealsResponse> call = service.getRandomMeals();
         call.enqueue(new Callback<mealsResponse>() {
             @Override
             public void onResponse(Call<mealsResponse> call, Response<mealsResponse> response) {
@@ -38,6 +40,20 @@ public class MealsRemoteDataSource {
             @Override
             public void onFailure(Call<mealsResponse> call, Throwable throwable) {
                 networkCallback.onFailureResult(throwable.getStackTrace().toString());
+            }
+        });
+    }
+    public void searchMealsByFirstLetter(char firstLetter, NetworkCallback networkCallback) {
+        Call<mealsResponse> call = service.searchMealsByFirstLetter(firstLetter);
+        call.enqueue(new Callback<mealsResponse>() {
+            @Override
+            public void onResponse(Call<mealsResponse> call, Response<mealsResponse> response) {
+                networkCallback.onSuccessResult(response.body().meals);
+            }
+
+            @Override
+            public void onFailure(Call<mealsResponse> call, Throwable throwable) {
+                networkCallback.onFailureResult(throwable.getMessage());
             }
         });
     }
@@ -54,7 +70,10 @@ public class MealsRemoteDataSource {
 interface mealsServices
 {
     @GET("random.php")
-    Call<mealsResponse> getMeals();
+    Call<mealsResponse> getRandomMeals();
+
+    @GET("search.php")
+    Call<mealsResponse> searchMealsByFirstLetter(@Query("f") char firstLetter);
 }
 
 class mealsResponse

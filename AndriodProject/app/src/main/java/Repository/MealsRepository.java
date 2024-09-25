@@ -10,5 +10,7 @@ import Network.Model.MealsRemoteDataSource;
 
 public interface MealsRepository {
 
-    public void getRandomMeal(MealsRemoteDataSource remoteSrc, NetworkCallback networkCallback);
+
+     void getRandomMeal();
+     void getMealsByFirstChar(char firstChar);
 }

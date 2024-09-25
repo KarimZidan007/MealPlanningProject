@@ -28,6 +28,7 @@ public class HomeFragment extends Fragment implements IRandomMealView {
     private FragmentHomeBinding binding;
     private RandomMealPresenter randomPresenter;
     private MealsRemoteDataSource randomSrc;
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         HomeViewModel homeViewModel =

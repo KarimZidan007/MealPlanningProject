@@ -6,10 +6,13 @@ import Feed.ui.home.IRandomMealView;
 import Network.Model.Meal;
 import Network.Model.MealsRemoteDataSource;
 import Network.Model.NetworkCallback;
+import Repository.DataSrcRepository;
+import Repository.MealsRepository;
 
 public class RandomMealPresenter implements RandomMealPresenterContract, NetworkCallback {
 public MealsRemoteDataSource remoteSrc;
 public IRandomMealView  RandomMealView;
+public MealsRepository mealsRepo;
     public RandomMealPresenter(MealsRemoteDataSource remoteSrc , IRandomMealView RandomMealView)
             {
                 this.RandomMealView=RandomMealView;
@@ -18,7 +21,8 @@ public IRandomMealView  RandomMealView;
     @Override
     public void getRandomMealRemotly()
     {
-        remoteSrc.getDataOverNetwork(this);
+        mealsRepo = new DataSrcRepository(remoteSrc,this);
+        mealsRepo.getRandomMeal();
     }
 
     @Override

@@ -1,4 +1,4 @@
-package Feed.ui.dashboard;
+package Feed.ui.search;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
