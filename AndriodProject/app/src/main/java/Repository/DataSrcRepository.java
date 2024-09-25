@@ -2,25 +2,28 @@ package Repository;
 
 
 import Network.Model.MealsRemoteDataSource;
-import Network.Model.NetworkCallback;
+import Network.Model.NetworkCallback.NetworkCallback;
 
 public class DataSrcRepository implements MealsRepository {
     MealsRemoteDataSource remoteSrc;
-    NetworkCallback networkCallback;
-    public DataSrcRepository(MealsRemoteDataSource remoteSrc, NetworkCallback networkCallback)
+    public DataSrcRepository(MealsRemoteDataSource remoteSrc)
     {
         this.remoteSrc=remoteSrc;
-        this.networkCallback=networkCallback;
     }
     @Override
-    public void getRandomMeal() {
-        remoteSrc.getRandomMeal(networkCallback);
+    public void getRandomMeal(NetworkCallback.NetworkCallbackRandom networkCallback) {
+        remoteSrc.getRandomMeal( networkCallback);
     }
 
     @Override
-    public void getMealsByFirstChar(char firstChar) {
+    public void getMealsByFirstChar(char firstChar ,NetworkCallback.NetworkCallbackFirstChar networkCallback) {
         remoteSrc.searchMealsByFirstLetter(firstChar,networkCallback);
 
+    }
+
+    @Override
+    public void getMealsByName(String Name,NetworkCallback.NetworkCallbackByName networkCallback ) {
+        remoteSrc.searchMealsByName(Name, networkCallback);
     }
 
 

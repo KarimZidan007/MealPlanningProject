@@ -5,11 +5,11 @@ import java.util.List;
 import Feed.ui.home.IRandomMealView;
 import Network.Model.Meal;
 import Network.Model.MealsRemoteDataSource;
-import Network.Model.NetworkCallback;
+import Network.Model.NetworkCallback.NetworkCallback;
 import Repository.DataSrcRepository;
 import Repository.MealsRepository;
 
-public class RandomMealPresenter implements RandomMealPresenterContract, NetworkCallback {
+public class RandomMealPresenter implements RandomMealPresenterContract, NetworkCallback.NetworkCallbackRandom {
 public MealsRemoteDataSource remoteSrc;
 public IRandomMealView  RandomMealView;
 public MealsRepository mealsRepo;
@@ -21,17 +21,17 @@ public MealsRepository mealsRepo;
     @Override
     public void getRandomMealRemotly()
     {
-        mealsRepo = new DataSrcRepository(remoteSrc,this);
-        mealsRepo.getRandomMeal();
+        mealsRepo = new DataSrcRepository(remoteSrc);
+        mealsRepo.getRandomMeal(this);
     }
 
     @Override
-    public void onSuccessResult(List<Meal> meal) {
+    public void onSuccessResultRandom(List<Meal> meal) {
         RandomMealView.displayRandomMeal(meal);
     }
 
     @Override
-    public void onFailureResult(String errorMsg) {
+    public void onFailureResultRandom(String errorMsg) {
         RandomMealView.displayError(errorMsg);
     }
 }

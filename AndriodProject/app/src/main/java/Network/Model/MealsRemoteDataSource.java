@@ -4,13 +4,13 @@ import android.content.Context;
 
 import java.util.List;
 
+import Network.Model.NetworkCallback.NetworkCallback;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
-import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public class MealsRemoteDataSource {
@@ -29,31 +29,45 @@ public class MealsRemoteDataSource {
          service = retrofit.create(mealsServices.class);
     }
 
-    public void getRandomMeal(NetworkCallback networkCallback) {
+    public void getRandomMeal(NetworkCallback.NetworkCallbackRandom networkCallback) {
         Call<mealsResponse> call = service.getRandomMeals();
         call.enqueue(new Callback<mealsResponse>() {
             @Override
             public void onResponse(Call<mealsResponse> call, Response<mealsResponse> response) {
-                networkCallback.onSuccessResult(response.body().meals);
+                networkCallback.onSuccessResultRandom(response.body().meals);
             }
 
             @Override
             public void onFailure(Call<mealsResponse> call, Throwable throwable) {
-                networkCallback.onFailureResult(throwable.getStackTrace().toString());
+                networkCallback.onFailureResultRandom(throwable.getStackTrace().toString());
             }
         });
     }
-    public void searchMealsByFirstLetter(char firstLetter, NetworkCallback networkCallback) {
+    public void searchMealsByFirstLetter(char firstLetter, NetworkCallback.NetworkCallbackFirstChar networkCallback) {
         Call<mealsResponse> call = service.searchMealsByFirstLetter(firstLetter);
         call.enqueue(new Callback<mealsResponse>() {
             @Override
             public void onResponse(Call<mealsResponse> call, Response<mealsResponse> response) {
-                networkCallback.onSuccessResult(response.body().meals);
+                networkCallback.onSuccessResultFirstChar(response.body().meals);
             }
 
             @Override
             public void onFailure(Call<mealsResponse> call, Throwable throwable) {
-                networkCallback.onFailureResult(throwable.getMessage());
+                networkCallback.onFailureResultFirstChar(throwable.getMessage());
+            }
+        });
+    }
+    public void searchMealsByName(String Name, NetworkCallback.NetworkCallbackByName networkCallback) {
+        Call<mealsResponse> call = service.searchMealsByName(Name);
+        call.enqueue(new Callback<mealsResponse>() {
+            @Override
+            public void onResponse(Call<mealsResponse> call, Response<mealsResponse> response) {
+                networkCallback.onSuccessResultByName(response.body().meals);
+            }
+
+            @Override
+            public void onFailure(Call<mealsResponse> call, Throwable throwable) {
+                networkCallback.onFailureResultByName(throwable.getMessage());
             }
         });
     }
@@ -74,11 +88,15 @@ interface mealsServices
 
     @GET("search.php")
     Call<mealsResponse> searchMealsByFirstLetter(@Query("f") char firstLetter);
+
+    @GET("search.php")
+    Call<mealsResponse> searchMealsByName(@Query("s") String Name);
+
 }
 
 class mealsResponse
 {
-    List<Meal> meals	;
+    List<Meal> meals;
 }
 
 

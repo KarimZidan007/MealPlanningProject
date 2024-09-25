@@ -4,38 +4,54 @@ import android.widget.Toast;
 
 import java.util.List;
 
-import Feed.NavActivity;
-import Feed.ui.search.IsearchByFirstLMealView;
-import Feed.ui.search.SearchFragment;
+import Feed.ui.search.IsearchMealView;
 import Network.Model.Meal;
 import Network.Model.MealsRemoteDataSource;
-import Network.Model.NetworkCallback;
+import Network.Model.NetworkCallback.NetworkCallback;
 import Repository.DataSrcRepository;
 
-public class SearchMealPresenter implements SearchMealPresenterContract, NetworkCallback {
+public class SearchMealPresenter implements SearchMealPresenterContract, NetworkCallback.NetworkCallbackFirstChar, NetworkCallback.NetworkCallbackByName {
 public MealsRemoteDataSource remoteSrc;
-public IsearchByFirstLMealView  searchByFirstLMealView;
+public IsearchMealView  Search;
 private DataSrcRepository searchRepo;
-    public SearchMealPresenter(MealsRemoteDataSource remoteSrc , IsearchByFirstLMealView searchByFirstLMealView)
+    public SearchMealPresenter(MealsRemoteDataSource remoteSrc , IsearchMealView Search)
             {
-                this.searchByFirstLMealView=searchByFirstLMealView;
+                this.Search=Search;
                 this.remoteSrc=remoteSrc;
             }
 
 
     @Override
-    public void onSuccessResult(List<Meal> meal) {
-        searchByFirstLMealView.displayFirstLMeals(meal);
+    public void onSuccessResultFirstChar(List<Meal> meal) {
+        Search.displayFirstLMeals(meal);
     }
 
     @Override
-    public void onFailureResult(String errorMsg) {
-        searchByFirstLMealView.displayError(errorMsg);
+    public void onFailureResultFirstChar(String errorMsg) {
+        Search.displayError(errorMsg);
+    }
+
+
+    @Override
+    public void reqSearchByFirstCharacter(char firstChar) {
+        searchRepo = new DataSrcRepository(remoteSrc);
+        searchRepo.getMealsByFirstChar(firstChar,this);
     }
 
     @Override
-    public void searchByFirstCharacter(char firstChar) {
-        searchRepo = new DataSrcRepository(remoteSrc,this);
-        searchRepo.getMealsByFirstChar(firstChar);
+    public void reqSearchByName(String name) {
+        searchRepo = new DataSrcRepository(remoteSrc);
+        searchRepo.getMealsByName(name,this);
+    }
+
+
+    @Override
+    public void onSuccessResultByName(List<Meal> meals) {
+        Search.displayMealsByName(meals);
+    }
+
+    @Override
+    public void onFailureResultByName(String errorMsg) {
+        Search.displayErrorByName(errorMsg);
     }
 }

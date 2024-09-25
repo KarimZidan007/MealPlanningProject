@@ -27,28 +27,34 @@ import com.example.sidechefproject.R;
 public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder>
 {
     private final Context context;
-    private static List<Meal> values ;
-    private static final String TAG="FirstLRecyclerView";
+    private  List<Meal> values ;
+    private  final String TAG="FirstLRecyclerView";
 
     public SearchAdapter(Context context, List<Meal> values ) {
         this.context = context;
-        this.values = new ArrayList<>(values.size());
-        this.values = values;
+        if(null != values)
+        {
+            this.values = new ArrayList<>(values.size());
+            this.values = values;
+        }
+        else
+        {
+            this.values = new ArrayList<>();
+            Meal noMeal = new Meal();
+            noMeal.setStrMeal("No Meal Found");
+            noMeal.setStrMealThumb("https://png.pngtree.com/png-vector/20210221/ourmid/pngtree-error-404-not-found-neon-effect-png-image_2928214.jpg");
+            this.values.add(noMeal);
+        }
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
-
         public ImageView imageV;
-        public ConstraintLayout conLayout;
         public View layoutView;
 
-
-        //maybe generate a problem
         public ViewHolder(View layoutView) {
             super(layoutView);
             this.layoutView = layoutView;
             imageV=layoutView.findViewById(R.id.favImageView2);
-
         }
     }
 
@@ -63,7 +69,6 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
-
         Glide.with(this.context).load(values.get(position).getStrMealThumb())
                 .apply(new RequestOptions().override(350,313)
                         .placeholder(R.drawable.ic_launcher_background)
@@ -74,10 +79,6 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
     @Override
     public int getItemCount() {
         return values.size();
-    }
-    public static void setList(List<Meal> meals)
-    {
-        values = meals;
     }
 }
 

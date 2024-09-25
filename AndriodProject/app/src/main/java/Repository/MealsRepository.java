@@ -1,16 +1,11 @@
 package Repository;
 
 
-
-import java.util.List;
-
-import Network.Model.NetworkCallback;
-import Network.Model.Meal;
-import Network.Model.MealsRemoteDataSource;
+import Network.Model.NetworkCallback.NetworkCallback;
 
 public interface MealsRepository {
 
-
-     void getRandomMeal();
-     void getMealsByFirstChar(char firstChar);
+     void getRandomMeal(NetworkCallback.NetworkCallbackRandom networkCallBack);
+     void getMealsByFirstChar(char firstChar,NetworkCallback.NetworkCallbackFirstChar networkCallBack);
+     void getMealsByName(String Name,NetworkCallback.NetworkCallbackByName networkCallBack);
 }

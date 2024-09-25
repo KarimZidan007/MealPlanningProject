@@ -18,19 +18,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.sidechefproject.R;
 import com.example.sidechefproject.databinding.FragmentSearchBinding;
-import com.google.android.material.search.SearchBar;
 
 import java.util.List;
 
-import Feed.Controllers.RandomMealPresenter;
 import Feed.Controllers.SearchMealPresenter;
 import Network.Model.Meal;
 import Network.Model.MealsRemoteDataSource;
 
-public class SearchFragment extends Fragment implements IsearchByFirstLMealView {
+public class SearchFragment extends Fragment implements IsearchMealView {
     SearchView search;
     private FragmentSearchBinding binding;
-    MealsRemoteDataSource  searchByFirstLetterSrc ;
+    MealsRemoteDataSource  searchSrc ;
     SearchMealPresenter searchMealPresenter;
     RecyclerView recView;
     SearchAdapter searchAdapter;
@@ -63,13 +61,16 @@ public class SearchFragment extends Fragment implements IsearchByFirstLMealView 
         recView = (RecyclerView) view.findViewById(R.id.searchRec);
         recView.setHasFixedSize(true);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this.getContext());
-        layoutManager.setOrientation(recView.HORIZONTAL);
+        layoutManager.setOrientation(recView.VERTICAL);
         recView.setLayoutManager(layoutManager);
 
         search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-
+                searchSrc= MealsRemoteDataSource.getRemoteSrcClient();
+                searchMealPresenter = new SearchMealPresenter(searchSrc,SearchFragment.this);
+                searchMealPresenter.reqSearchByName(query);
+                Log.i("SEARCH", "onQueryTextSubmit: ");
                 return false;
             }
 
@@ -77,11 +78,10 @@ public class SearchFragment extends Fragment implements IsearchByFirstLMealView 
             public boolean onQueryTextChange(String newText) {
 
                 if (newText.length() == 1) {
-                    searchByFirstLetterSrc= MealsRemoteDataSource.getRemoteSrcClient();
-                    searchMealPresenter = new SearchMealPresenter(searchByFirstLetterSrc,SearchFragment.this);
+                    searchSrc= MealsRemoteDataSource.getRemoteSrcClient();
+                    searchMealPresenter = new SearchMealPresenter(searchSrc,SearchFragment.this);
                     char firstCharacter = newText.charAt(0);
-                    searchMealPresenter.searchByFirstCharacter(firstCharacter);
-
+                    searchMealPresenter.reqSearchByFirstCharacter(firstCharacter);
                 }
                 return false;
             }
@@ -104,6 +104,20 @@ public class SearchFragment extends Fragment implements IsearchByFirstLMealView 
 
     @Override
     public void displayError(String errorMsg) {
+        Toast.makeText(SearchFragment.this.getContext(), errorMsg, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void displayMealsByName(List<Meal> meals) {
+        searchAdapter = new SearchAdapter(SearchFragment.this.getContext(),meals);
+        recView.setAdapter(searchAdapter);
+        searchAdapter.notifyDataSetChanged();
+        Log.i("NAMEEE", "displayMealsByName: ");
+    }
+
+    @Override
+    public void displayErrorByName(String errorMsg) {
+        Toast.makeText(SearchFragment.this.getContext(), errorMsg, Toast.LENGTH_SHORT).show();
 
     }
 }
