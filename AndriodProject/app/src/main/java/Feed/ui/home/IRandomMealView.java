@@ -2,7 +2,7 @@ package Feed.ui.home;
 
 import java.util.List;
 
-import Network.Model.Meal;
+import Model.Meal;
 
 public interface IRandomMealView {
 

@@ -3,7 +3,7 @@ package Feed.Controllers;
 import java.util.List;
 
 import Feed.ui.home.IRandomMealView;
-import Network.Model.Meal;
+import Model.Meal;
 import Network.Model.MealsRemoteDataSource;
 import Network.Model.NetworkCallback.NetworkCallback;
 import Repository.DataSrcRepository;

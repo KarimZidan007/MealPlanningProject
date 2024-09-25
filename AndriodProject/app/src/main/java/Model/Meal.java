@@ -1,4 +1,4 @@
-package Network.Model;
+package Model;
 
 
 public class Meal{

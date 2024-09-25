@@ -22,7 +22,7 @@ import com.example.sidechefproject.databinding.FragmentSearchBinding;
 import java.util.List;
 
 import Feed.Controllers.SearchMealPresenter;
-import Network.Model.Meal;
+import Model.Meal;
 import Network.Model.MealsRemoteDataSource;
 
 public class SearchFragment extends Fragment implements IsearchMealView {
@@ -32,6 +32,7 @@ public class SearchFragment extends Fragment implements IsearchMealView {
     SearchMealPresenter searchMealPresenter;
     RecyclerView recView;
     SearchAdapter searchAdapter;
+
 
 
     @Override
@@ -61,7 +62,7 @@ public class SearchFragment extends Fragment implements IsearchMealView {
         recView = (RecyclerView) view.findViewById(R.id.searchRec);
         recView.setHasFixedSize(true);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this.getContext());
-        layoutManager.setOrientation(recView.VERTICAL);
+        layoutManager.setOrientation(recView.HORIZONTAL);
         recView.setLayoutManager(layoutManager);
 
         search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -70,7 +71,6 @@ public class SearchFragment extends Fragment implements IsearchMealView {
                 searchSrc= MealsRemoteDataSource.getRemoteSrcClient();
                 searchMealPresenter = new SearchMealPresenter(searchSrc,SearchFragment.this);
                 searchMealPresenter.reqSearchByName(query);
-                Log.i("SEARCH", "onQueryTextSubmit: ");
                 return false;
             }
 

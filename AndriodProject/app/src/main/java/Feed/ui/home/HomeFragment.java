@@ -20,7 +20,7 @@ import com.example.sidechefproject.databinding.FragmentHomeBinding;
 import java.util.List;
 
 import Feed.Controllers.RandomMealPresenter;
-import Network.Model.Meal;
+import Model.Meal;
 import Network.Model.MealsRemoteDataSource;
 
 public class HomeFragment extends Fragment implements IRandomMealView {
@@ -28,7 +28,7 @@ public class HomeFragment extends Fragment implements IRandomMealView {
     private FragmentHomeBinding binding;
     private RandomMealPresenter randomPresenter;
     private MealsRemoteDataSource randomSrc;
-
+    private TextView randomMealName;
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         HomeViewModel homeViewModel =
@@ -38,6 +38,7 @@ public class HomeFragment extends Fragment implements IRandomMealView {
         View root = binding.getRoot();
 
         randomMealView = binding.imageViewHome;
+        randomMealName = binding.textView3;
         return root;
     }
     @Override
@@ -55,6 +56,7 @@ public class HomeFragment extends Fragment implements IRandomMealView {
 
     @Override
     public void displayRandomMeal(List<Meal> meal) {
+        randomMealName.setText(meal.get(0).getStrMeal());
         Glide.with(this).load(meal.get(0).getStrMealThumb())
                 .apply(new RequestOptions().override(350,313)
                         .placeholder(R.drawable.ic_launcher_background)

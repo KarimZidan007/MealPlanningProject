@@ -10,6 +10,7 @@ public class DataSrcRepository implements MealsRepository {
     {
         this.remoteSrc=remoteSrc;
     }
+
     @Override
     public void getRandomMeal(NetworkCallback.NetworkCallbackRandom networkCallback) {
         remoteSrc.getRandomMeal( networkCallback);
@@ -18,12 +19,41 @@ public class DataSrcRepository implements MealsRepository {
     @Override
     public void getMealsByFirstChar(char firstChar ,NetworkCallback.NetworkCallbackFirstChar networkCallback) {
         remoteSrc.searchMealsByFirstLetter(firstChar,networkCallback);
-
     }
 
     @Override
     public void getMealsByName(String Name,NetworkCallback.NetworkCallbackByName networkCallback ) {
         remoteSrc.searchMealsByName(Name, networkCallback);
+    }
+
+    @Override
+    public void getMealsCategories(NetworkCallback.NetworkCallbackGetCateogries networkCallBack) {
+        remoteSrc.getSearchCategories(networkCallBack);
+    }
+
+    @Override
+    public void getMealsCountries(NetworkCallback.NetworkCallbackGetCountries networkCallBack) {
+        remoteSrc.getSearchCountries(networkCallBack);
+    }
+
+    @Override
+    public void getMealsIngredients(NetworkCallback.NetworkCallbackGetIngredients networkCallBack) {
+        remoteSrc.getSearchIngredients(networkCallBack);
+    }
+
+    @Override
+    public void FilterMealsByIngredient(String ingredient, NetworkCallback.NetworkCallbackFilterByIngredient networkCallBack) {
+        remoteSrc.reqFilterByIngredient(ingredient,networkCallBack);
+    }
+
+    @Override
+    public void FilterMealsByCateogry(String category, NetworkCallback.NetworkCallbackFilterByCateogry networkCallBack) {
+        remoteSrc.reqFilterByCateogry(category,networkCallBack);
+    }
+
+    @Override
+    public void FilterMealsByCountry(String country, NetworkCallback.NetworkCallbackFilterByCountry networkCallback) {
+        remoteSrc.reqFilterByCountry(country,networkCallback);
     }
 
 
