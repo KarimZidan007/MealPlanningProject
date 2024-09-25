@@ -48,6 +48,7 @@ public class SignIn extends AppCompatActivity {
             public void onClick(View v) {
                 Intent createAccountOut = new Intent(SignIn.this ,createAccount.class);
                 startActivity(createAccountOut);
+                finish();
             }
         });
     }

@@ -51,6 +51,7 @@ public class createAccount extends AppCompatActivity {
             public void onClick(View v) {
                 Intent signInIntent = new Intent(createAccount.this ,SignIn.class);
                 startActivity(signInIntent);
+                finish();
             }
         });
     }

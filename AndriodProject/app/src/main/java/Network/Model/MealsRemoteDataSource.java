@@ -12,10 +12,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
 
 public class MealsRemoteDataSource {
-    public static final String BASE_URL = "www.themealdb.com/api/json/v1/1/";
+    public static final String BASE_URL = "https://www.themealdb.com/api/json/v1/1/";
     private mealsServices service;
     private Retrofit retrofit = null;
-    private static MealsRemoteDataSource retroFitClient = null;
+    private static MealsRemoteDataSource MealsRemoteDataSourceClient = null;
     private Context context;
     public static List<Meal> pojoElements;
     private MealsRemoteDataSource() {
@@ -42,12 +42,12 @@ public class MealsRemoteDataSource {
         });
     }
     //method provide only one retrofitclient
-    public static MealsRemoteDataSource getRetrofitClient() {
-        if(retroFitClient == null)
+    public static MealsRemoteDataSource getRemoteSrcClient() {
+        if(MealsRemoteDataSourceClient == null)
         {
-             retroFitClient = new MealsRemoteDataSource();
+            MealsRemoteDataSourceClient = new MealsRemoteDataSource();
         }
-        return retroFitClient;
+        return MealsRemoteDataSourceClient;
     }
 }
 
