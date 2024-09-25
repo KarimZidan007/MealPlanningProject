@@ -5,34 +5,29 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.SearchView;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
+import androidx.viewpager.widget.ViewPager;
 import com.example.sidechefproject.R;
 import com.example.sidechefproject.databinding.FragmentSearchBinding;
+import Feed.ui.search.tablayout.VPAdapter;
+import Feed.ui.search.tablayout.category;
+import Feed.ui.search.tablayout.country;
+import Feed.ui.search.tablayout.ingridents;
+import Feed.ui.search.tablayout.search;
 
-import java.util.List;
+import com.google.android.material.tabs.TabLayout;
 
-import Feed.Controllers.SearchMealPresenter;
-import Model.Meal;
-import Network.Model.MealsRemoteDataSource;
-
-public class SearchFragment extends Fragment implements IsearchMealView {
-    SearchView search;
+public class SearchFragment extends Fragment {
     private FragmentSearchBinding binding;
-    MealsRemoteDataSource  searchSrc ;
-    SearchMealPresenter searchMealPresenter;
-    RecyclerView recView;
-    SearchAdapter searchAdapter;
 
+
+
+    TabLayout tabLayout;
+    ViewPager viewPager;
 
 
     @Override
@@ -49,8 +44,8 @@ public class SearchFragment extends Fragment implements IsearchMealView {
         binding = FragmentSearchBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        search = binding.searchBar;
-        search.clearFocus();
+        //search = binding.searchBar;
+        //search.clearFocus();
         //return inflater.inflate(R.layout.firstlettersearchmeals, container, false);
 
 
@@ -59,33 +54,18 @@ public class SearchFragment extends Fragment implements IsearchMealView {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        recView = (RecyclerView) view.findViewById(R.id.searchRec);
-        recView.setHasFixedSize(true);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this.getContext());
-        layoutManager.setOrientation(recView.HORIZONTAL);
-        recView.setLayoutManager(layoutManager);
 
-        search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                searchSrc= MealsRemoteDataSource.getRemoteSrcClient();
-                searchMealPresenter = new SearchMealPresenter(searchSrc,SearchFragment.this);
-                searchMealPresenter.reqSearchByName(query);
-                return false;
-            }
 
-            @Override
-            public boolean onQueryTextChange(String newText) {
-
-                if (newText.length() == 1) {
-                    searchSrc= MealsRemoteDataSource.getRemoteSrcClient();
-                    searchMealPresenter = new SearchMealPresenter(searchSrc,SearchFragment.this);
-                    char firstCharacter = newText.charAt(0);
-                    searchMealPresenter.reqSearchByFirstCharacter(firstCharacter);
-                }
-                return false;
-            }
-        });
+        tabLayout = view.findViewById(R.id.tabLayout);
+        viewPager = view.findViewById(R.id.view_pager);
+        VPAdapter adapter = new VPAdapter(getChildFragmentManager(), FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+        adapter.addFragment(new category(), "Categories");
+        adapter.addFragment(new country(), "Countries");
+        adapter.addFragment(new ingridents(), "Ingredients");
+        adapter.addFragment(new search(), "Search");
+        viewPager.setAdapter(adapter);
+        viewPager.setOffscreenPageLimit(3);
+        tabLayout.setupWithViewPager(viewPager);
     }
 
     @Override
@@ -94,30 +74,5 @@ public class SearchFragment extends Fragment implements IsearchMealView {
         binding = null;
     }
 
-    @Override
-    public void displayFirstLMeals(List<Meal> meals) {
-        searchAdapter = new SearchAdapter(SearchFragment.this.getContext(),meals);
-        recView.setAdapter(searchAdapter);
-        searchAdapter.notifyDataSetChanged();
 
-    }
-
-    @Override
-    public void displayError(String errorMsg) {
-        Toast.makeText(SearchFragment.this.getContext(), errorMsg, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void displayMealsByName(List<Meal> meals) {
-        searchAdapter = new SearchAdapter(SearchFragment.this.getContext(),meals);
-        recView.setAdapter(searchAdapter);
-        searchAdapter.notifyDataSetChanged();
-        Log.i("NAMEEE", "displayMealsByName: ");
-    }
-
-    @Override
-    public void displayErrorByName(String errorMsg) {
-        Toast.makeText(SearchFragment.this.getContext(), errorMsg, Toast.LENGTH_SHORT).show();
-
-    }
 }

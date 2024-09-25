@@ -1,7 +1,6 @@
 package Feed.Controllers;
 
 import java.util.List;
-
 import Feed.ui.search.IsearchMealView;
 import Model.Category;
 import Model.Country;

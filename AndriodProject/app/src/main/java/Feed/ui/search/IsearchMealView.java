@@ -7,13 +7,19 @@ import Model.Meal;
 
 public interface IsearchMealView
 {
+        interface IsearchFirstLMeals
+        {
+            void  displayFirstLMeals(List<Meal> meals);
+            void  displayError(String errorMsg);
+        }
+        interface IsearchByNameMeals
+        {
 
-         void  displayFirstLMeals(List<Meal> meals);
-         void  displayError(String errorMsg);
+            void  displayMealsByName(List<Meal> meals);
+            void  displayErrorByName(String errorMsg);
+        }
 
 
-         void  displayMealsByName(List<Meal> meals);
-         void  displayErrorByName(String errorMsg);
 
 }
 

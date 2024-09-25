@@ -17,4 +17,9 @@
     <string name="title_activity_nav">NavActivity</string>
     <string name="hint">Search here ...</string>
     <string name="mealname">"Meal Name "</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="pager">viewpager</string>
+    <string name="page">pager1</string>
+    <string name="viewpage">viewpagefrag</string>
 </resources>
