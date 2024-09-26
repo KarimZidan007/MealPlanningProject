@@ -60,7 +60,7 @@ public class search extends Fragment  implements IsearchMealView.IsearchAllViews
             public boolean onQueryTextSubmit(String query) {
                 searchSrc= MealsRemoteDataSource.getRemoteSrcClient();
                 //searchMealPresenter = new SearchMealPresenter.searchFragPresenter(searchSrc, search.this);
-                searchMealPresenter = new searchFragPresenter(searchSrc,search.this);
+                searchMealPresenter = new searchFragPresenter(searchSrc,  search.this);
                 searchMealPresenter.getMealByNameRemotly(query);
                 return false;
             }

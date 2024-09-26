@@ -1,9 +1,12 @@
 package Network.Model.Responses;
 
-import java.util.ArrayList;
+import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
 import Model.Category;
 
-public class categoriesResponse {
-    public ArrayList<Category> categories;
+public class CategoriesResponse {
+
+    @SerializedName("categories")
+    public List<Category> categories;
 }

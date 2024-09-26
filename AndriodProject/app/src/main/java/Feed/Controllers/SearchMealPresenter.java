@@ -21,25 +21,7 @@ public class SearchMealPresenter{
 //    }
 //
 //
-//    //Ask for Meals Categories
-//    @Override
-//    public void reqMealsCategories() {
-//        searchRepo = new DataSrcRepository(remoteSrc);
-//        searchRepo.getMealsCategories(this);
-//    }
-//    @Override
-//    public void onSuccessResultgetCategories(List<Category> categories) {
-//
-//    }
-//
-//    @Override
-//    public void onFailureResultgetCategories(String errorMsg) {
-//
-//    }
-//
-//    //Ask for Meals Categories
-//
-//    /***********************************************************************************/
+
 //
 //    //Ask for Meals Countries
 //    @Override
@@ -79,25 +61,7 @@ public class SearchMealPresenter{
 //
 //
 //
-//    /***********************************************************************************/
-//    //Req Filter By Cateogry
-//    @Override
-//    public void reqFilteringByCateogry(String category) {
-//        searchRepo = new DataSrcRepository(remoteSrc);
-//        searchRepo.FilterMealsByCateogry(category,this);
-//    }
-//    @Override
-//    public void onSuccessResultFilterByCateogries(List<Meal> meals) {
-//
-//    }
-//
-//    @Override
-//    public void onFailureResultFilterByCateogries(String errorMsg) {
-//
-//    }
-//    //Req Filter By Cateogry
-//
-//    /***********************************************************************************/
+
 //
 //    //Req Filter By Country
 //

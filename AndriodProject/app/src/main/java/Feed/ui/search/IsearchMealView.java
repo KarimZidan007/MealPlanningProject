@@ -22,6 +22,12 @@ public interface IsearchMealView
             void  displayErrorByName(String errorMsg);
 
         }
+    interface IgetMealFilterCategoriesView
+    {
+        void  displayFilterMealsCateogries(List<Meal> meals);
+        void  displayFilterErrorByName(String errorMsg);
+
+    }
 
 
 

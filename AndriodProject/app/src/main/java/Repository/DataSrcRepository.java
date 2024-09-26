@@ -1,6 +1,8 @@
 package Repository;
 
 
+import android.util.Log;
+
 import Network.Model.MealsRemoteDataSource;
 import Network.Model.NetworkCallback.NetworkCallback;
 
@@ -29,6 +31,7 @@ public class DataSrcRepository implements MealsRepository {
     @Override
     public void getMealsCategories(NetworkCallback.NetworkCallbackGetCateogries networkCallBack) {
         remoteSrc.getSearchCategories(networkCallBack);
+
     }
 
     @Override

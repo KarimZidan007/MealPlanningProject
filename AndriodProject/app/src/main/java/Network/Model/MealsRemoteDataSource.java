@@ -1,12 +1,15 @@
 package Network.Model;
 
 import android.content.Context;
+import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import Model.Category;
 import Model.Meal;
 import Network.Model.NetworkCallback.NetworkCallback;
-import Network.Model.Responses.categoriesResponse;
+import Network.Model.Responses.CategoriesResponse;
 import Network.Model.Responses.countryResponse;
 import Network.Model.Responses.ingredientsResponse;
 import Network.Model.Responses.mealsResponse;
@@ -76,14 +79,19 @@ public class MealsRemoteDataSource {
         });
     }
     public void getSearchCategories( NetworkCallback.NetworkCallbackGetCateogries networkCallback) {
-        Call<categoriesResponse> call = service.getCategories();
-        call.enqueue(new Callback<categoriesResponse>() {
+        Call<CategoriesResponse> call = service.getCategories();
+        call.enqueue(new Callback<CategoriesResponse>() {
             @Override
-            public void onResponse(Call<categoriesResponse> call, Response<categoriesResponse> response) {
-                networkCallback.onSuccessResultgetCategories(response.body().categories);
+            public void onResponse(Call<CategoriesResponse> call, Response<CategoriesResponse> catResponse) {
+                if(catResponse.body().categories == null)
+                {
+                    Log.i("NAMEEE", "onResponse: ");
+                }
+                networkCallback.onSuccessResultgetCategories(catResponse.body().categories);
+
             }
             @Override
-            public void onFailure(Call<categoriesResponse> call, Throwable throwable) {
+            public void onFailure(Call<CategoriesResponse> call, Throwable throwable) {
                 networkCallback.onFailureResultgetCategories(throwable.getMessage());
             }
         });
@@ -180,7 +188,7 @@ interface mealsServices
     Call<mealsResponse> searchMealsByName(@Query("s") String Name);
 
     @GET("categories.php")
-    Call<categoriesResponse> getCategories();
+    Call<CategoriesResponse> getCategories();
 
     @GET("list.php?i=list")
     Call<ingredientsResponse> getIngredients();

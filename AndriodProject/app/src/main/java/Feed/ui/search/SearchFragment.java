@@ -44,17 +44,11 @@ public class SearchFragment extends Fragment {
         binding = FragmentSearchBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        //search = binding.searchBar;
-        //search.clearFocus();
-        //return inflater.inflate(R.layout.firstlettersearchmeals, container, false);
-
-
      return root;
     }
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
 
         tabLayout = view.findViewById(R.id.tabLayout);
         viewPager = view.findViewById(R.id.view_pager);

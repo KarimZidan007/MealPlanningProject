@@ -5,9 +5,18 @@ public interface MealsIPresenter {
     public interface RandomMealPresenterContract {
         public abstract void getRandomMealRemotly();
     }
-    public interface SearchMealPresenterContract {
-        public abstract void getMealByNameRemotly(String name );
-        public abstract void getMealByFirstCharRemotly(char firtChar);
+
+    interface SearchMealPresenterContract {
+        void getMealByNameRemotly(String name);
+
+        void getMealByFirstCharRemotly(char firtChar);
     }
 
+    public interface getCategoriesPresenterContract {
+        void reqMealsCategories();
+    }
+
+    interface getMealsFilterdByCateogry {
+        void reqFilteringByCateogry(String category);
+    }
 }
