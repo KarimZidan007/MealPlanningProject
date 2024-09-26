@@ -2,6 +2,8 @@ package Feed.ui.search.tablayout;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -10,8 +12,13 @@ import android.view.ViewGroup;
 
 import com.example.sidechefproject.R;
 
+import java.util.List;
 
-public class category extends Fragment implements ICategoryView {
+import Feed.ui.search.IsearchMealView;
+import Model.Category;
+
+
+public class category extends Fragment  implements IsearchMealView.IgetMealCategoriesView {
 
 
     @Override
@@ -25,5 +32,21 @@ public class category extends Fragment implements ICategoryView {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_category, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+    }
+
+    @Override
+    public void displayMealsCateogries(List<Category> categories) {
+
+    }
+
+    @Override
+    public void displayErrorByName(String errorMsg) {
+
     }
 }

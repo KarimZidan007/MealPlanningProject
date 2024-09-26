@@ -20,17 +20,18 @@ import com.example.sidechefproject.R;
 import java.util.List;
 
 import Feed.Controllers.SearchMealPresenter;
+import Feed.Controllers.searchFragPresenter;
 import Feed.ui.search.IsearchMealView;
 import Feed.ui.search.SearchAdapter;
 import Feed.ui.search.SearchFragment;
 import Model.Meal;
 import Network.Model.MealsRemoteDataSource;
 
-public class search extends Fragment  implements IsearchMealView.IsearchByNameMeals, IsearchMealView.IsearchFirstLMeals {
+public class search extends Fragment  implements IsearchMealView.IsearchAllViewsMeals {
     SearchView search;
     RecyclerView recView;
     MealsRemoteDataSource  searchSrc ;
-    SearchMealPresenter searchMealPresenter;
+    searchFragPresenter searchMealPresenter;
     SearchAdapter searchAdapter;
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -58,8 +59,9 @@ public class search extends Fragment  implements IsearchMealView.IsearchByNameMe
             @Override
             public boolean onQueryTextSubmit(String query) {
                 searchSrc= MealsRemoteDataSource.getRemoteSrcClient();
-                searchMealPresenter = new SearchMealPresenter(searchSrc, search.this);
-                searchMealPresenter.reqSearchByName(query);
+                //searchMealPresenter = new SearchMealPresenter.searchFragPresenter(searchSrc, search.this);
+                searchMealPresenter = new searchFragPresenter(searchSrc,search.this);
+                searchMealPresenter.getMealByNameRemotly(query);
                 return false;
             }
 
@@ -68,9 +70,9 @@ public class search extends Fragment  implements IsearchMealView.IsearchByNameMe
 
                 if (newText.length() == 1) {
                     searchSrc= MealsRemoteDataSource.getRemoteSrcClient();
-                    searchMealPresenter = new SearchMealPresenter(searchSrc,search.this);
+                    searchMealPresenter = new searchFragPresenter(searchSrc,search.this);
                     char firstCharacter = newText.charAt(0);
-                    searchMealPresenter.reqSearchByFirstCharacter(firstCharacter);
+                    searchMealPresenter.getMealByFirstCharRemotly(firstCharacter);
                 }
                 return false;
             }

@@ -9,7 +9,7 @@ import Network.Model.NetworkCallback.NetworkCallback;
 import Repository.DataSrcRepository;
 import Repository.MealsRepository;
 
-public class RandomMealPresenter implements RandomMealPresenterContract, NetworkCallback.NetworkCallbackRandom {
+public class RandomMealPresenter implements MealsIPresenter.RandomMealPresenterContract, NetworkCallback.NetworkCallbackRandom {
 public MealsRemoteDataSource remoteSrc;
 public IRandomMealView  RandomMealView;
 public MealsRepository mealsRepo;
