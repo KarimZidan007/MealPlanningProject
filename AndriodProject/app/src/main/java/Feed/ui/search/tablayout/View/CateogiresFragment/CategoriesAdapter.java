@@ -1,24 +1,20 @@
-package Feed.ui.search.tablayout.View;
-
+package Feed.ui.search.tablayout.View.CateogiresFragment;
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.sidechefproject.R;
 import java.util.ArrayList;
 import java.util.List;
+
 import Model.Category;
 
 
@@ -27,10 +23,9 @@ import Model.Category;
     {
         private final Context context;
         private List<Category> values ;
-        onClickFilterByCateogryListner listner;
+        private onClickFilterByCateogryListner listner;
         private  final String TAG="FirstLRecyclerView";
-
-        public CategoriesAdapter(Context context, List<Category> categories,onClickFilterByCateogryListner listner_ ) {
+        public CategoriesAdapter(Context context, List<Category> categories, onClickFilterByCateogryListner listner_ ) {
             this.context = context;
             if(null != categories)
             {
@@ -45,7 +40,6 @@ import Model.Category;
                 noCategory.setStrCategory("No Meal Found");
                 this.values.add(noCategory);
                 listner=listner_;
-
             }
         }
 
@@ -71,12 +65,11 @@ import Model.Category;
             LayoutInflater cusInflater = LayoutInflater.from(parent.getContext());
             View tempV=cusInflater.inflate(R.layout.cateogry_frag_content, parent,false);
             CategoriesAdapter.ViewHolder tempHolder= new CategoriesAdapter.ViewHolder(tempV);
-            Log.i("NAMEEE", "onCreateViewHolder: ");
             return tempHolder;
         }
 
         @Override
-        public void onBindViewHolder(@NonNull Feed.ui.search.tablayout.View.CategoriesAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
+        public void onBindViewHolder(@NonNull CategoriesAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
             holder.filterBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -89,6 +82,7 @@ import Model.Category;
                             .placeholder(R.drawable.ic_launcher_background)
                             .error(R.drawable.ic_launcher_foreground))
                     .into(holder.catImage);
+
         }
 
         @Override

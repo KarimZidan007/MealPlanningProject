@@ -1,4 +1,4 @@
-package Feed.ui.search.tablayout.View;
+package Feed.ui.search.tablayout.View.CateogiresFragment;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -20,7 +20,7 @@ import com.example.sidechefproject.R;
 import java.util.ArrayList;
 import java.util.List;
 
-import Model.Category;
+import Feed.ui.search.tablayout.View.onMealClickListener;
 import Model.Meal;
 
 
@@ -29,13 +29,15 @@ public class FilterByCategoriesAdapter extends RecyclerView.Adapter<FilterByCate
     private final Context context;
     private List<Meal> values ;
     private  final String TAG="FirstLRecyclerView";
+    private onMealClickListener.onMealClickListenerCat mealDetailsListner;
 
-    public FilterByCategoriesAdapter(Context context, List<Meal> meals ) {
+    public FilterByCategoriesAdapter(Context context, List<Meal> meals , onMealClickListener.onMealClickListenerCat mealDetailsListner) {
         this.context = context;
         if(null != meals)
         {
             this.values = new ArrayList<Meal>(meals.size());
             this.values = meals;
+            this.mealDetailsListner = mealDetailsListner;
         }
         else if(meals == null)
         {
@@ -43,12 +45,11 @@ public class FilterByCategoriesAdapter extends RecyclerView.Adapter<FilterByCate
             Meal noMeal = new Meal();
             noMeal.setStrMeal("No Meal Found");
             this.values.add(noMeal);
-
+            this.mealDetailsListner = mealDetailsListner;
         }
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
-        public Button filterBtn;
         public View layoutView;
         public TextView mealNameText;
         public ImageView imageV;
@@ -68,8 +69,6 @@ public class FilterByCategoriesAdapter extends RecyclerView.Adapter<FilterByCate
         LayoutInflater cusInflater = LayoutInflater.from(parent.getContext());
         View tempV=cusInflater.inflate(R.layout.firstlettersearchmeals, parent,false);
         FilterByCategoriesAdapter.ViewHolder tempHolder= new FilterByCategoriesAdapter.ViewHolder(tempV);
-        Log.i("NAMEEE", "YES: ");
-
         return tempHolder;
 
     }
@@ -83,6 +82,12 @@ public class FilterByCategoriesAdapter extends RecyclerView.Adapter<FilterByCate
                         .placeholder(R.drawable.ic_launcher_background)
                         .error(R.drawable.ic_launcher_foreground))
                 .into(holder.imageV);
+        holder.layoutView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mealDetailsListner.onMealCatClick(values.get(position).getStrMeal());
+            }
+        });
     }
 
     @Override

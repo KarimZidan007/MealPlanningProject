@@ -12,11 +12,27 @@ public interface MealsIPresenter {
         void getMealByFirstCharRemotly(char firtChar);
     }
 
-    public interface getCategoriesPresenterContract {
+     interface getCategoriesPresenterContract {
         void reqMealsCategories();
     }
 
     interface getMealsFilterdByCateogry {
         void reqFilteringByCateogry(String category);
     }
+     interface getCountriesPresenterContract {
+        void reqMealsCountries();
+    }
+
+    interface getMealsFilterdByCountry {
+        void reqFilteringByCountry(String country);
+    }
+    interface getIngredientsPresenterContract {
+        void reqMealsIngredients();
+    }
+
+    interface getMealsFilterdByIngredient {
+        void reqFilteringByIngredient(String ingredient);    }
 }
+
+
+

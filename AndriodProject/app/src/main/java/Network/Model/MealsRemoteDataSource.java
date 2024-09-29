@@ -10,8 +10,8 @@ import Model.Category;
 import Model.Meal;
 import Network.Model.NetworkCallback.NetworkCallback;
 import Network.Model.Responses.CategoriesResponse;
-import Network.Model.Responses.countryResponse;
-import Network.Model.Responses.ingredientsResponse;
+import Network.Model.Responses.CountryResponse;
+import Network.Model.Responses.IngredientsResponse;
 import Network.Model.Responses.mealsResponse;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -24,10 +24,7 @@ import retrofit2.http.Query;
 public class MealsRemoteDataSource {
     public static final String BASE_URL = "https://www.themealdb.com/api/json/v1/1/";
     private mealsServices service;
-    private Retrofit retrofit = null;
     private static MealsRemoteDataSource MealsRemoteDataSourceClient = null;
-    private Context context;
-    public static List<Meal> pojoElements;
     private MealsRemoteDataSource() {
 
         Retrofit retrofit = new Retrofit.Builder()
@@ -83,12 +80,7 @@ public class MealsRemoteDataSource {
         call.enqueue(new Callback<CategoriesResponse>() {
             @Override
             public void onResponse(Call<CategoriesResponse> call, Response<CategoriesResponse> catResponse) {
-                if(catResponse.body().categories == null)
-                {
-                    Log.i("NAMEEE", "onResponse: ");
-                }
                 networkCallback.onSuccessResultgetCategories(catResponse.body().categories);
-
             }
             @Override
             public void onFailure(Call<CategoriesResponse> call, Throwable throwable) {
@@ -97,29 +89,29 @@ public class MealsRemoteDataSource {
         });
     }
     public void getSearchCountries( NetworkCallback.NetworkCallbackGetCountries networkCallback) {
-        Call<countryResponse> call = service.getCountries();
-        call.enqueue(new Callback<countryResponse>() {
+        Call<CountryResponse> call = service.getCountries();
+        call.enqueue(new Callback<CountryResponse>() {
             @Override
-            public void onResponse(Call<countryResponse> call, Response<countryResponse> response) {
-                networkCallback.onSuccessResultgetCountries(response.body().countries);
+            public void onResponse(Call<CountryResponse> call, Response<CountryResponse> response) {
+                networkCallback.onSuccessResultgetCountries(response.body().meals);
             }
 
             @Override
-            public void onFailure(Call<countryResponse> call, Throwable throwable) {
+            public void onFailure(Call<CountryResponse> call, Throwable throwable) {
                 networkCallback.onFailureResultgetCountries(throwable.getMessage());
             }
         });
     }
     public void getSearchIngredients( NetworkCallback.NetworkCallbackGetIngredients networkCallback) {
-        Call<ingredientsResponse> call = service.getIngredients();
-        call.enqueue(new Callback<ingredientsResponse>() {
+        Call<IngredientsResponse> call = service.getIngredients();
+        call.enqueue(new Callback<IngredientsResponse>() {
             @Override
-            public void onResponse(Call<ingredientsResponse> call, Response<ingredientsResponse> response) {
-                networkCallback.onSuccessResultGetIngredients(response.body().ingredients);
+            public void onResponse(Call<IngredientsResponse> call, Response<IngredientsResponse> response) {
+                networkCallback.onSuccessResultGetIngredients(response.body().meals);
             }
 
             @Override
-            public void onFailure(Call<ingredientsResponse> call, Throwable throwable) {
+            public void onFailure(Call<IngredientsResponse> call, Throwable throwable) {
                 networkCallback.onFailureResultGetIngredients(throwable.getMessage());
             }
         });
@@ -191,10 +183,10 @@ interface mealsServices
     Call<CategoriesResponse> getCategories();
 
     @GET("list.php?i=list")
-    Call<ingredientsResponse> getIngredients();
+    Call<IngredientsResponse> getIngredients();
 
     @GET("list.php?a=list")
-    Call<countryResponse> getCountries();
+    Call<CountryResponse> getCountries();
 
     @GET("filter.php")
     Call<mealsResponse> filterByIngredient(@Query("i") String ingredient);

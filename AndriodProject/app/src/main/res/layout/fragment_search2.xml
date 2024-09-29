@@ -4,7 +4,7 @@
     android:id="@+id/frameLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="Feed.ui.search.tablayout.search" >
+    tools:context="Feed.ui.search.tablayout.View.SearchFragment.search" >
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/sfconst"

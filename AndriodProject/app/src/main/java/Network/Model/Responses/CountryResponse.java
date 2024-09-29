@@ -4,6 +4,6 @@ import java.util.ArrayList;
 
 import Model.Country;
 
-public class countryResponse {
-    public ArrayList<Country> countries;
+public class CountryResponse {
+    public ArrayList<Country> meals;
 }

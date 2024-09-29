@@ -20,6 +20,6 @@
     <fragment
         android:id="@+id/navigation_notifications"
         android:name="Feed.ui.notifications.NotificationsFragment"
-        android:label="@string/title_notifications"
+        android:label="@string/titlefav"
         tools:layout="@layout/fragment_notifications" />
 </navigation>

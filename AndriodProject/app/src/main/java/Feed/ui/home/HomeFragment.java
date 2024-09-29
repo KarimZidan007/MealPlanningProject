@@ -1,5 +1,6 @@
 package Feed.ui.home;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.example.sidechefproject.MealDetails.MealDetailsActivity;
 import com.example.sidechefproject.R;
 import com.example.sidechefproject.databinding.FragmentHomeBinding;
 
@@ -62,6 +64,14 @@ public class HomeFragment extends Fragment implements IRandomMealView {
                         .placeholder(R.drawable.ic_launcher_background)
                         .error(R.drawable.ic_launcher_foreground))
                 .into(randomMealView);
+        randomMealView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent mealDetailsIntent = new Intent(HomeFragment.this.getContext(), MealDetailsActivity.class);
+                mealDetailsIntent.putExtra("MEAL",meal.get(0));
+                startActivity(mealDetailsIntent);
+            }
+        });
     }
 
     @Override

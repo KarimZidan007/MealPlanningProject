@@ -1,0 +1,40 @@
+<!-- res/layout/item_ingredient.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <!-- Ingredient Image -->
+    <ImageView
+        android:id="@+id/imageViewIngredient"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_launcher_background" />
+
+    <!-- Ingredient Name -->
+    <TextView
+        android:id="@+id/textViewIngredientName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:text="Ingredient Name"
+        android:textColor="@android:color/black"
+        android:textSize="16sp" />
+
+    <!-- Ingredient Measure -->
+    <TextView
+        android:id="@+id/textViewIngredientMeasure"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:gravity="center"
+        android:text="Measure"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="14sp" />
+
+</LinearLayout>

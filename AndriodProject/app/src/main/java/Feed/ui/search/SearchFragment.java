@@ -1,7 +1,6 @@
 package Feed.ui.search;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,10 +13,10 @@ import androidx.viewpager.widget.ViewPager;
 import com.example.sidechefproject.R;
 import com.example.sidechefproject.databinding.FragmentSearchBinding;
 import Feed.ui.search.tablayout.VPAdapter;
-import Feed.ui.search.tablayout.category;
-import Feed.ui.search.tablayout.country;
-import Feed.ui.search.tablayout.ingridents;
-import Feed.ui.search.tablayout.search;
+import Feed.ui.search.tablayout.View.CateogiresFragment.category;
+import Feed.ui.search.tablayout.View.CountriesFragment.country;
+import Feed.ui.search.tablayout.View.IngredientsFragment.ingreident;
+import Feed.ui.search.tablayout.View.SearchFragment.search;
 
 import com.google.android.material.tabs.TabLayout;
 
@@ -53,10 +52,10 @@ public class SearchFragment extends Fragment {
         tabLayout = view.findViewById(R.id.tabLayout);
         viewPager = view.findViewById(R.id.view_pager);
         VPAdapter adapter = new VPAdapter(getChildFragmentManager(), FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+        adapter.addFragment(new search(), "Search");
         adapter.addFragment(new category(), "Categories");
         adapter.addFragment(new country(), "Countries");
-        adapter.addFragment(new ingridents(), "Ingredients");
-        adapter.addFragment(new search(), "Search");
+        adapter.addFragment(new ingreident(), "Ingredients");
         viewPager.setAdapter(adapter);
         viewPager.setOffscreenPageLimit(3);
         tabLayout.setupWithViewPager(viewPager);

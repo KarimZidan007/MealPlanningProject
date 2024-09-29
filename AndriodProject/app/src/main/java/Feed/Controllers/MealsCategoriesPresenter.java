@@ -61,7 +61,6 @@ public class MealsCategoriesPresenter implements MealsIPresenter.getCategoriesPr
     @Override
     public void onSuccessResultFilterByCateogries(List<Meal> meals) {
         filter.displayFilterMealsCateogries(meals);
-        Log.i("NAMEEE", "onClick: ");
 
     }
 
@@ -69,7 +68,7 @@ public class MealsCategoriesPresenter implements MealsIPresenter.getCategoriesPr
 
     @Override
     public void onFailureResultFilterByCateogries(String errorMsg) {
-        filter.displayFilterErrorByName(errorMsg);
+        filter.displayFilterErrorCateogries(errorMsg);
     }
     //Req Filter By Cateogry
 

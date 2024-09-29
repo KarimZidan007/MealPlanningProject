@@ -22,4 +22,5 @@
     <string name="pager">viewpager</string>
     <string name="page">pager1</string>
     <string name="viewpage">viewpagefrag</string>
+    <string name="titlefav">favouriteMeal</string>
 </resources>

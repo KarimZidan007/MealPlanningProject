@@ -1,5 +1,6 @@
-package Feed.ui.search.tablayout;
+package Feed.ui.search.tablayout.View.SearchFragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -15,19 +16,18 @@ import android.view.ViewGroup;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import com.example.sidechefproject.MealDetails.MealDetailsActivity;
 import com.example.sidechefproject.R;
 
 import java.util.List;
 
-import Feed.Controllers.SearchMealPresenter;
 import Feed.Controllers.searchFragPresenter;
 import Feed.ui.search.IsearchMealView;
-import Feed.ui.search.SearchAdapter;
-import Feed.ui.search.SearchFragment;
+import Feed.ui.search.tablayout.View.onMealClickListener;
 import Model.Meal;
 import Network.Model.MealsRemoteDataSource;
 
-public class search extends Fragment  implements IsearchMealView.IsearchAllViewsMeals {
+public class search extends Fragment  implements IsearchMealView.IsearchAllViewsMeals, onMealClickListener.onMealClickSearchListener {
     SearchView search;
     RecyclerView recView;
     MealsRemoteDataSource  searchSrc ;
@@ -59,7 +59,6 @@ public class search extends Fragment  implements IsearchMealView.IsearchAllViews
             @Override
             public boolean onQueryTextSubmit(String query) {
                 searchSrc= MealsRemoteDataSource.getRemoteSrcClient();
-                //searchMealPresenter = new SearchMealPresenter.searchFragPresenter(searchSrc, search.this);
                 searchMealPresenter = new searchFragPresenter(searchSrc,  search.this);
                 searchMealPresenter.getMealByNameRemotly(query);
                 return false;
@@ -67,7 +66,6 @@ public class search extends Fragment  implements IsearchMealView.IsearchAllViews
 
             @Override
             public boolean onQueryTextChange(String newText) {
-
                 if (newText.length() == 1) {
                     searchSrc= MealsRemoteDataSource.getRemoteSrcClient();
                     searchMealPresenter = new searchFragPresenter(searchSrc,search.this);
@@ -80,7 +78,7 @@ public class search extends Fragment  implements IsearchMealView.IsearchAllViews
     }
     @Override
     public void displayFirstLMeals(List<Meal> meals) {
-        searchAdapter = new SearchAdapter(search.this.getContext(),meals);
+        searchAdapter = new SearchAdapter(search.this.getContext(),meals,this);
         recView.setAdapter(searchAdapter);
         searchAdapter.notifyDataSetChanged();
 
@@ -93,7 +91,7 @@ public class search extends Fragment  implements IsearchMealView.IsearchAllViews
 
     @Override
     public void displayMealsByName(List<Meal> meals) {
-        searchAdapter = new SearchAdapter(search.this.getContext(),meals);
+        searchAdapter = new SearchAdapter(search.this.getContext(),meals,this);
         recView.setAdapter(searchAdapter);
         searchAdapter.notifyDataSetChanged();
         Log.i("NAMEEE", "displayMealsByName: ");
@@ -103,6 +101,13 @@ public class search extends Fragment  implements IsearchMealView.IsearchAllViews
     public void displayErrorByName(String errorMsg) {
         Toast.makeText(search.this.getContext(), errorMsg, Toast.LENGTH_SHORT).show();
 
+    }
+    //call back method when i press on a meal
+    @Override
+    public void onMealClick(Meal meal) {
+        Intent mealDetailsIntent = new Intent(this.getContext(),MealDetailsActivity.class);
+        mealDetailsIntent.putExtra("MEAL",meal);
+        startActivity(mealDetailsIntent);
     }
 
 }

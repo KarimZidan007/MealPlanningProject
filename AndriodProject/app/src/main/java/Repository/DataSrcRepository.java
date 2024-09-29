@@ -31,7 +31,6 @@ public class DataSrcRepository implements MealsRepository {
     @Override
     public void getMealsCategories(NetworkCallback.NetworkCallbackGetCateogries networkCallBack) {
         remoteSrc.getSearchCategories(networkCallBack);
-
     }
 
     @Override
@@ -58,6 +57,4 @@ public class DataSrcRepository implements MealsRepository {
     public void FilterMealsByCountry(String country, NetworkCallback.NetworkCallbackFilterByCountry networkCallback) {
         remoteSrc.reqFilterByCountry(country,networkCallback);
     }
-
-
 }
