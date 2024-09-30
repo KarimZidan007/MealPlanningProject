@@ -18,23 +18,33 @@ import com.example.sidechefproject.R;
 
 import java.util.List;
 
+import DataBase.Model.AppDataBase;
+import DataBase.controller.MealDAO;
+import Feed.Controllers.InsertingDBPresenter.addFavMealPresenter;
 import Feed.Controllers.MealsByIngredient.MealsIngredientPresenter;
 import Feed.Controllers.searchFragPresenter;
 import Feed.ui.search.IsearchMealView;
+import Feed.ui.search.tablayout.View.CountriesFragment.country;
+import Feed.ui.search.tablayout.View.onAddFavMealClickListner;
 import Feed.ui.search.tablayout.View.onMealClickListener;
 import Model.Ingredient;
 import Model.Meal;
 import Network.Model.MealsRemoteDataSource;
+import Repository.DataSrcRepository;
 
 
-public class ingreident extends Fragment implements IsearchMealView.IgetMealFilterIngredientsView,IsearchMealView.IgetMealIngredientsView, onClickListByIngredient, onMealClickListener.onMealClickListenerIngreident,IsearchMealView.IsearchAllViewsMeals {
+public class ingreident extends Fragment implements IsearchMealView.IgetMealFilterIngredientsView,IsearchMealView.IgetMealIngredientsView, onClickListByIngredient, onMealClickListener.onMealClickListenerIngreident,IsearchMealView.IsearchAllViewsMeals, onAddFavMealClickListner {
 RecyclerView ingreidentRec;
 IngredientAdapter ingredientAdapter;
 MealsIngredientPresenter ingredientPresenter;
 MealsRemoteDataSource dataSource;
 FilterByIngredientAdapter filterIngAdapter;
 searchFragPresenter searchMealPresenter;
-
+    private addFavMealPresenter favMealPresenter;
+    private AppDataBase dataBaseObj;
+    private MealDAO dao;
+    private DataSrcRepository repo;
+    private boolean isDetailRequest=true;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,7 +82,7 @@ searchFragPresenter searchMealPresenter;
 
     @Override
     public void displayFilterMealsIngredients(List<Meal> meals) {
-        filterIngAdapter = new FilterByIngredientAdapter(ingreident.this.getContext(),meals,this);
+        filterIngAdapter = new FilterByIngredientAdapter(ingreident.this.getContext(),meals,this,this);
         ingreidentRec.setAdapter(filterIngAdapter);
         ingredientAdapter.notifyDataSetChanged();
     }
@@ -111,14 +121,31 @@ searchFragPresenter searchMealPresenter;
     @Override
     public void displayMealsByName(List<Meal> meals) {
         Meal tempMeal = meals.get(0);
-        Intent mealDetailsIntent = new Intent(ingreident.this.getContext(), MealDetailsActivity.class);
-        mealDetailsIntent.putExtra("MEAL",tempMeal);
-        startActivity(mealDetailsIntent);
+        if (isDetailRequest) {
+            Intent mealDetailsIntent = new Intent(ingreident.this.getContext(), MealDetailsActivity.class);
+            mealDetailsIntent.putExtra("MEAL", tempMeal);
+            startActivity(mealDetailsIntent);
+        }
+        else
+        {
+            dataBaseObj = AppDataBase.getDbInstance(ingreident.this.getContext());
+            dao = dataBaseObj.getMealsDao();
+            repo = new DataSrcRepository(dao);
+            favMealPresenter = new addFavMealPresenter(repo);
+            favMealPresenter.insertFavMeal(tempMeal);
+            isDetailRequest=true;
+        }
     }
 
     @Override
     public void displayErrorByName(String errorMsg) {
 
+    }
+
+    @Override
+    public void onFavMealAdd(Meal meal) {
+        isDetailRequest=false;
+        onMealIngreidentClick(meal.getStrMeal());
     }
 }
 

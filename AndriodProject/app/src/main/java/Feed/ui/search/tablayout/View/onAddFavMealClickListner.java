@@ -4,6 +4,5 @@ import Model.Meal;
 
 public interface onAddFavMealClickListner {
     void onFavMealAdd(Meal meal);
-
 }
 

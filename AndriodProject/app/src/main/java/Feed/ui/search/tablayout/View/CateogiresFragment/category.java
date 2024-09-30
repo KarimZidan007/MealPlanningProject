@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -50,7 +51,6 @@ private boolean isDetailRequest=true;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
@@ -65,9 +65,12 @@ private boolean isDetailRequest=true;
         super.onViewCreated(view, savedInstanceState);
         catRec=view.findViewById(R.id.categoryRec);
         catRec.setHasFixedSize(true);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this.getContext());
-        layoutManager.setOrientation(catRec.VERTICAL);
-        catRec.setLayoutManager(layoutManager);
+        //LinearLayoutManager layoutManager = new LinearLayoutManager(this.getContext());
+        //layoutManager.setOrientation(catRec.VERTICAL);
+
+        catRec.setLayoutManager(new GridLayoutManager(getContext(),2));
+
+        //catRec.setLayoutManager(layoutManager);
         dataSource= MealsRemoteDataSource.getRemoteSrcClient();
         catPresenter = new MealsCategoriesPresenter(dataSource,(IsearchMealView.IgetMealCategoriesView)category.this);
         catPresenter.reqMealsCategories();
@@ -110,7 +113,6 @@ private boolean isDetailRequest=true;
             favMealPresenter.insertFavMeal(tempMeal);
             isDetailRequest=true;
         }
-
     }
 
     @Override

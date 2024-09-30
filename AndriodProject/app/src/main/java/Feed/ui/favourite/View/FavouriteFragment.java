@@ -50,8 +50,7 @@ public class FavouriteFragment extends Fragment implements onMealClickListener.o
         dataBaseObj = AppDataBase.getDbInstance(FavouriteFragment.this.getContext());
         dao = dataBaseObj.getMealsDao();
         repo = new DataSrcRepository(dao);
-        presenter = new FavMealPresenter(repo,this);
-
+        presenter = new FavMealPresenter(repo);
 
 
         return view;

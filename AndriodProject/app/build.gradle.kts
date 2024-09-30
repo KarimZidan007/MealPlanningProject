@@ -58,4 +58,6 @@ dependencies {
     annotationProcessor(libs.androidx.room.compiler)
     implementation ("androidx.viewpager2:viewpager2:1.0.0")
     implementation ("com.google.android.material:material:1.9.0")
+    implementation ("com.github.anasanasanas:material-calendarview:2.0.2")
+
 }

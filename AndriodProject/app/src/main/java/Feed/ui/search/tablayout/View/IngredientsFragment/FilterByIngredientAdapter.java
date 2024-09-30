@@ -19,6 +19,7 @@ import com.example.sidechefproject.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import Feed.ui.search.tablayout.View.onAddFavMealClickListner;
 import Feed.ui.search.tablayout.View.onMealClickListener;
 import Model.Meal;
 
@@ -29,13 +30,16 @@ public class FilterByIngredientAdapter extends RecyclerView.Adapter<FilterByIngr
     private List<Meal> values ;
     private  final String TAG="FirstLRecyclerView";
     private  onMealClickListener.onMealClickListenerIngreident mealDetailsListner;
-    public FilterByIngredientAdapter(Context context, List<Meal> meals, onMealClickListener.onMealClickListenerIngreident mealDetailsListner) {
+    private onAddFavMealClickListner addFavMealListner;
+
+    public FilterByIngredientAdapter(Context context, List<Meal> meals, onMealClickListener.onMealClickListenerIngreident mealDetailsListner,onAddFavMealClickListner addFavMealListner) {
         this.context = context;
         if(null != meals)
         {
             this.values = new ArrayList<Meal>(meals.size());
             this.values = meals;
             this.mealDetailsListner=mealDetailsListner;
+            this.addFavMealListner=addFavMealListner;
         }
         else if(meals == null)
         {
@@ -44,6 +48,7 @@ public class FilterByIngredientAdapter extends RecyclerView.Adapter<FilterByIngr
             noMeal.setStrMeal("No Meal Found");
             this.values.add(noMeal);
             this.mealDetailsListner=mealDetailsListner;
+            this.addFavMealListner=addFavMealListner;
         }
     }
 
@@ -51,13 +56,14 @@ public class FilterByIngredientAdapter extends RecyclerView.Adapter<FilterByIngr
         public View layoutView;
         public TextView mealNameText;
         public ImageView imageV;
+        ImageView iconImage;
 
         public ViewHolder(View layoutView) {
             super(layoutView);
             this.layoutView = layoutView;
-            //catImage= layoutView.findViewById(R.id.imageCat);
-            imageV=layoutView.findViewById(R.id.favImageView2);
-            mealNameText=layoutView.findViewById(R.id.mealName);
+            imageV=layoutView.findViewById(R.id.meal_image);
+            mealNameText=layoutView.findViewById(R.id.meal_name);
+            iconImage = itemView.findViewById(R.id.meal_favorite_icon);
         }
     }
 
@@ -65,7 +71,7 @@ public class FilterByIngredientAdapter extends RecyclerView.Adapter<FilterByIngr
     @Override
     public FilterByIngredientAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater cusInflater = LayoutInflater.from(parent.getContext());
-        View tempV=cusInflater.inflate(R.layout.firstlettersearchmeals, parent,false);
+        View tempV=cusInflater.inflate(R.layout.meal_card_layout_unfav, parent,false);
         FilterByIngredientAdapter.ViewHolder tempHolder= new FilterByIngredientAdapter.ViewHolder(tempV);
         return tempHolder;
 
@@ -84,6 +90,14 @@ public class FilterByIngredientAdapter extends RecyclerView.Adapter<FilterByIngr
             @Override
             public void onClick(View v) {
                 mealDetailsListner.onMealIngreidentClick(values.get(position).getStrMeal());
+            }
+        });
+        holder.iconImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addFavMealListner.onFavMealAdd(values.get(position));
+                holder.iconImage.setImageResource(R.drawable.ic_favorite_filled);
+
             }
         });
     }

@@ -61,7 +61,6 @@ public class FilterByCategoriesAdapter extends RecyclerView.Adapter<FilterByCate
         public ViewHolder(View layoutView) {
             super(layoutView);
             this.layoutView = layoutView;
-            //catImage= layoutView.findViewById(R.id.imageCat);
             imageV=layoutView.findViewById(R.id.meal_image);
             mealNameText=layoutView.findViewById(R.id.meal_name);
             iconImage = itemView.findViewById(R.id.meal_favorite_icon);

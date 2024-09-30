@@ -59,6 +59,8 @@ public class Meal implements Serializable {
     public String strMeasure20;
     public String strSource;
 
+
+
     public String getIdMeal() {
         return idMeal;
     }

@@ -18,26 +18,41 @@ import com.example.sidechefproject.R;
 
 import java.util.List;
 
+import DataBase.Model.AppDataBase;
+import DataBase.controller.MealDAO;
+import Feed.Controllers.InsertingDBPresenter.addFavMealPresenter;
 import Feed.Controllers.MealsByCountry.MealsCountriesPresenter;
 import Feed.Controllers.searchFragPresenter;
+import Feed.ui.favourite.Controller.FavMealPresenter;
+import Feed.ui.favourite.View.FavouriteFragment;
+import Feed.ui.favourite.View.onClickRemoveFavourite;
 import Feed.ui.search.IsearchMealView;
+import Feed.ui.search.tablayout.View.CateogiresFragment.category;
+import Feed.ui.search.tablayout.View.onAddFavMealClickListner;
 import Feed.ui.search.tablayout.View.onMealClickListener;
 import Model.Country;
 import Model.Meal;
 import Network.Model.MealsRemoteDataSource;
+import Repository.DataSrcRepository;
 
-public class country extends Fragment implements onClickListByCountry,IsearchMealView.IgetMealCountriesView,IsearchMealView.IgetMealFilterCountriesView,IsearchMealView.IsearchAllViewsMeals, onMealClickListener.onMealClickListenerCountry {
-    RecyclerView countryRec;
-    CountryAdapter countryAdapter;
-    MealsCountriesPresenter countryPresenter;
-    MealsRemoteDataSource dataSource;
-    FilterByCountryAdapter filterAdapter;
-    searchFragPresenter searchMealPresenter;
+public class country extends Fragment implements onClickListByCountry,IsearchMealView.IgetMealCountriesView,IsearchMealView.IgetMealFilterCountriesView,IsearchMealView.IsearchAllViewsMeals, onMealClickListener.onMealClickListenerCountry, onAddFavMealClickListner, onClickRemoveFavourite {
+    private  RecyclerView countryRec;
+    private  CountryAdapter countryAdapter;
+    private  MealsCountriesPresenter countryPresenter;
+    private  MealsRemoteDataSource dataSource;
+    private FilterByCountryAdapter filterAdapter;
+    private searchFragPresenter searchMealPresenter;
+    private addFavMealPresenter favMealPresenter;
+    private FavMealPresenter presenter;
+    private AppDataBase dataBaseObj;
+    private MealDAO dao;
+    private DataSrcRepository repo;
+    private boolean isDetailRequest=true;
+
     //create adapter
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
@@ -75,7 +90,7 @@ public class country extends Fragment implements onClickListByCountry,IsearchMea
 
     @Override
     public void displayFilterMealsCountries(List<Meal> meals) {
-        filterAdapter = new FilterByCountryAdapter(country.this.getContext(),meals,this);
+        filterAdapter = new FilterByCountryAdapter(country.this.getContext(),meals,this,this,this);
         countryRec.setAdapter(filterAdapter);
         filterAdapter.notifyDataSetChanged();
     }
@@ -105,9 +120,21 @@ public class country extends Fragment implements onClickListByCountry,IsearchMea
     @Override
     public void displayMealsByName(List<Meal> meals) {
         Meal tempMeal = meals.get(0);
-        Intent mealDetailsIntent = new Intent(country.this.getContext(), MealDetailsActivity.class);
-        mealDetailsIntent.putExtra("MEAL",tempMeal);
-        startActivity(mealDetailsIntent);
+
+        if (isDetailRequest) {
+            Intent mealDetailsIntent = new Intent(country.this.getContext(), MealDetailsActivity.class);
+            mealDetailsIntent.putExtra("MEAL", tempMeal);
+            startActivity(mealDetailsIntent);
+        }
+        else
+        {
+            dataBaseObj = AppDataBase.getDbInstance(country.this.getContext());
+            dao = dataBaseObj.getMealsDao();
+            repo = new DataSrcRepository(dao);
+            favMealPresenter = new addFavMealPresenter(repo);
+            favMealPresenter.insertFavMeal(tempMeal);
+            isDetailRequest=true;
+        }
     }
 
     @Override
@@ -122,5 +149,21 @@ public class country extends Fragment implements onClickListByCountry,IsearchMea
         dataSource= MealsRemoteDataSource.getRemoteSrcClient();
         searchMealPresenter = new searchFragPresenter(dataSource,  country.this);
         searchMealPresenter.getMealByNameRemotly(mealName);
+    }
+
+    @Override
+    public void onFavMealAdd(Meal meal) {
+        isDetailRequest=false;
+        onMealCountryClick(meal.getStrMeal());
+    }
+
+    @Override
+    public void onFavMealRemove(Meal meal) {
+        dataBaseObj = AppDataBase.getDbInstance(country.this.getContext());
+        dao = dataBaseObj.getMealsDao();
+        repo = new DataSrcRepository(dao);
+        presenter = new FavMealPresenter(repo);
+        presenter.deleteMeal(meal);
+
     }
 }

@@ -20,6 +20,8 @@ import com.example.sidechefproject.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import Feed.ui.favourite.View.onClickRemoveFavourite;
+import Feed.ui.search.tablayout.View.onAddFavMealClickListner;
 import Feed.ui.search.tablayout.View.onMealClickListener;
 import Model.Meal;
 
@@ -30,14 +32,18 @@ public class FilterByCountryAdapter extends RecyclerView.Adapter<FilterByCountry
     private List<Meal> values ;
     private  final String TAG="FirstLRecyclerView";
     private onMealClickListener.onMealClickListenerCountry mealDetailsListner;
-
-    public FilterByCountryAdapter(Context context, List<Meal> meals, onMealClickListener.onMealClickListenerCountry mealDetailsListner ) {
+    private onAddFavMealClickListner addFavMealListner;
+    private onClickRemoveFavourite removeListner;
+    boolean isFav=false;
+    public FilterByCountryAdapter(Context context, List<Meal> meals, onMealClickListener.onMealClickListenerCountry mealDetailsListner , onAddFavMealClickListner addFavMealListner, onClickRemoveFavourite removeListner) {
         this.context = context;
+        this.mealDetailsListner = mealDetailsListner;
+        this.addFavMealListner=addFavMealListner;
+        this.removeListner=removeListner;
         if(null != meals)
         {
             this.values = new ArrayList<Meal>(meals.size());
             this.values = meals;
-            this.mealDetailsListner = mealDetailsListner;
         }
         else if(meals == null)
         {
@@ -45,7 +51,6 @@ public class FilterByCountryAdapter extends RecyclerView.Adapter<FilterByCountry
             Meal noMeal = new Meal();
             noMeal.setStrMeal("No Meal Found");
             this.values.add(noMeal);
-            this.mealDetailsListner = mealDetailsListner;
         }
     }
 
@@ -53,13 +58,14 @@ public class FilterByCountryAdapter extends RecyclerView.Adapter<FilterByCountry
         public View layoutView;
         public TextView mealNameText;
         public ImageView imageV;
+        public ImageView iconImage;
 
         public ViewHolder(View layoutView) {
             super(layoutView);
             this.layoutView = layoutView;
-            //catImage= layoutView.findViewById(R.id.imageCat);
-            imageV=layoutView.findViewById(R.id.favImageView2);
-            mealNameText=layoutView.findViewById(R.id.mealName);
+            imageV=layoutView.findViewById(R.id.meal_image);
+            mealNameText=layoutView.findViewById(R.id.meal_name);
+            iconImage = itemView.findViewById(R.id.meal_favorite_icon);
         }
     }
 
@@ -67,12 +73,9 @@ public class FilterByCountryAdapter extends RecyclerView.Adapter<FilterByCountry
     @Override
     public FilterByCountryAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater cusInflater = LayoutInflater.from(parent.getContext());
-        View tempV=cusInflater.inflate(R.layout.firstlettersearchmeals, parent,false);
+        View tempV=cusInflater.inflate(R.layout.meal_card_layout_unfav, parent,false);
         FilterByCountryAdapter.ViewHolder tempHolder= new FilterByCountryAdapter.ViewHolder(tempV);
-        Log.i("NAMEEE", "YES FROM COUNTRY: ");
-
         return tempHolder;
-
     }
 
     @Override
@@ -88,6 +91,24 @@ public class FilterByCountryAdapter extends RecyclerView.Adapter<FilterByCountry
             @Override
             public void onClick(View v) {
                 mealDetailsListner.onMealCountryClick(values.get(position).getStrMeal());
+            }
+        });
+        holder.iconImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!isFav)
+                {
+                    addFavMealListner.onFavMealAdd(values.get(position));
+                    holder.iconImage.setImageResource(R.drawable.ic_favorite_filled);
+                    isFav=true;
+                }
+                else
+                {
+                    removeListner.onFavMealRemove(values.get(position));
+                    holder.iconImage.setImageResource(R.drawable.fav);
+                    isFav=false;
+                }
+
             }
         });
     }

@@ -8,9 +8,7 @@
     android:paddingTop="?attr/actionBarSize"
     tools:context=".NavActivity">
 
-    <!-- Add Toolbar -->
 
-    <!-- Bottom Navigation View -->
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"

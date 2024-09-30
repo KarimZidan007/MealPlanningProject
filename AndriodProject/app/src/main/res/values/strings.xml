@@ -25,4 +25,6 @@
     <string name="titlefav">favouriteMeal</string>
     <string name="fav">Favourite</string>
     <string name="favorite_icon">fav</string>
+    <string name="calendar">Calendar</string>
+    <string name="titlecalendar">Calendar</string>
 </resources>

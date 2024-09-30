@@ -12,11 +12,9 @@ import Repository.DataSrcRepository;
 
 public class FavMealPresenter implements MealsIPresenter.getFavMeals {
     private DataSrcRepository Src;
-    FavouriteMealView iView;
-    public FavMealPresenter(DataSrcRepository Src, FavouriteMealView iView)
+    public FavMealPresenter(DataSrcRepository Src)
     {
         this.Src=Src;
-        this.iView=iView;
     }
     @Override
     public LiveData<List<Meal>> getFavouriteMeals() {
