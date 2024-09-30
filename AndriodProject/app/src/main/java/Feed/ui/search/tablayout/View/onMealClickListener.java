@@ -19,8 +19,8 @@ public interface onMealClickListener
     {
         void onMealIngreidentClick(String mealName);
     }
-    interface onMealClickListenerRandom
+    interface onMealClickListenerFavourite
     {
-        void onMealRandomClick(String mealName);
+        void onMealFavoutriteClick(Meal mealName);
     }
 }

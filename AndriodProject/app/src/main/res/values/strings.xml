@@ -23,4 +23,6 @@
     <string name="page">pager1</string>
     <string name="viewpage">viewpagefrag</string>
     <string name="titlefav">favouriteMeal</string>
+    <string name="fav">Favourite</string>
+    <string name="favorite_icon">fav</string>
 </resources>

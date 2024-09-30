@@ -3,14 +3,25 @@ package Repository;
 
 import android.util.Log;
 
+import androidx.lifecycle.LiveData;
+
+import java.util.List;
+
+import DataBase.controller.MealDAO;
+import Model.Meal;
 import Network.Model.MealsRemoteDataSource;
 import Network.Model.NetworkCallback.NetworkCallback;
 
 public class DataSrcRepository implements MealsRepository {
     MealsRemoteDataSource remoteSrc;
+    MealDAO localSrc;
     public DataSrcRepository(MealsRemoteDataSource remoteSrc)
     {
         this.remoteSrc=remoteSrc;
+    }
+    public DataSrcRepository(MealDAO localSrc)
+    {
+        this.localSrc=localSrc;
     }
 
     @Override
@@ -56,5 +67,30 @@ public class DataSrcRepository implements MealsRepository {
     @Override
     public void FilterMealsByCountry(String country, NetworkCallback.NetworkCallbackFilterByCountry networkCallback) {
         remoteSrc.reqFilterByCountry(country,networkCallback);
+    }
+
+    @Override
+    public LiveData<List<Meal>> getFavMeals() {
+        return localSrc.getAllMeals();
+    }
+
+    @Override
+    public void delFavMeal( Meal meal) {
+        new Thread(){
+            @Override
+            public void run() {
+                localSrc.deleteMeal(meal);
+            }
+        }.start();
+    }
+
+    @Override
+    public void insertFavMeal( Meal meal) {
+        new Thread(){
+            @Override
+            public void run() {
+                localSrc.insertMeal(meal);
+            }
+        }.start();
     }
 }

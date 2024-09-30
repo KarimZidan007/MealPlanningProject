@@ -35,7 +35,7 @@ import Model.Category;
             }
             else if(categories == null)
             {
-                this.values = new ArrayList<>();
+                this.values = new ArrayList<>(1);
                 Category noCategory = new Category();
                 noCategory.setStrCategory("No Meal Found");
                 this.values.add(noCategory);

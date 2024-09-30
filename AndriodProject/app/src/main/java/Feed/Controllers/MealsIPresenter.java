@@ -1,6 +1,13 @@
 package Feed.Controllers;
 
 
+import androidx.lifecycle.LiveData;
+
+import java.util.List;
+
+import Model.Meal;
+import Repository.DataSrcRepository;
+
 public interface MealsIPresenter {
     public interface RandomMealPresenterContract {
         public abstract void getRandomMealRemotly();
@@ -32,6 +39,13 @@ public interface MealsIPresenter {
 
     interface getMealsFilterdByIngredient {
         void reqFilteringByIngredient(String ingredient);    }
+    interface getFavMeals {
+        LiveData<List<Meal>> getFavouriteMeals();
+        void deleteMeal(Meal meal);
+    }
+    interface addFavMeal {
+        void insertFavMeal(Meal meal);
+    }
 }
 
 

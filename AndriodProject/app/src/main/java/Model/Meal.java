@@ -1,17 +1,21 @@
 package Model;
 
 
-import java.io.Serializable;
+import androidx.annotation.NonNull;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
+import java.io.Serializable;
+@Entity(tableName = "meal_table")
 public class Meal implements Serializable {
+    @NonNull
+    @PrimaryKey
     public String idMeal;
     public String strMeal;
-    public Object strDrinkAlternate;
     public String strCategory;
     public String strArea;
     public String strInstructions;
     public String strMealThumb;
-    public Object strTags;
     public String strYoutube;
     public String strIngredient1;
     public String strIngredient2;
@@ -54,9 +58,6 @@ public class Meal implements Serializable {
     public String strMeasure19;
     public String strMeasure20;
     public String strSource;
-    public Object strImageSource;
-    public Object strCreativeCommonsConfirmed;
-    public Object dateModified;
 
     public String getIdMeal() {
         return idMeal;
@@ -74,13 +75,6 @@ public class Meal implements Serializable {
         this.strMeal = strMeal;
     }
 
-    public Object getStrDrinkAlternate() {
-        return strDrinkAlternate;
-    }
-
-    public void setStrDrinkAlternate(Object strDrinkAlternate) {
-        this.strDrinkAlternate = strDrinkAlternate;
-    }
 
     public String getStrCategory() {
         return strCategory;
@@ -120,14 +114,6 @@ public class Meal implements Serializable {
 
     public void setStrYoutube(String strYoutube) {
         this.strYoutube = strYoutube;
-    }
-
-    public Object getStrTags() {
-        return strTags;
-    }
-
-    public void setStrTags(Object strTags) {
-        this.strTags = strTags;
     }
 
     public String getStrIngredient1() {
@@ -456,29 +442,5 @@ public class Meal implements Serializable {
 
     public void setStrSource(String strSource) {
         this.strSource = strSource;
-    }
-
-    public Object getStrImageSource() {
-        return strImageSource;
-    }
-
-    public void setStrImageSource(Object strImageSource) {
-        this.strImageSource = strImageSource;
-    }
-
-    public Object getStrCreativeCommonsConfirmed() {
-        return strCreativeCommonsConfirmed;
-    }
-
-    public void setStrCreativeCommonsConfirmed(Object strCreativeCommonsConfirmed) {
-        this.strCreativeCommonsConfirmed = strCreativeCommonsConfirmed;
-    }
-
-    public Object getDateModified() {
-        return dateModified;
-    }
-
-    public void setDateModified(Object dateModified) {
-        this.dateModified = dateModified;
     }
 }

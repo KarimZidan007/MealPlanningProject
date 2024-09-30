@@ -18,23 +18,35 @@ import com.example.sidechefproject.R;
 
 import java.util.List;
 
+import DataBase.Model.AppDataBase;
+import DataBase.controller.MealDAO;
+import Feed.Controllers.InsertingDBPresenter.addFavMealPresenter;
 import Feed.Controllers.MealsCategoriesPresenter;
 import Feed.Controllers.searchFragPresenter;
+import Feed.ui.favourite.Controller.FavMealPresenter;
+import Feed.ui.favourite.View.FavouriteFragment;
 import Feed.ui.search.IsearchMealView;
+import Feed.ui.search.tablayout.View.onAddFavMealClickListner;
 import Feed.ui.search.tablayout.View.onMealClickListener;
 import Model.Category;
 import Model.Meal;
 import Network.Model.MealsRemoteDataSource;
+import Repository.DataSrcRepository;
 
 
-public class category extends Fragment  implements IsearchMealView.IgetMealCategoriesView ,IsearchMealView.IgetMealFilterCategoriesView ,onClickFilterByCateogryListner, onMealClickListener.onMealClickListenerCat,IsearchMealView.IsearchAllViewsMeals {
+public class category extends Fragment  implements IsearchMealView.IgetMealCategoriesView ,IsearchMealView.IgetMealFilterCategoriesView ,onClickFilterByCateogryListner, onMealClickListener.onMealClickListenerCat,IsearchMealView.IsearchAllViewsMeals, onAddFavMealClickListner {
 RecyclerView catRec;
 CategoriesAdapter catAdapter;
 FilterByCategoriesAdapter filterAdapter;
 MealsCategoriesPresenter catPresenter;
 MealsRemoteDataSource dataSource;
 searchFragPresenter searchMealPresenter;
-MealsRemoteDataSource  searchSrc ;
+private addFavMealPresenter favMealPresenter;
+private AppDataBase dataBaseObj;
+private MealDAO dao;
+private DataSrcRepository repo;
+private boolean isDetailRequest=true;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,10 +94,23 @@ MealsRemoteDataSource  searchSrc ;
     @Override
     public void displayMealsByName(List<Meal> meals) {
         Meal tempMeal = meals.get(0);
-        Intent mealDetailsIntent = new Intent(category.this.getContext(), MealDetailsActivity.class);
-        mealDetailsIntent.putExtra("MEAL",tempMeal);
-        startActivity(mealDetailsIntent);
-        //Log.i("NAMEEE",tempMeal.getStrYoutube());
+
+        if (isDetailRequest)
+        {
+            Intent mealDetailsIntent = new Intent(category.this.getContext(), MealDetailsActivity.class);
+            mealDetailsIntent.putExtra("MEAL",tempMeal);
+            startActivity(mealDetailsIntent);
+        }
+        else
+        {
+            dataBaseObj = AppDataBase.getDbInstance(category.this.getContext());
+            dao = dataBaseObj.getMealsDao();
+            repo = new DataSrcRepository(dao);
+            favMealPresenter = new addFavMealPresenter(repo);
+            favMealPresenter.insertFavMeal(tempMeal);
+            isDetailRequest=true;
+        }
+
     }
 
     @Override
@@ -102,7 +127,7 @@ MealsRemoteDataSource  searchSrc ;
 
     @Override
     public void displayFilterMealsCateogries(List<Meal> meals) {
-        filterAdapter = new FilterByCategoriesAdapter(category.this.getContext(),meals,this);
+        filterAdapter = new FilterByCategoriesAdapter(category.this.getContext(),meals,this,this);
         catRec.setAdapter(filterAdapter);
         filterAdapter.notifyDataSetChanged();
     }
@@ -121,5 +146,11 @@ MealsRemoteDataSource  searchSrc ;
         dataSource= MealsRemoteDataSource.getRemoteSrcClient();
         searchMealPresenter = new searchFragPresenter(dataSource,  category.this);
         searchMealPresenter.getMealByNameRemotly(mealName);
+    }
+
+    @Override
+    public void onFavMealAdd(Meal meal) {
+        isDetailRequest=false;
+        onMealCatClick(meal.getStrMeal());
     }
 }

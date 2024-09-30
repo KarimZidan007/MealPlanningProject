@@ -19,7 +19,7 @@
 
     <fragment
         android:id="@+id/navigation_notifications"
-        android:name="Feed.ui.notifications.NotificationsFragment"
+        android:name="Feed.ui.favourite.View.FavouriteFragment"
         android:label="@string/titlefav"
-        tools:layout="@layout/fragment_notifications" />
+        tools:layout="@layout/fragment_favourite" />
 </navigation>
