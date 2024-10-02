@@ -11,21 +11,26 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.sidechefproject.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import Feed.ui.search.tablayout.View.CateogiresFragment.onMealPlanningClick;
 import Model.Ingredient;
 
 public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.ViewHolder> {
 private final Context context;
 private List<Ingredient> values;
 private  onClickListByIngredient  listner;
+
     private final String COUNTRY_TAG= "CountryRecyclerView";
     public IngredientAdapter(Context context, List<Ingredient> ingredients, onClickListByIngredient listner)
     {
         this.context=context;
+
         if(ingredients != null)
         {
             values = new ArrayList<Ingredient>(ingredients.size());
@@ -51,6 +56,7 @@ private  onClickListByIngredient  listner;
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+
         holder.listBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -58,6 +64,11 @@ private  onClickListByIngredient  listner;
             }
         });
         holder.ingredientName.setText(values.get(position).getStrIngredient());
+        Glide.with(this.context).load("https://www.themealdb.com/images/ingredients/"+values.get(position).getStrIngredient()+".png")
+                .apply(new RequestOptions().override(350,313)
+                        .placeholder(R.drawable.ic_launcher_background)
+                        .error(R.drawable.ic_launcher_foreground))
+                .into(holder.ingredientImage);
     }
 
     @Override
@@ -68,7 +79,7 @@ private  onClickListByIngredient  listner;
     class ViewHolder extends RecyclerView.ViewHolder
     {
         public Button listBtn;
-        public View layoutView;
+         View layoutView;
         public TextView ingredientName;
         public ImageView ingredientImage;
 
@@ -77,6 +88,7 @@ private  onClickListByIngredient  listner;
             this.layoutView=LayoutView;
             ingredientName=layoutView.findViewById(R.id.IngredientName);
             listBtn=layoutView.findViewById(R.id.ListMealsI);
+            ingredientImage=layoutView.findViewById(R.id.imageVI);
         }
     }
 }

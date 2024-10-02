@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData;
 import java.util.List;
 
 import Model.Meal;
+import Model.MealDate;
 import Repository.DataSrcRepository;
 
 public interface MealsIPresenter {
@@ -39,12 +40,21 @@ public interface MealsIPresenter {
 
     interface getMealsFilterdByIngredient {
         void reqFilteringByIngredient(String ingredient);    }
+
     interface getFavMeals {
         LiveData<List<Meal>> getFavouriteMeals();
         void deleteMeal(Meal meal);
     }
     interface addFavMeal {
         void insertFavMeal(Meal meal);
+    }
+    interface getPlannedMeals {
+        LiveData<List<MealDate>> getPlannedMeals(String date);
+
+        void deletePlannedMeal(MealDate meal);
+    }
+    interface addPlannedMeal {
+        void insertPlannedMeal(MealDate meal);
     }
 }
 

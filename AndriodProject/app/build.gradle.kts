@@ -1,5 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.google.gms.google.services)
+    alias(libs.plugins.google.firebase.crashlytics)
 }
 
 android {
@@ -48,6 +50,7 @@ dependencies {
     implementation(libs.car.ui.lib)
     implementation(libs.androidx.recyclerview)
     implementation(libs.androidx.room.runtime)
+    implementation(libs.firebase.crashlytics)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
@@ -59,5 +62,10 @@ dependencies {
     implementation ("androidx.viewpager2:viewpager2:1.0.0")
     implementation ("com.google.android.material:material:1.9.0")
     implementation ("com.github.anasanasanas:material-calendarview:2.0.2")
+    implementation(platform("com.google.firebase:firebase-bom:33.3.0"))
+    implementation("com.google.firebase:firebase-auth")
+    implementation ("com.caverock:androidsvg:1.4")
+    implementation ("com.github.bumptech.glide:glide:4.14.2")
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.14.2")
 
 }

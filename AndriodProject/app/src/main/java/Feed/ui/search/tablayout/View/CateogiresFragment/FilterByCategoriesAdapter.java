@@ -32,14 +32,16 @@ public class FilterByCategoriesAdapter extends RecyclerView.Adapter<FilterByCate
     private  final String TAG="FirstLRecyclerView";
     private onMealClickListener.onMealClickListenerCat mealDetailsListner;
     private onAddFavMealClickListner addFavMealListner;
-    public FilterByCategoriesAdapter(Context context, List<Meal> meals , onMealClickListener.onMealClickListenerCat mealDetailsListner, onAddFavMealClickListner addFavMealListner) {
+    private onMealPlanningClick addMealtoPlan;
+    public FilterByCategoriesAdapter(Context context, List<Meal> meals , onMealClickListener.onMealClickListenerCat mealDetailsListner, onAddFavMealClickListner addFavMealListner,onMealPlanningClick addMealtoPlan) {
         this.context = context;
+        this.mealDetailsListner = mealDetailsListner;
+        this.addFavMealListner=addFavMealListner;
+        this.addMealtoPlan=addMealtoPlan;
         if(null != meals)
         {
             this.values = new ArrayList<Meal>(meals.size());
             this.values = meals;
-            this.mealDetailsListner = mealDetailsListner;
-            this.addFavMealListner=addFavMealListner;
         }
         else if(meals == null)
         {
@@ -47,8 +49,6 @@ public class FilterByCategoriesAdapter extends RecyclerView.Adapter<FilterByCate
             Meal noMeal = new Meal();
             noMeal.setStrMeal("No Meal Found");
             this.values.add(noMeal);
-            this.mealDetailsListner = mealDetailsListner;
-            this.addFavMealListner=addFavMealListner;
         }
     }
 
@@ -57,6 +57,7 @@ public class FilterByCategoriesAdapter extends RecyclerView.Adapter<FilterByCate
         public TextView mealNameText;
         public ImageView imageV;
         ImageView iconImage;
+        ImageView schedualeIcon;
 
         public ViewHolder(View layoutView) {
             super(layoutView);
@@ -64,6 +65,7 @@ public class FilterByCategoriesAdapter extends RecyclerView.Adapter<FilterByCate
             imageV=layoutView.findViewById(R.id.meal_image);
             mealNameText=layoutView.findViewById(R.id.meal_name);
             iconImage = itemView.findViewById(R.id.meal_favorite_icon);
+            schedualeIcon=itemView.findViewById(R.id.meal_schedule_icon);
         }
     }
 
@@ -99,6 +101,9 @@ public class FilterByCategoriesAdapter extends RecyclerView.Adapter<FilterByCate
                 holder.iconImage.setImageResource(R.drawable.ic_favorite_filled); // Change to filled heart
 
             }
+        });
+        holder.schedualeIcon.setOnClickListener(v -> {
+            addMealtoPlan.onMealScheduleClicked(values.get(position));
         });
 
     }

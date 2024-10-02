@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Feed.ui.favourite.View.onClickRemoveFavourite;
+import Feed.ui.search.tablayout.View.CateogiresFragment.onMealPlanningClick;
 import Feed.ui.search.tablayout.View.onAddFavMealClickListner;
 import Feed.ui.search.tablayout.View.onMealClickListener;
 import Model.Meal;
@@ -34,12 +35,15 @@ public class FilterByCountryAdapter extends RecyclerView.Adapter<FilterByCountry
     private onMealClickListener.onMealClickListenerCountry mealDetailsListner;
     private onAddFavMealClickListner addFavMealListner;
     private onClickRemoveFavourite removeListner;
-    boolean isFav=false;
-    public FilterByCountryAdapter(Context context, List<Meal> meals, onMealClickListener.onMealClickListenerCountry mealDetailsListner , onAddFavMealClickListner addFavMealListner, onClickRemoveFavourite removeListner) {
+    private boolean isFav=false;
+    private onMealPlanningClick addMealtoPlan;
+
+    public FilterByCountryAdapter(Context context, List<Meal> meals, onMealClickListener.onMealClickListenerCountry mealDetailsListner , onAddFavMealClickListner addFavMealListner, onClickRemoveFavourite removeListner,onMealPlanningClick addMealtoPlan) {
         this.context = context;
         this.mealDetailsListner = mealDetailsListner;
         this.addFavMealListner=addFavMealListner;
         this.removeListner=removeListner;
+        this.addMealtoPlan=addMealtoPlan;
         if(null != meals)
         {
             this.values = new ArrayList<Meal>(meals.size());
@@ -59,13 +63,15 @@ public class FilterByCountryAdapter extends RecyclerView.Adapter<FilterByCountry
         public TextView mealNameText;
         public ImageView imageV;
         public ImageView iconImage;
-
+        private ImageView schedualeIcon;
         public ViewHolder(View layoutView) {
             super(layoutView);
             this.layoutView = layoutView;
             imageV=layoutView.findViewById(R.id.meal_image);
             mealNameText=layoutView.findViewById(R.id.meal_name);
             iconImage = itemView.findViewById(R.id.meal_favorite_icon);
+            schedualeIcon=itemView.findViewById(R.id.meal_schedule_icon);
+
         }
     }
 
@@ -87,6 +93,9 @@ public class FilterByCountryAdapter extends RecyclerView.Adapter<FilterByCountry
                         .placeholder(R.drawable.ic_launcher_background)
                         .error(R.drawable.ic_launcher_foreground))
                 .into(holder.imageV);
+        holder.schedualeIcon.setOnClickListener(v -> {
+            addMealtoPlan.onMealScheduleClicked(values.get(position));
+        });
         holder.layoutView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

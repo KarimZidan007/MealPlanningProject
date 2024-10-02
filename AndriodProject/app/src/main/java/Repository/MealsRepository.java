@@ -7,6 +7,7 @@ import java.util.List;
 
 import DataBase.controller.MealDAO;
 import Model.Meal;
+import Model.MealDate;
 import Network.Model.NetworkCallback.NetworkCallback;
 import Network.Model.Responses.mealsResponse;
 import retrofit2.Call;
@@ -24,8 +25,11 @@ public interface MealsRepository {
      void FilterMealsByIngredient(String ingredient ,NetworkCallback.NetworkCallbackFilterByIngredient networkCallBack);
      void FilterMealsByCateogry(String category ,NetworkCallback.NetworkCallbackFilterByCateogry networkCallBack);
      void FilterMealsByCountry(String country, NetworkCallback.NetworkCallbackFilterByCountry networkCallback) ;
-      LiveData<List<Meal>> getFavMeals( );
-      void delFavMeal(Meal meal);
-      void insertFavMeal(Meal meal);
+     LiveData<List<Meal>> getFavMeals( );
+     void delFavMeal(Meal meal);
+     void insertFavMeal(Meal meal);
+     LiveData<List<MealDate>> getPlannedMeals(String date );
+     void delPlannedMeal(MealDate meal);
+     void insertPlannedMeal(MealDate meal);
 
 }

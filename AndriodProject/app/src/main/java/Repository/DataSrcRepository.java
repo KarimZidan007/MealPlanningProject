@@ -8,13 +8,16 @@ import androidx.lifecycle.LiveData;
 import java.util.List;
 
 import DataBase.controller.MealDAO;
+import DataBase.controller.MealDateDao;
 import Model.Meal;
+import Model.MealDate;
 import Network.Model.MealsRemoteDataSource;
 import Network.Model.NetworkCallback.NetworkCallback;
 
 public class DataSrcRepository implements MealsRepository {
     MealsRemoteDataSource remoteSrc;
     MealDAO localSrc;
+    MealDateDao plannerSrc;
     public DataSrcRepository(MealsRemoteDataSource remoteSrc)
     {
         this.remoteSrc=remoteSrc;
@@ -22,6 +25,10 @@ public class DataSrcRepository implements MealsRepository {
     public DataSrcRepository(MealDAO localSrc)
     {
         this.localSrc=localSrc;
+    }
+    public DataSrcRepository(MealDateDao plannerSrc)
+    {
+        this.plannerSrc=plannerSrc;
     }
 
     @Override
@@ -90,6 +97,31 @@ public class DataSrcRepository implements MealsRepository {
             @Override
             public void run() {
                 localSrc.insertMeal(meal);
+            }
+        }.start();
+    }
+
+    @Override
+    public LiveData<List<MealDate>> getPlannedMeals(String date) {
+        return plannerSrc.getMealsForDate(date);
+    }
+
+    @Override
+    public void delPlannedMeal(MealDate meal) {
+        new Thread(){
+            @Override
+            public void run() {
+                plannerSrc.deletePlannedMeal(meal);
+            }
+        }.start();
+    }
+
+    @Override
+    public void insertPlannedMeal(MealDate meal) {
+        new Thread(){
+            @Override
+            public void run() {
+                plannerSrc.insertPlannedMeal(meal);
             }
         }.start();
     }

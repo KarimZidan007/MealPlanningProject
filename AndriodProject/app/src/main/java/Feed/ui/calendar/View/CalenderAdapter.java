@@ -1,8 +1,7 @@
-package Feed.ui.search.tablayout.View.IngredientsFragment;
+package Feed.ui.calendar.View;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,35 +22,32 @@ import Feed.ui.search.tablayout.View.CateogiresFragment.onMealPlanningClick;
 import Feed.ui.search.tablayout.View.onAddFavMealClickListner;
 import Feed.ui.search.tablayout.View.onMealClickListener;
 import Model.Meal;
+import Model.MealDate;
 
 
-public class FilterByIngredientAdapter extends RecyclerView.Adapter<FilterByIngredientAdapter.ViewHolder>
+public class CalenderAdapter extends RecyclerView.Adapter<CalenderAdapter.ViewHolder>
 {
     private final Context context;
-    private List<Meal> values ;
-    private  final String TAG="FirstLRecyclerView";
-    private  onMealClickListener.onMealClickListenerIngreident mealDetailsListner;
+    private List<MealDate> values ;
     private onAddFavMealClickListner addFavMealListner;
     private onMealPlanningClick addMealtoPlan;
-
-    public FilterByIngredientAdapter(Context context, List<Meal> meals, onMealClickListener.onMealClickListenerIngreident mealDetailsListner, onAddFavMealClickListner addFavMealListner, onMealPlanningClick addMealtoPlan) {
+    private onMealClickListener.onMealClickListenerCat mealDetailsListner;
+    //, onMealClickListener.onMealClickListenerCat mealDetailsListner, onAddFavMealClickListner addFavMealListner, onMealPlanningClick addMealtoPlan
+    public CalenderAdapter(Context context, List<MealDate> meals ) {
         this.context = context;
-        this.addMealtoPlan=addMealtoPlan;
+       // this.addFavMealListner=addFavMealListner;
+       // this.addMealtoPlan=addMealtoPlan;
+       // this.mealDetailsListner=mealDetailsListner;
         if(null != meals)
         {
-            this.values = new ArrayList<Meal>(meals.size());
+            this.values = new ArrayList<MealDate>(meals.size());
             this.values = meals;
-            this.mealDetailsListner=mealDetailsListner;
-            this.addFavMealListner=addFavMealListner;
         }
         else if(meals == null)
         {
-            this.values = new ArrayList<>(1);
-            Meal noMeal = new Meal();
-            noMeal.setStrMeal("No Meal Found");
+            this.values = new ArrayList<>();
+            MealDate noMeal = new MealDate("NoMealFound","","");
             this.values.add(noMeal);
-            this.mealDetailsListner=mealDetailsListner;
-            this.addFavMealListner=addFavMealListner;
         }
     }
 
@@ -68,22 +64,21 @@ public class FilterByIngredientAdapter extends RecyclerView.Adapter<FilterByIngr
             imageV=layoutView.findViewById(R.id.meal_image);
             mealNameText=layoutView.findViewById(R.id.meal_name);
             iconImage = itemView.findViewById(R.id.meal_favorite_icon);
-            schedualeIcon=itemView.findViewById(R.id.meal_schedule_icon);
         }
     }
 
     @NonNull
     @Override
-    public FilterByIngredientAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public CalenderAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater cusInflater = LayoutInflater.from(parent.getContext());
         View tempV=cusInflater.inflate(R.layout.meal_card_layout_unfav, parent,false);
-        FilterByIngredientAdapter.ViewHolder tempHolder= new FilterByIngredientAdapter.ViewHolder(tempV);
+        CalenderAdapter.ViewHolder tempHolder= new CalenderAdapter.ViewHolder(tempV);
         return tempHolder;
 
     }
 
     @Override
-    public void onBindViewHolder(@NonNull FilterByIngredientAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
+    public void onBindViewHolder(@NonNull CalenderAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
 
         holder.mealNameText.setText(values.get(position).getStrMeal());
         Glide.with(this.context).load(values.get(position).getStrMealThumb())
@@ -91,23 +86,24 @@ public class FilterByIngredientAdapter extends RecyclerView.Adapter<FilterByIngr
                         .placeholder(R.drawable.ic_launcher_background)
                         .error(R.drawable.ic_launcher_foreground))
                 .into(holder.imageV);
-        holder.schedualeIcon.setOnClickListener(v -> {
-            addMealtoPlan.onMealScheduleClicked(values.get(position));
-        });
         holder.layoutView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mealDetailsListner.onMealIngreidentClick(values.get(position).getStrMeal());
+                mealDetailsListner.onMealCatClick(values.get(position).getStrMeal());
             }
         });
-        holder.iconImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addFavMealListner.onFavMealAdd(values.get(position));
-                holder.iconImage.setImageResource(R.drawable.ic_favorite_filled);
+//        holder.iconImage.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                addFavMealListner.onFavMealAdd(values.get(position));
+//                holder.iconImage.setImageResource(R.drawable.ic_favorite_filled); // Change to filled heart
+//
+//            }
+//        });
+//        holder.schedualeIcon.setOnClickListener(v -> {
+//            addMealtoPlan.onMealScheduleClicked(values.get(position));
+//        });
 
-            }
-        });
     }
 
     @Override

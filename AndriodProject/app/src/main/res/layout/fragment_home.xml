@@ -1,7 +1,8 @@
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_margin="8dp"
     app:cardCornerRadius="8dp"
     app:cardElevation="4dp">
@@ -30,17 +31,38 @@
             android:maxLines="2"
             android:ellipsize="end" />
 
-        <!-- Heart Icon -->
-        <ImageView
-            android:id="@+id/meal_favorite_icon"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            android:layout_gravity="end"
-            android:clickable="true"
-            android:contentDescription="@string/favorite_icon"
-            android:focusable="true"
-            android:padding="8dp"
-            android:src="@drawable/fav" />
+        <!-- RelativeLayout for Icons -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp">
+
+            <!-- Calendar Icon (Scheduling) -->
+            <ImageView
+                android:id="@+id/meal_schedule_icon"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_alignParentStart="true"
+                android:clickable="true"
+                android:contentDescription="@string/schedule_icon"
+                android:focusable="true"
+                android:src="@drawable/scheduale" />
+
+            <!-- Heart Icon -->
+            <ImageView
+                android:id="@+id/meal_favorite_icon"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_alignParentEnd="true"
+                android:clickable="true"
+                android:contentDescription="@string/favorite_icon"
+                android:focusable="true"
+                android:src="@drawable/fav" />
+
+        </RelativeLayout>
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>
+
+
+

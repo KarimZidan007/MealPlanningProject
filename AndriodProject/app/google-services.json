@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "957933034271",
+    "project_id": "sidechefproject",
+    "storage_bucket": "sidechefproject.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:957933034271:android:63193f9dd5748ee4716e2a",
+        "android_client_info": {
+          "package_name": "com.example.sidechefproject"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA7GlL1pozbLyDZEhOWzl9Zm6o7K1xsWmA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

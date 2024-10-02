@@ -11,13 +11,50 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import java.util.ArrayList;
+import com.caverock.androidsvg.SVG;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.sidechefproject.R;
 
 public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.ViewHolder> {
 private final Context context;
 private List<Country> values;
-    onClickListByCountry listner;
-    private final String COUNTRY_TAG= "CountryRecyclerView";
+private onClickListByCountry listner;
+private final String BASELINK = "https://raw.githubusercontent.com/hjnilsson/country-flags/master/svg/";
+private final String[] countryCodes = {
+            "us", // American
+            "gb", // British
+            "ca", // Canadian
+            "cn", // Chinese
+            "hr", // Croatian
+            "nl", // Dutch
+            "eg", // Egyptian
+            "ph", // Filipino
+            "fr", // French
+            "gr", // Greek
+            "in", // Indian
+            "ie", // Irish
+            "it", // Italian
+            "jm", // Jamaican
+            "jp", // Japanese
+            "ke", // Kenyan
+            "my", // Malaysian
+            "mx", // Mexican
+            "ma", // Moroccan
+            "pl", // Polish
+            "pt", // Portuguese
+            "ru", // Russian
+            "es", // Spanish
+            "th", // Thai
+            "tn", // Tunisian
+            "tr", // Turkish
+            "ua", // Ukrainian
+            "vn", // Vietnamese
+            "vn",
+            "vn",
+            "vn",
+    };
     public CountryAdapter(Context context, List<Country> countries, onClickListByCountry listner_)
     {
         this.context=context;
@@ -53,6 +90,11 @@ private List<Country> values;
             }
         });
         holder.countryName.setText(values.get(position).getStrArea());
+        Glide.with(this.context).load("https://flagsapi.com/"+countryCodes[position].toUpperCase()+"/shiny/64.png")
+                .apply(new RequestOptions().override(350,313)
+                        .placeholder(R.drawable.ic_launcher_background)
+                        .error(R.drawable.ic_launcher_foreground))
+                .into(holder.countryImage);
     }
 
     @java.lang.Override
@@ -72,6 +114,7 @@ private List<Country> values;
             this.layoutView=LayoutView;
             countryName=layoutView.findViewById(R.id.IngredientName);
             listBtn=layoutView.findViewById(R.id.ListMealsI);
+            countryImage= layoutView.findViewById(R.id.imageVI);
 
         }
     }
