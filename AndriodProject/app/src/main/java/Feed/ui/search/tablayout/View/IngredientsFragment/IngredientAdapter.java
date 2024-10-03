@@ -18,7 +18,6 @@ import com.example.sidechefproject.R;
 import java.util.ArrayList;
 import java.util.List;
 
-import Feed.ui.search.tablayout.View.CateogiresFragment.onMealPlanningClick;
 import Model.Ingredient;
 
 public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.ViewHolder> {

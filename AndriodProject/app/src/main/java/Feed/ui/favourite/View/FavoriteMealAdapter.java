@@ -59,6 +59,7 @@ public class FavoriteMealAdapter extends RecyclerView.Adapter<FavoriteMealAdapte
 
     @Override
     public void onBindViewHolder(@NonNull MealViewHolder holder, int position) {
+        holder.iconImage.setImageResource(R.drawable.delete);
         holder.mealName.setText(meals.get(position).getStrMeal());
         Glide.with(this.context).load(meals.get(position).getStrMealThumb())
                 .apply(new RequestOptions().override(350,313)

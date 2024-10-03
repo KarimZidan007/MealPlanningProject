@@ -1,4 +1,4 @@
-package Feed.ui.search.tablayout.View.CateogiresFragment;
+package Feed.ui.calendar.View;
 
 import Model.Meal;
 

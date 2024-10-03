@@ -2,11 +2,9 @@ package Feed.ui.search.tablayout.View.CateogiresFragment;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,8 +18,10 @@ import com.example.sidechefproject.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import Feed.ui.favourite.View.onClickRemoveFavourite;
 import Feed.ui.search.tablayout.View.onAddFavMealClickListner;
 import Feed.ui.search.tablayout.View.onMealClickListener;
+import Feed.ui.calendar.View.onMealPlanningClick;
 import Model.Meal;
 
 
@@ -33,11 +33,15 @@ public class FilterByCategoriesAdapter extends RecyclerView.Adapter<FilterByCate
     private onMealClickListener.onMealClickListenerCat mealDetailsListner;
     private onAddFavMealClickListner addFavMealListner;
     private onMealPlanningClick addMealtoPlan;
-    public FilterByCategoriesAdapter(Context context, List<Meal> meals , onMealClickListener.onMealClickListenerCat mealDetailsListner, onAddFavMealClickListner addFavMealListner,onMealPlanningClick addMealtoPlan) {
+    private boolean isFav=false;
+    private onClickRemoveFavourite removeListner;
+
+    public FilterByCategoriesAdapter(Context context, List<Meal> meals , onMealClickListener.onMealClickListenerCat mealDetailsListner, onAddFavMealClickListner addFavMealListner, onMealPlanningClick addMealtoPlan , onClickRemoveFavourite removeListner) {
         this.context = context;
         this.mealDetailsListner = mealDetailsListner;
         this.addFavMealListner=addFavMealListner;
         this.addMealtoPlan=addMealtoPlan;
+        this.removeListner=removeListner;
         if(null != meals)
         {
             this.values = new ArrayList<Meal>(meals.size());
@@ -65,7 +69,7 @@ public class FilterByCategoriesAdapter extends RecyclerView.Adapter<FilterByCate
             imageV=layoutView.findViewById(R.id.meal_image);
             mealNameText=layoutView.findViewById(R.id.meal_name);
             iconImage = itemView.findViewById(R.id.meal_favorite_icon);
-            schedualeIcon=itemView.findViewById(R.id.meal_schedule_icon);
+            schedualeIcon=itemView.findViewById(R.id.schedule_icon_del);
         }
     }
 
@@ -99,7 +103,23 @@ public class FilterByCategoriesAdapter extends RecyclerView.Adapter<FilterByCate
             public void onClick(View v) {
                 addFavMealListner.onFavMealAdd(values.get(position));
                 holder.iconImage.setImageResource(R.drawable.ic_favorite_filled); // Change to filled heart
-
+            }
+        });
+        holder.iconImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!isFav)
+                {
+                    addFavMealListner.onFavMealAdd(values.get(position));
+                    holder.iconImage.setImageResource(R.drawable.ic_favorite_filled); // Change to filled heart
+                    isFav=true;
+                }
+                else
+                {
+                    removeListner.onFavMealRemove(values.get(position));
+                    holder.iconImage.setImageResource(R.drawable.fav);
+                    isFav=false;
+                }
             }
         });
         holder.schedualeIcon.setOnClickListener(v -> {

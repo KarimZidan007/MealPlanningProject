@@ -18,7 +18,6 @@ import com.example.sidechefproject.R;
 import java.util.ArrayList;
 import java.util.List;
 
-import Feed.ui.search.tablayout.View.CateogiresFragment.onMealPlanningClick;
 import Feed.ui.search.tablayout.View.onAddFavMealClickListner;
 import Feed.ui.search.tablayout.View.onMealClickListener;
 import Model.Meal;
@@ -30,14 +29,13 @@ public class CalenderAdapter extends RecyclerView.Adapter<CalenderAdapter.ViewHo
     private final Context context;
     private List<MealDate> values ;
     private onAddFavMealClickListner addFavMealListner;
-    private onMealPlanningClick addMealtoPlan;
+    private onDeletePlanMealClick delMealFromPLanListner;
     private onMealClickListener.onMealClickListenerCat mealDetailsListner;
-    //, onMealClickListener.onMealClickListenerCat mealDetailsListner, onAddFavMealClickListner addFavMealListner, onMealPlanningClick addMealtoPlan
-    public CalenderAdapter(Context context, List<MealDate> meals ) {
+    public CalenderAdapter(Context context, List<MealDate> meals ,onDeletePlanMealClick delMealFromPLanListner ,onMealClickListener.onMealClickListenerCat mealDetailsListner,onAddFavMealClickListner addFavMealListner) {
         this.context = context;
-       // this.addFavMealListner=addFavMealListner;
-       // this.addMealtoPlan=addMealtoPlan;
-       // this.mealDetailsListner=mealDetailsListner;
+        this.addFavMealListner=addFavMealListner;
+        this.mealDetailsListner=mealDetailsListner;
+        this.delMealFromPLanListner=delMealFromPLanListner;
         if(null != meals)
         {
             this.values = new ArrayList<MealDate>(meals.size());
@@ -46,17 +44,17 @@ public class CalenderAdapter extends RecyclerView.Adapter<CalenderAdapter.ViewHo
         else if(meals == null)
         {
             this.values = new ArrayList<>();
-            MealDate noMeal = new MealDate("NoMealFound","","");
+            MealDate noMeal = new MealDate(new Meal(),"","");
             this.values.add(noMeal);
         }
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
-        public View layoutView;
-        public TextView mealNameText;
-        public ImageView imageV;
-        ImageView iconImage;
-        ImageView schedualeIcon;
+        private View layoutView;
+        private TextView mealNameText;
+        private ImageView imageV;
+        private ImageView iconImage;
+        private ImageView delIcon;
 
         public ViewHolder(View layoutView) {
             super(layoutView);
@@ -64,6 +62,7 @@ public class CalenderAdapter extends RecyclerView.Adapter<CalenderAdapter.ViewHo
             imageV=layoutView.findViewById(R.id.meal_image);
             mealNameText=layoutView.findViewById(R.id.meal_name);
             iconImage = itemView.findViewById(R.id.meal_favorite_icon);
+            delIcon = itemView.findViewById(R.id.schedule_icon_del);
         }
     }
 
@@ -71,7 +70,7 @@ public class CalenderAdapter extends RecyclerView.Adapter<CalenderAdapter.ViewHo
     @Override
     public CalenderAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater cusInflater = LayoutInflater.from(parent.getContext());
-        View tempV=cusInflater.inflate(R.layout.meal_card_layout_unfav, parent,false);
+        View tempV=cusInflater.inflate(R.layout.meal_card_calendar_details, parent,false);
         CalenderAdapter.ViewHolder tempHolder= new CalenderAdapter.ViewHolder(tempV);
         return tempHolder;
 
@@ -92,18 +91,24 @@ public class CalenderAdapter extends RecyclerView.Adapter<CalenderAdapter.ViewHo
                 mealDetailsListner.onMealCatClick(values.get(position).getStrMeal());
             }
         });
-//        holder.iconImage.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                addFavMealListner.onFavMealAdd(values.get(position));
-//                holder.iconImage.setImageResource(R.drawable.ic_favorite_filled); // Change to filled heart
-//
-//            }
-//        });
-//        holder.schedualeIcon.setOnClickListener(v -> {
-//            addMealtoPlan.onMealScheduleClicked(values.get(position));
-//        });
+        holder.iconImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Meal temp =  new Meal(values.get(position));
+               // temp = values.get(position);
+                addFavMealListner.onFavMealAdd(temp);
+                holder.iconImage.setImageResource(R.drawable.ic_favorite_filled); // Change to filled heart
+            }
+        });
+        holder.delIcon.setOnClickListener(v -> {
+            delMealFromPLanListner.onDeleteMealScheduleClicked(values.get(position));
+        });
 
+    }
+
+    public void setList(List<MealDate> meals)
+    {
+        this.values=meals;
     }
 
     @Override

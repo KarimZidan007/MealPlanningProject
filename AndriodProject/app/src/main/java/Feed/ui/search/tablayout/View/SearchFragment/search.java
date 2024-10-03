@@ -28,8 +28,7 @@ import DataBase.Model.calAppDataBase;
 import DataBase.controller.MealDateDao;
 import Feed.Controllers.searchFragPresenter;
 import Feed.ui.search.IsearchMealView;
-import Feed.ui.search.tablayout.View.CateogiresFragment.onMealPlanningClick;
-import Feed.ui.search.tablayout.View.IngredientsFragment.ingreident;
+import Feed.ui.calendar.View.onMealPlanningClick;
 import Feed.ui.search.tablayout.View.onMealClickListener;
 import Model.Meal;
 import Model.MealDate;
@@ -171,7 +170,7 @@ public class search extends Fragment  implements IsearchMealView.IsearchAllViews
     }
     private void saveMealToDate(Meal meal, String date, String time) {
         // Create a new MealDate object with separate date and time
-        MealDate mealDate = new MealDate(meal.getStrMeal(), date, time);
+        MealDate mealDate = new MealDate(meal, date, time);
 
         plannedDbObj = calAppDataBase.getDbInstance(search.this.getContext());
         mealDateDao = plannedDbObj.getDateMealsDao();

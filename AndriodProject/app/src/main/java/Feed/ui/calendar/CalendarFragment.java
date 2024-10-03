@@ -22,24 +22,40 @@ import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import DataBase.Model.AppDataBase;
 import DataBase.Model.calAppDataBase;
+import DataBase.controller.MealDAO;
 import DataBase.controller.MealDateDao;
 import Feed.ui.calendar.View.CalenderAdapter;
 import Feed.ui.calendar.View.MealIndicatorDecorator;
 
+import Feed.ui.calendar.View.onDeletePlanMealClick;
+import Feed.ui.favourite.View.FavouriteFragment;
+import Feed.ui.search.tablayout.View.onAddFavMealClickListner;
+import Feed.ui.search.tablayout.View.onMealClickListener;
+import Model.Meal;
 import Model.MealDate;
 
-public class CalendarFragment extends Fragment {
+public class CalendarFragment extends Fragment implements onAddFavMealClickListner,onDeletePlanMealClick, onMealClickListener.onMealClickListenerCat {
     private MaterialCalendarView calendarView;
     private MealDateDao mealDateDao;
     private calAppDataBase plannedDbObj;
     private RecyclerView calendarRec;
     private List<MealDate> values =null;
-
+    private CalenderAdapter adapter;
+    private MealIndicatorDecorator mealIndicatorDecorator;
+    private Set<CalendarDay> mealDays;
+    private  Map<CalendarDay, MealIndicatorDecorator> mealIndicatorDecorators = new HashMap<>();
+    private CalendarDay selectedCalendarDay;
+    private AppDataBase dataBaseObj;
+    private MealDAO dao;
 
     @Nullable
     @Override
@@ -89,10 +105,13 @@ public class CalendarFragment extends Fragment {
             int year = date.getYear();
             int month = date.getMonth();
             int day = date.getDay();
+            selectedCalendarDay = CalendarDay.from(year, month, day);
 
             // Format the selected date
             String selectedDate = String.format("%04d-%02d-%02d", year, month , day).trim();
 
+            adapter = new CalenderAdapter(getContext(), new ArrayList<MealDate>(),CalendarFragment.this,CalendarFragment.this,CalendarFragment.this);
+            calendarRec.setAdapter(adapter);
 
             // Fetch meals for the selected date and observe
             LiveData<List<MealDate>> liveDataForDate = mealDateDao.getMealsForDate(selectedDate);
@@ -103,11 +122,10 @@ public class CalendarFragment extends Fragment {
 
                         // Update the RecyclerView and calendar decorators
                         values = meals;
-                        CalenderAdapter adapter = new CalenderAdapter(getContext(), values);
-                        calendarRec.setAdapter(adapter);
+                        adapter.setList(values);
                         adapter.notifyDataSetChanged();
 
-                        Set<CalendarDay> mealDays = new HashSet<>();
+                         mealDays = new HashSet<>();
                         for (MealDate meal : meals) {
                             String dateString = meal.getDate();
                             LocalDate localDate = LocalDate.parse(dateString, DateTimeFormatter.ISO_LOCAL_DATE);
@@ -115,13 +133,49 @@ public class CalendarFragment extends Fragment {
                             mealDays.add(day);
                         }
                         MealIndicatorDecorator mealIndicatorDecorator = new MealIndicatorDecorator(mealDays);
+                        mealIndicatorDecorators.put(selectedCalendarDay, mealIndicatorDecorator);
                         calendarView.addDecorator(mealIndicatorDecorator);
 
                     } else {
+                        MealIndicatorDecorator existingDecorator = mealIndicatorDecorators.remove(selectedCalendarDay);
+                        if (existingDecorator != null) {
+                            calendarView.addDecorator(mealIndicatorDecorators.get(selectedDate));
+                        }
+                        adapter.setList(new ArrayList<>());
+                        adapter.notifyDataSetChanged();
                         Toast.makeText(getContext(), "No meals for this date", Toast.LENGTH_SHORT).show();
                     }
                 }
             });
         });
     }
+
+    @Override
+    public void onDeleteMealScheduleClicked(MealDate meal) {
+        plannedDbObj = calAppDataBase.getDbInstance(CalendarFragment.this.getContext());
+        mealDateDao = plannedDbObj.getDateMealsDao();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                mealDateDao.deletePlannedMeal(meal);
+            }
+        }).start();
     }
+
+    @Override
+    public void onFavMealAdd(Meal meal) {
+        dataBaseObj = AppDataBase.getDbInstance(CalendarFragment.this.getContext());
+        dao = dataBaseObj.getMealsDao();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                dao.insertMeal(meal);
+            }
+        }).start();
+    }
+
+    @Override
+    public void onMealCatClick(String mealName) {
+
+    }
+}

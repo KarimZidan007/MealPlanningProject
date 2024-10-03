@@ -2,7 +2,6 @@ package Feed.ui.search.tablayout.View.IngredientsFragment;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +18,7 @@ import com.example.sidechefproject.R;
 import java.util.ArrayList;
 import java.util.List;
 
-import Feed.ui.search.tablayout.View.CateogiresFragment.onMealPlanningClick;
+import Feed.ui.calendar.View.onMealPlanningClick;
 import Feed.ui.search.tablayout.View.onAddFavMealClickListner;
 import Feed.ui.search.tablayout.View.onMealClickListener;
 import Model.Meal;
@@ -68,7 +67,7 @@ public class FilterByIngredientAdapter extends RecyclerView.Adapter<FilterByIngr
             imageV=layoutView.findViewById(R.id.meal_image);
             mealNameText=layoutView.findViewById(R.id.meal_name);
             iconImage = itemView.findViewById(R.id.meal_favorite_icon);
-            schedualeIcon=itemView.findViewById(R.id.meal_schedule_icon);
+            schedualeIcon=itemView.findViewById(R.id.schedule_icon_del);
         }
     }
 

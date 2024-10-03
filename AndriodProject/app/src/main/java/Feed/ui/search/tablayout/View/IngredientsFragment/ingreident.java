@@ -30,8 +30,7 @@ import Feed.Controllers.InsertingDBPresenter.addFavMealPresenter;
 import Feed.Controllers.MealsByIngredient.MealsIngredientPresenter;
 import Feed.Controllers.searchFragPresenter;
 import Feed.ui.search.IsearchMealView;
-import Feed.ui.search.tablayout.View.CateogiresFragment.onMealPlanningClick;
-import Feed.ui.search.tablayout.View.CountriesFragment.country;
+import Feed.ui.calendar.View.onMealPlanningClick;
 import Feed.ui.search.tablayout.View.onAddFavMealClickListner;
 import Feed.ui.search.tablayout.View.onMealClickListener;
 import Model.Ingredient;
@@ -209,7 +208,7 @@ private calAppDataBase plannedDbObj;
     }
     private void saveMealToDate(Meal meal, String date, String time) {
         // Create a new MealDate object with separate date and time
-        MealDate mealDate = new MealDate(meal.getStrMeal(), date, time);
+        MealDate mealDate = new MealDate(meal, date, time);
 
         plannedDbObj = calAppDataBase.getDbInstance(ingreident.this.getContext());
         mealDateDao = plannedDbObj.getDateMealsDao();

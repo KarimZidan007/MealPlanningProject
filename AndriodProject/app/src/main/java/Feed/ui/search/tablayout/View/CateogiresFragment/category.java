@@ -1,7 +1,5 @@
 package Feed.ui.search.tablayout.View.CateogiresFragment;
 
-import static android.text.format.DateUtils.isToday;
-
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
@@ -31,9 +29,13 @@ import DataBase.controller.MealDAO;
 import Feed.Controllers.InsertingDBPresenter.addFavMealPresenter;
 import Feed.Controllers.MealsCategoriesPresenter;
 import Feed.Controllers.searchFragPresenter;
+import Feed.ui.favourite.Controller.FavMealPresenter;
+import Feed.ui.favourite.View.onClickRemoveFavourite;
+import Feed.ui.home.HomeFragment;
 import Feed.ui.search.IsearchMealView;
 import Feed.ui.search.tablayout.View.onAddFavMealClickListner;
 import Feed.ui.search.tablayout.View.onMealClickListener;
+import Feed.ui.calendar.View.onMealPlanningClick;
 import Model.Category;
 import Model.Meal;
 import Model.MealDate;
@@ -41,20 +43,28 @@ import Network.Model.MealsRemoteDataSource;
 import Repository.DataSrcRepository;
 import DataBase.controller.MealDateDao;
 
-public class category extends Fragment  implements IsearchMealView.IgetMealCategoriesView ,IsearchMealView.IgetMealFilterCategoriesView ,onClickFilterByCateogryListner, onMealClickListener.onMealClickListenerCat,IsearchMealView.IsearchAllViewsMeals, onAddFavMealClickListner,onMealPlanningClick {
-RecyclerView catRec;
-CategoriesAdapter catAdapter;
-FilterByCategoriesAdapter filterAdapter;
-MealsCategoriesPresenter catPresenter;
-MealsRemoteDataSource dataSource;
-searchFragPresenter searchMealPresenter;
+public class category extends Fragment  implements IsearchMealView.IgetMealCategoriesView ,IsearchMealView.IgetMealFilterCategoriesView ,onClickFilterByCateogryListner, onMealClickListener.onMealClickListenerCat,IsearchMealView.IsearchAllViewsMeals, onAddFavMealClickListner, onMealPlanningClick, onClickRemoveFavourite {
+private RecyclerView catRec;
+private CategoriesAdapter catAdapter;
+private FilterByCategoriesAdapter filterAdapter;
+private MealsCategoriesPresenter catPresenter;
+private MealsRemoteDataSource dataSource;
+private searchFragPresenter searchMealPresenter;
 private addFavMealPresenter favMealPresenter;
 private AppDataBase dataBaseObj;
 private MealDAO dao;
 private DataSrcRepository repo;
-private boolean isDetailRequest=true;
 private MealDateDao mealDateDao;
 private calAppDataBase plannedDbObj;
+private FavMealPresenter presenter;
+
+
+
+    private enum  requestType{
+    isDetailRequest,
+    addToFavDbRequest,
+    addToPlanRequest};
+private requestType mealRequest = requestType.isDetailRequest;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -73,12 +83,11 @@ private calAppDataBase plannedDbObj;
         super.onViewCreated(view, savedInstanceState);
         catRec=view.findViewById(R.id.categoryRec);
         catRec.setHasFixedSize(true);
-        //LinearLayoutManager layoutManager = new LinearLayoutManager(this.getContext());
-        //layoutManager.setOrientation(catRec.VERTICAL);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this.getContext());
+        layoutManager.setOrientation(catRec.VERTICAL);
+        catRec.setLayoutManager(layoutManager);
 
-        catRec.setLayoutManager(new GridLayoutManager(getContext(),2));
 
-        //catRec.setLayoutManager(layoutManager);
         dataSource= MealsRemoteDataSource.getRemoteSrcClient();
         catPresenter = new MealsCategoriesPresenter(dataSource,(IsearchMealView.IgetMealCategoriesView)category.this);
         catPresenter.reqMealsCategories();
@@ -106,11 +115,16 @@ private calAppDataBase plannedDbObj;
     public void displayMealsByName(List<Meal> meals) {
         Meal tempMeal = meals.get(0);
 
-        if (isDetailRequest)
+        if (requestType.isDetailRequest==mealRequest)
         {
             Intent mealDetailsIntent = new Intent(category.this.getContext(), MealDetailsActivity.class);
             mealDetailsIntent.putExtra("MEAL",tempMeal);
             startActivity(mealDetailsIntent);
+        }
+        else if(requestType.addToPlanRequest==mealRequest)
+        {
+            addDetailedMealToPlan(tempMeal);
+            mealRequest=requestType.isDetailRequest;
         }
         else
         {
@@ -119,7 +133,7 @@ private calAppDataBase plannedDbObj;
             repo = new DataSrcRepository(dao);
             favMealPresenter = new addFavMealPresenter(repo);
             favMealPresenter.insertFavMeal(tempMeal);
-            isDetailRequest=true;
+            mealRequest=requestType.isDetailRequest;
         }
     }
 
@@ -137,7 +151,8 @@ private calAppDataBase plannedDbObj;
 
     @Override
     public void displayFilterMealsCateogries(List<Meal> meals) {
-        filterAdapter = new FilterByCategoriesAdapter(category.this.getContext(),meals,this,this,this);
+        //req meal details
+        filterAdapter = new FilterByCategoriesAdapter(category.this.getContext(),meals,this,this,this,this);
         catRec.setAdapter(filterAdapter);
         filterAdapter.notifyDataSetChanged();
     }
@@ -158,12 +173,24 @@ private calAppDataBase plannedDbObj;
 
     @Override
     public void onFavMealAdd(Meal meal) {
-        isDetailRequest=false;
+        mealRequest=requestType.addToFavDbRequest;
         onMealCatClick(meal.getStrMeal());
     }
-
+    @Override
+    public void onFavMealRemove(Meal meal) {
+        dataBaseObj = AppDataBase.getDbInstance(category.this.getContext());
+        dao = dataBaseObj.getMealsDao();
+        repo = new DataSrcRepository(dao);
+        presenter = new FavMealPresenter(repo);
+        presenter.deleteMeal(meal);
+    }
     @Override
     public void onMealScheduleClicked(Meal meal) {
+        mealRequest=requestType.addToPlanRequest;
+        onMealCatClick(meal.getStrMeal());
+    }
+    private void addDetailedMealToPlan(Meal meal)
+    {
         // Get the current date and time
         Calendar calendar = Calendar.getInstance();
 
@@ -171,7 +198,6 @@ private calAppDataBase plannedDbObj;
         DatePickerDialog datePickerDialog = new DatePickerDialog(category.this.getContext(),
                 (view, year, monthOfYear, dayOfMonth) -> {
                     // Format the selected date
-                    //String selectedDate = year + "-" + (monthOfYear + 1) + "-" + dayOfMonth;
                     String selectedDate = String.format("%04d-%02d-%02d", year, monthOfYear+1 , dayOfMonth);
 
                     // After selecting the date, show the time picker dialog restricted to future times
@@ -213,7 +239,7 @@ private calAppDataBase plannedDbObj;
     }
     private void saveMealToDate(Meal meal, String date, String time) {
         // Create a new MealDate object with separate date and time
-        MealDate mealDate = new MealDate(meal.getStrMeal(), date, time);
+        MealDate mealDate = new MealDate(meal, date, time);
 
         plannedDbObj = calAppDataBase.getDbInstance(category.this.getContext());
         mealDateDao = plannedDbObj.getDateMealsDao();
@@ -223,3 +249,4 @@ private calAppDataBase plannedDbObj;
         Toast.makeText(category.this.getContext(), "Meal scheduled for " + date + " at " + time, Toast.LENGTH_SHORT).show();
     }
 }
+

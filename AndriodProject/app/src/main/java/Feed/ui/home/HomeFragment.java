@@ -33,7 +33,6 @@ import Feed.Controllers.InsertingDBPresenter.addFavMealPresenter;
 import Feed.Controllers.RandomMealPresenter;
 import Feed.ui.favourite.Controller.FavMealPresenter;
 import Feed.ui.favourite.View.onClickRemoveFavourite;
-import Feed.ui.search.tablayout.View.CountriesFragment.country;
 import Feed.ui.search.tablayout.View.onAddFavMealClickListner;
 import Model.Meal;
 import Model.MealDate;
@@ -68,7 +67,7 @@ public class HomeFragment extends Fragment implements IRandomMealView , onClickR
         imageV = binding.mealImage;
         iconImage = binding.mealFavoriteIcon;
         mealNameText = binding.mealName;
-        schedualeIcon=root.findViewById(R.id.meal_schedule_icon);
+        schedualeIcon=root.findViewById(R.id.schedule_icon_del);
         return root;
     }
     @Override
@@ -193,7 +192,7 @@ public class HomeFragment extends Fragment implements IRandomMealView , onClickR
     }
     private void saveMealToDate(Meal meal, String date, String time) {
         // Create a new MealDate object with separate date and time
-        MealDate mealDate = new MealDate(meal.getStrMeal(), date, time);
+        MealDate mealDate = new MealDate(meal, date, time);
 
         plannedDbObj = calAppDataBase.getDbInstance(HomeFragment.this.getContext());
         mealDateDao = plannedDbObj.getDateMealsDao();

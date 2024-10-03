@@ -46,7 +46,7 @@
                 android:clickable="true"
                 android:contentDescription="@string/schedule_icon"
                 android:focusable="true"
-                android:src="@drawable/scheduale" />
+                android:src="@drawable/delete" />
 
             <!-- Heart Icon -->
             <ImageView

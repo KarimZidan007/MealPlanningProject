@@ -2,11 +2,9 @@ package Feed.ui.search.tablayout.View.CountriesFragment;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Feed.ui.favourite.View.onClickRemoveFavourite;
-import Feed.ui.search.tablayout.View.CateogiresFragment.onMealPlanningClick;
+import Feed.ui.calendar.View.onMealPlanningClick;
 import Feed.ui.search.tablayout.View.onAddFavMealClickListner;
 import Feed.ui.search.tablayout.View.onMealClickListener;
 import Model.Meal;
@@ -70,7 +68,7 @@ public class FilterByCountryAdapter extends RecyclerView.Adapter<FilterByCountry
             imageV=layoutView.findViewById(R.id.meal_image);
             mealNameText=layoutView.findViewById(R.id.meal_name);
             iconImage = itemView.findViewById(R.id.meal_favorite_icon);
-            schedualeIcon=itemView.findViewById(R.id.meal_schedule_icon);
+            schedualeIcon=itemView.findViewById(R.id.schedule_icon_del);
 
         }
     }
