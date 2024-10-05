@@ -39,7 +39,7 @@
 
             <!-- Calendar Icon (Scheduling) -->
             <ImageView
-                android:id="@+id/schedule_icon_del"
+                android:id="@+id/schedualeIcon"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_alignParentStart="true"

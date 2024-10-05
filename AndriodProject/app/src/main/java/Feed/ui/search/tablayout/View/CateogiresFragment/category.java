@@ -20,6 +20,8 @@ import android.widget.Toast;
 import com.example.sidechefproject.MealDetails.MealDetailsActivity;
 import com.example.sidechefproject.R;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.List;
 
@@ -83,10 +85,7 @@ private requestType mealRequest = requestType.isDetailRequest;
         super.onViewCreated(view, savedInstanceState);
         catRec=view.findViewById(R.id.categoryRec);
         catRec.setHasFixedSize(true);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this.getContext());
-        layoutManager.setOrientation(catRec.VERTICAL);
-        catRec.setLayoutManager(layoutManager);
-
+        catRec.setLayoutManager(new GridLayoutManager(getContext(),2));
 
         dataSource= MealsRemoteDataSource.getRemoteSrcClient();
         catPresenter = new MealsCategoriesPresenter(dataSource,(IsearchMealView.IgetMealCategoriesView)category.this);
@@ -151,6 +150,9 @@ private requestType mealRequest = requestType.isDetailRequest;
 
     @Override
     public void displayFilterMealsCateogries(List<Meal> meals) {
+          LinearLayoutManager layoutManager = new LinearLayoutManager(this.getContext());
+         layoutManager.setOrientation(catRec.VERTICAL);
+        catRec.setLayoutManager(layoutManager);
         //req meal details
         filterAdapter = new FilterByCategoriesAdapter(category.this.getContext(),meals,this,this,this,this);
         catRec.setAdapter(filterAdapter);
@@ -238,8 +240,14 @@ private requestType mealRequest = requestType.isDetailRequest;
                 day == today.get(Calendar.DAY_OF_MONTH);
     }
     private void saveMealToDate(Meal meal, String date, String time) {
-        // Create a new MealDate object with separate date and time
-        MealDate mealDate = new MealDate(meal, date, time);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate localDate = LocalDate.parse(date, formatter);
+
+        // Get the day of the week from LocalDate
+        String dayOfWeek = localDate.getDayOfWeek().toString(); // e.g., "SUNDAY", "MONDAY"
+        String formattedDayOfWeek = dayOfWeek.substring(0, 1).toUpperCase() + dayOfWeek.substring(1).toLowerCase(); // e.g., "Sunday"
+
+        MealDate mealDate = new MealDate(meal, date, time,formattedDayOfWeek);
 
         plannedDbObj = calAppDataBase.getDbInstance(category.this.getContext());
         mealDateDao = plannedDbObj.getDateMealsDao();

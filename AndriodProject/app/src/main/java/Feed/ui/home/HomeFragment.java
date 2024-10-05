@@ -22,6 +22,8 @@ import com.example.sidechefproject.MealDetails.MealDetailsActivity;
 import com.example.sidechefproject.R;
 import com.example.sidechefproject.databinding.FragmentHomeBinding;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.List;
 
@@ -67,7 +69,7 @@ public class HomeFragment extends Fragment implements IRandomMealView , onClickR
         imageV = binding.mealImage;
         iconImage = binding.mealFavoriteIcon;
         mealNameText = binding.mealName;
-        schedualeIcon=root.findViewById(R.id.schedule_icon_del);
+        schedualeIcon=root.findViewById(R.id.schedualeIcon);
         return root;
     }
     @Override
@@ -191,8 +193,16 @@ public class HomeFragment extends Fragment implements IRandomMealView , onClickR
                 day == today.get(Calendar.DAY_OF_MONTH);
     }
     private void saveMealToDate(Meal meal, String date, String time) {
-        // Create a new MealDate object with separate date and time
-        MealDate mealDate = new MealDate(meal, date, time);
+
+        // Parse the date string to LocalDate using the correct format (yyyy-MM-dd)
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate localDate = LocalDate.parse(date, formatter);
+
+        // Get the day of the week from LocalDate
+        String dayOfWeek = localDate.getDayOfWeek().toString(); // e.g., "SUNDAY", "MONDAY"
+        String formattedDayOfWeek = dayOfWeek.substring(0, 1).toUpperCase() + dayOfWeek.substring(1).toLowerCase(); // e.g., "Sunday"
+
+        MealDate mealDate = new MealDate(meal, date, time,formattedDayOfWeek);
 
         plannedDbObj = calAppDataBase.getDbInstance(HomeFragment.this.getContext());
         mealDateDao = plannedDbObj.getDateMealsDao();

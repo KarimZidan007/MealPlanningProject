@@ -65,10 +65,10 @@ public class FilterByCountryAdapter extends RecyclerView.Adapter<FilterByCountry
         public ViewHolder(View layoutView) {
             super(layoutView);
             this.layoutView = layoutView;
-            imageV=layoutView.findViewById(R.id.meal_image);
+            imageV=layoutView.findViewById(R.id.meal_picture);
             mealNameText=layoutView.findViewById(R.id.meal_name);
-            iconImage = itemView.findViewById(R.id.meal_favorite_icon);
-            schedualeIcon=itemView.findViewById(R.id.schedule_icon_del);
+            iconImage = itemView.findViewById(R.id.favIcon);
+            schedualeIcon=itemView.findViewById(R.id.schedualeIcon);
 
         }
     }
@@ -77,7 +77,7 @@ public class FilterByCountryAdapter extends RecyclerView.Adapter<FilterByCountry
     @Override
     public FilterByCountryAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater cusInflater = LayoutInflater.from(parent.getContext());
-        View tempV=cusInflater.inflate(R.layout.meal_card_layout_unfav, parent,false);
+        View tempV=cusInflater.inflate(R.layout.container_list_card_withplan, parent,false);
         FilterByCountryAdapter.ViewHolder tempHolder= new FilterByCountryAdapter.ViewHolder(tempV);
         return tempHolder;
     }

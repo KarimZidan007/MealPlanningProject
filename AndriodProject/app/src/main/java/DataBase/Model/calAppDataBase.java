@@ -8,7 +8,7 @@ import androidx.room.RoomDatabase;
 import DataBase.controller.MealDateDao;
 import Model.MealDate;
 
-@Database(entities = {MealDate.class}, version = 1)
+@Database(entities = {MealDate.class}, version = 2)
 public abstract class calAppDataBase extends RoomDatabase {
     private static calAppDataBase dataBaseInstance = null;
     public abstract MealDateDao getDateMealsDao();

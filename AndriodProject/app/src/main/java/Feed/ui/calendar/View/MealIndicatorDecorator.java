@@ -1,8 +1,11 @@
 package Feed.ui.calendar.View;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.graphics.drawable.ColorDrawable;
+
 import androidx.annotation.NonNull;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.DayViewDecorator;
@@ -26,6 +29,6 @@ public class MealIndicatorDecorator implements DayViewDecorator {
 
     @Override
     public void decorate(@NonNull DayViewFacade view) {
-        view.addSpan(new DotSpan(10, 0xFFFB8C00)); // Add a black dot with radius 10
+        view.addSpan(new DotSpan(10, Color.BLACK));
     }
 }

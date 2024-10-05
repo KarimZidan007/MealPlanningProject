@@ -1,0 +1,4 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true" android:color="@color/colorPrimary" /> <!-- Orange when pressed -->
+    <item android:color="@color/white" /> <!-- Default color (white) -->
+</selector>

@@ -8,6 +8,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -19,6 +20,8 @@ import android.widget.Toast;
 import com.example.sidechefproject.MealDetails.MealDetailsActivity;
 import com.example.sidechefproject.R;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.List;
 
@@ -65,18 +68,16 @@ public class country extends Fragment implements onClickListByCountry,IsearchMea
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_country, container, false);
+        return inflater.inflate(R.layout.fragment_category, container, false);
     }
 
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        countryRec=view.findViewById(R.id.countryRec);
+        countryRec=view.findViewById(R.id.categoryRec);
         countryRec.setHasFixedSize(true);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this.getContext());
-        layoutManager.setOrientation(countryRec.VERTICAL);
-        countryRec.setLayoutManager(layoutManager);
+        countryRec.setLayoutManager(new GridLayoutManager(getContext(),2));
         dataSource= MealsRemoteDataSource.getRemoteSrcClient();
         countryPresenter = new MealsCountriesPresenter(dataSource,(IsearchMealView.IgetMealCountriesView)country.this);
         countryPresenter.reqMealsCountries();
@@ -109,6 +110,10 @@ public class country extends Fragment implements onClickListByCountry,IsearchMea
 
     @Override
     public void onFilterByCountry(String countryName) {
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this.getContext());
+        layoutManager.setOrientation(countryRec.VERTICAL);
+        countryRec.setLayoutManager(layoutManager);
+        //req meal details
         dataSource= MealsRemoteDataSource.getRemoteSrcClient();
         countryPresenter = new MealsCountriesPresenter(dataSource,(IsearchMealView.IgetMealFilterCountriesView)country.this);
         countryPresenter.reqFilteringByCountry(countryName);
@@ -224,8 +229,14 @@ public class country extends Fragment implements onClickListByCountry,IsearchMea
                 day == today.get(Calendar.DAY_OF_MONTH);
     }
     private void saveMealToDate(Meal meal, String date, String time) {
-        // Create a new MealDate object with separate date and time
-        MealDate mealDate = new MealDate(meal, date, time);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate localDate = LocalDate.parse(date, formatter);
+
+        // Get the day of the week from LocalDate
+        String dayOfWeek = localDate.getDayOfWeek().toString(); // e.g., "SUNDAY", "MONDAY"
+        String formattedDayOfWeek = dayOfWeek.substring(0, 1).toUpperCase() + dayOfWeek.substring(1).toLowerCase(); // e.g., "Sunday"
+
+        MealDate mealDate = new MealDate(meal, date, time,formattedDayOfWeek);
 
         plannedDbObj = calAppDataBase.getDbInstance(country.this.getContext());
         mealDateDao = plannedDbObj.getDateMealsDao();

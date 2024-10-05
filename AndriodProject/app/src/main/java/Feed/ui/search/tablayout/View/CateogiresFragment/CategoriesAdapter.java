@@ -54,7 +54,7 @@ import Model.Category;
                 this.layoutView = layoutView;
                 categoryNameText=layoutView.findViewById(R.id.categoryName);
                 catImage= layoutView.findViewById(R.id.imageCat);
-                filterBtn=layoutView.findViewById(R.id.filterbTn);
+                //filterBtn=layoutView.findViewById(R.id.filterbTn);
 
             }
         }
@@ -70,7 +70,7 @@ import Model.Category;
 
         @Override
         public void onBindViewHolder(@NonNull CategoriesAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
-            holder.filterBtn.setOnClickListener(new View.OnClickListener() {
+            holder.catImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     listner.onFilterByCateogry(values.get(position).getStrCategory());
@@ -78,7 +78,7 @@ import Model.Category;
             });
             holder.categoryNameText.setText(values.get(position).getStrCategory());
             Glide.with(this.context).load(values.get(position).getStrCategoryThumb())
-                    .apply(new RequestOptions().override(350,313)
+                    .apply(new RequestOptions().override(313,200)
                             .placeholder(R.drawable.ic_launcher_background)
                             .error(R.drawable.ic_launcher_foreground))
                     .into(holder.catImage);

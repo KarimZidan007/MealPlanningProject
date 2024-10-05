@@ -66,10 +66,10 @@ public class FilterByCategoriesAdapter extends RecyclerView.Adapter<FilterByCate
         public ViewHolder(View layoutView) {
             super(layoutView);
             this.layoutView = layoutView;
-            imageV=layoutView.findViewById(R.id.meal_image);
+            imageV=layoutView.findViewById(R.id.meal_picture);
             mealNameText=layoutView.findViewById(R.id.meal_name);
-            iconImage = itemView.findViewById(R.id.meal_favorite_icon);
-            schedualeIcon=itemView.findViewById(R.id.schedule_icon_del);
+            iconImage = itemView.findViewById(R.id.favIcon);
+            schedualeIcon=itemView.findViewById(R.id.schedualeIcon);
         }
     }
 
@@ -77,7 +77,7 @@ public class FilterByCategoriesAdapter extends RecyclerView.Adapter<FilterByCate
     @Override
     public FilterByCategoriesAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater cusInflater = LayoutInflater.from(parent.getContext());
-        View tempV=cusInflater.inflate(R.layout.meal_card_layout_unfav, parent,false);
+        View tempV=cusInflater.inflate(R.layout.container_list_card_withplan, parent,false);
         FilterByCategoriesAdapter.ViewHolder tempHolder= new FilterByCategoriesAdapter.ViewHolder(tempV);
         return tempHolder;
 
@@ -88,7 +88,7 @@ public class FilterByCategoriesAdapter extends RecyclerView.Adapter<FilterByCate
 
         holder.mealNameText.setText(values.get(position).getStrMeal());
         Glide.with(this.context).load(values.get(position).getStrMealThumb())
-                .apply(new RequestOptions().override(350,313)
+                .apply(new RequestOptions().override(114,114)
                         .placeholder(R.drawable.ic_launcher_background)
                         .error(R.drawable.ic_launcher_foreground))
                 .into(holder.imageV);
@@ -98,13 +98,7 @@ public class FilterByCategoriesAdapter extends RecyclerView.Adapter<FilterByCate
                 mealDetailsListner.onMealCatClick(values.get(position).getStrMeal());
             }
         });
-        holder.iconImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addFavMealListner.onFavMealAdd(values.get(position));
-                holder.iconImage.setImageResource(R.drawable.ic_favorite_filled); // Change to filled heart
-            }
-        });
+
         holder.iconImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

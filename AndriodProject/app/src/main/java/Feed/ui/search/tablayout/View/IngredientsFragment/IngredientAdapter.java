@@ -49,14 +49,14 @@ private  onClickListByIngredient  listner;
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater cusInflater = LayoutInflater.from(parent.getContext());
-        View tempV=cusInflater.inflate(R.layout.ingredient_frag_content, parent,false);
+        View tempV=cusInflater.inflate(R.layout.cateogry_frag_content, parent,false);
         IngredientAdapter.ViewHolder tempHolder= new IngredientAdapter.ViewHolder(tempV);
         return tempHolder;    }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
-        holder.listBtn.setOnClickListener(new View.OnClickListener() {
+        holder.ingredientImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 listner.onFilterByIngredient(values.get(position).getStrIngredient());
@@ -85,9 +85,8 @@ private  onClickListByIngredient  listner;
         public ViewHolder(@NonNull View LayoutView) {
             super(LayoutView);
             this.layoutView=LayoutView;
-            ingredientName=layoutView.findViewById(R.id.IngredientName);
-            listBtn=layoutView.findViewById(R.id.ListMealsI);
-            ingredientImage=layoutView.findViewById(R.id.imageVI);
+            ingredientName=layoutView.findViewById(R.id.categoryName);
+            ingredientImage=layoutView.findViewById(R.id.imageCat);
         }
     }
 }

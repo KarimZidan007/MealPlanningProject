@@ -8,6 +8,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -21,6 +22,9 @@ import android.widget.Toast;
 import com.example.sidechefproject.MealDetails.MealDetailsActivity;
 import com.example.sidechefproject.R;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -35,13 +39,14 @@ import Model.MealDate;
 import Network.Model.MealsRemoteDataSource;
 
 public class search extends Fragment  implements IsearchMealView.IsearchAllViewsMeals, onMealClickListener.onMealClickSearchListener, onMealPlanningClick {
-    SearchView search;
-    RecyclerView recView;
-    MealsRemoteDataSource  searchSrc ;
-    searchFragPresenter searchMealPresenter;
-    SearchAdapter searchAdapter;
+    private SearchView search;
+    private RecyclerView recView;
+    private MealsRemoteDataSource  searchSrc ;
+    private searchFragPresenter searchMealPresenter;
+    private SearchAdapter searchAdapter;
     private MealDateDao mealDateDao;
     private calAppDataBase plannedDbObj;
+    private List<Meal> searchedMeals=new ArrayList<>();
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,9 +66,7 @@ public class search extends Fragment  implements IsearchMealView.IsearchAllViews
         search=view.findViewById(R.id.searchBar);
         recView=view.findViewById(R.id.searchRec);
         recView.setHasFixedSize(true);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this.getContext());
-        layoutManager.setOrientation(recView.HORIZONTAL);
-        recView.setLayoutManager(layoutManager);
+        recView.setLayoutManager(new GridLayoutManager(getContext(),1));
         search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -81,12 +84,27 @@ public class search extends Fragment  implements IsearchMealView.IsearchAllViews
                     char firstCharacter = newText.charAt(0);
                     searchMealPresenter.getMealByFirstCharRemotly(firstCharacter);
                 }
+                else
+                {
+                    List<Meal> toRemove = new ArrayList<>();
+
+                    for (int x = 1; x < newText.length(); x++) {
+                        for (int i = 0; i < searchedMeals.size(); i++) {
+                            if (x >= searchedMeals.get(i).getStrMeal().length() ||
+                                    newText.charAt(x) != searchedMeals.get(i).getStrMeal().charAt(x)) {
+                                searchedMeals.remove(i);
+                            }
+                        }
+                    }
+                    displayFirstLMeals(searchedMeals);
+                }
                 return false;
             }
         });
     }
     @Override
     public void displayFirstLMeals(List<Meal> meals) {
+        searchedMeals=meals;
         searchAdapter = new SearchAdapter(search.this.getContext(),meals,this);
         recView.setAdapter(searchAdapter);
         searchAdapter.notifyDataSetChanged();
@@ -169,8 +187,14 @@ public class search extends Fragment  implements IsearchMealView.IsearchAllViews
                 day == today.get(Calendar.DAY_OF_MONTH);
     }
     private void saveMealToDate(Meal meal, String date, String time) {
-        // Create a new MealDate object with separate date and time
-        MealDate mealDate = new MealDate(meal, date, time);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate localDate = LocalDate.parse(date, formatter);
+
+        // Get the day of the week from LocalDate
+        String dayOfWeek = localDate.getDayOfWeek().toString(); // e.g., "SUNDAY", "MONDAY"
+        String formattedDayOfWeek = dayOfWeek.substring(0, 1).toUpperCase() + dayOfWeek.substring(1).toLowerCase(); // e.g., "Sunday"
+
+        MealDate mealDate = new MealDate(meal, date, time,formattedDayOfWeek);
 
         plannedDbObj = calAppDataBase.getDbInstance(search.this.getContext());
         mealDateDao = plannedDbObj.getDateMealsDao();

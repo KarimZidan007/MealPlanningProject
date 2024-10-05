@@ -34,6 +34,7 @@ import DataBase.Model.calAppDataBase;
 import DataBase.controller.MealDAO;
 import DataBase.controller.MealDateDao;
 import Feed.ui.calendar.View.CalenderAdapter;
+import Feed.ui.calendar.View.CustomSelectorDecorator;
 import Feed.ui.calendar.View.MealIndicatorDecorator;
 
 import Feed.ui.calendar.View.onDeletePlanMealClick;
@@ -56,7 +57,7 @@ public class CalendarFragment extends Fragment implements onAddFavMealClickListn
     private CalendarDay selectedCalendarDay;
     private AppDataBase dataBaseObj;
     private MealDAO dao;
-
+    private  CustomSelectorDecorator customSelectorDecorator;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -102,55 +103,69 @@ public class CalendarFragment extends Fragment implements onAddFavMealClickListn
             }
         });
         calendarView.setOnDateChangedListener((widget, date, selected) -> {
+            // Get selected date values
             int year = date.getYear();
-            int month = date.getMonth();
+            int month = date.getMonth();  // Note: CalendarDay's month is 1-indexed (Jan = 1, Dec = 12)
             int day = date.getDay();
+
+            // Create a CalendarDay object for the selected date
             selectedCalendarDay = CalendarDay.from(year, month, day);
 
-            // Format the selected date
-            String selectedDate = String.format("%04d-%02d-%02d", year, month , day).trim();
+            // Remove old decorators and apply new selection decorator
+            if (customSelectorDecorator != null) {
+                calendarView.removeDecorator(customSelectorDecorator);
+            }
+            // Apply a custom circle for the selected day (orange color)
+             customSelectorDecorator = new CustomSelectorDecorator(getContext(), selectedCalendarDay);
+            calendarView.addDecorator(customSelectorDecorator);
 
-            adapter = new CalenderAdapter(getContext(), new ArrayList<MealDate>(),CalendarFragment.this,CalendarFragment.this,CalendarFragment.this);
+            // Format the selected date as string (assuming you need this for database lookup)
+            String selectedDate = String.format("%04d-%02d-%02d", year, month, day).trim();
+
+            // Set up the adapter for the RecyclerView with an empty list initially
+            adapter = new CalenderAdapter(getContext(), new ArrayList<>(), CalendarFragment.this, CalendarFragment.this, CalendarFragment.this);
             calendarRec.setAdapter(adapter);
 
-            // Fetch meals for the selected date and observe
+            // Fetch meals for the selected date and observe changes
             LiveData<List<MealDate>> liveDataForDate = mealDateDao.getMealsForDate(selectedDate);
-            liveDataForDate.observe(getViewLifecycleOwner(), new Observer<List<MealDate>>() {
-                @Override
-                public void onChanged(List<MealDate> meals) {
-                    if (meals != null && !meals.isEmpty()) {
+            liveDataForDate.observe(getViewLifecycleOwner(), meals -> {
+                if (meals != null && !meals.isEmpty()) {
+                    // Meals found for the selected date
 
-                        // Update the RecyclerView and calendar decorators
-                        values = meals;
-                        adapter.setList(values);
-                        adapter.notifyDataSetChanged();
+                    // Update RecyclerView with the list of meals
+                    values = meals;
+                    adapter.setList(values);
+                    adapter.notifyDataSetChanged();
 
-                         mealDays = new HashSet<>();
-                        for (MealDate meal : meals) {
-                            String dateString = meal.getDate();
-                            LocalDate localDate = LocalDate.parse(dateString, DateTimeFormatter.ISO_LOCAL_DATE);
-                            CalendarDay day = CalendarDay.from(localDate.getYear(), localDate.getMonthValue(), localDate.getDayOfMonth());
-                            mealDays.add(day);
-                        }
-                        MealIndicatorDecorator mealIndicatorDecorator = new MealIndicatorDecorator(mealDays);
-                        mealIndicatorDecorators.put(selectedCalendarDay, mealIndicatorDecorator);
-                        calendarView.addDecorator(mealIndicatorDecorator);
-
-                    } else {
-                        MealIndicatorDecorator existingDecorator = mealIndicatorDecorators.remove(selectedCalendarDay);
-                        if (existingDecorator != null) {
-                            calendarView.addDecorator(mealIndicatorDecorators.get(selectedDate));
-                        }
-                        adapter.setList(new ArrayList<>());
-                        adapter.notifyDataSetChanged();
-                        Toast.makeText(getContext(), "No meals for this date", Toast.LENGTH_SHORT).show();
+                    // Prepare a set of CalendarDays for the meal dates
+                    mealDays = new HashSet<>();
+                    for (MealDate meal : meals) {
+                        String dateString = meal.getDate();
+                        LocalDate localDate = LocalDate.parse(dateString, DateTimeFormatter.ISO_LOCAL_DATE);
+                        CalendarDay mealDay = CalendarDay.from(localDate.getYear(), localDate.getMonthValue(), localDate.getDayOfMonth());
+                        mealDays.add(mealDay);
                     }
+
+                    // Apply a decorator for the meal days (meal indicator)
+                    MealIndicatorDecorator mealIndicatorDecorator = new MealIndicatorDecorator(mealDays);
+                    mealIndicatorDecorators.put(selectedCalendarDay, mealIndicatorDecorator);
+                    calendarView.addDecorator(mealIndicatorDecorator);
+
+                } else {
+                    // No meals for the selected date
+                    MealIndicatorDecorator existingDecorator = mealIndicatorDecorators.remove(selectedCalendarDay);
+                    if (existingDecorator != null) {
+                        calendarView.removeDecorator(existingDecorator);  // Remove decorator for that day if no meals found
+                    }
+                    adapter.setList(new ArrayList<>());
+                    adapter.notifyDataSetChanged();
+                    Toast.makeText(getContext(), "No meals for this date", Toast.LENGTH_SHORT).show();
                 }
             });
         });
-    }
+}
 
-    @Override
+        @Override
     public void onDeleteMealScheduleClicked(MealDate meal) {
         plannedDbObj = calAppDataBase.getDbInstance(CalendarFragment.this.getContext());
         mealDateDao = plannedDbObj.getDateMealsDao();

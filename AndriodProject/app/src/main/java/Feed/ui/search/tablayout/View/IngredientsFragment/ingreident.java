@@ -8,6 +8,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -19,6 +20,8 @@ import android.widget.Toast;
 import com.example.sidechefproject.MealDetails.MealDetailsActivity;
 import com.example.sidechefproject.R;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.List;
 
@@ -29,8 +32,11 @@ import DataBase.controller.MealDateDao;
 import Feed.Controllers.InsertingDBPresenter.addFavMealPresenter;
 import Feed.Controllers.MealsByIngredient.MealsIngredientPresenter;
 import Feed.Controllers.searchFragPresenter;
+import Feed.ui.favourite.Controller.FavMealPresenter;
+import Feed.ui.favourite.View.onClickRemoveFavourite;
 import Feed.ui.search.IsearchMealView;
 import Feed.ui.calendar.View.onMealPlanningClick;
+import Feed.ui.search.tablayout.View.CateogiresFragment.category;
 import Feed.ui.search.tablayout.View.onAddFavMealClickListner;
 import Feed.ui.search.tablayout.View.onMealClickListener;
 import Model.Ingredient;
@@ -40,7 +46,7 @@ import Network.Model.MealsRemoteDataSource;
 import Repository.DataSrcRepository;
 
 
-public class ingreident extends Fragment implements IsearchMealView.IgetMealFilterIngredientsView,IsearchMealView.IgetMealIngredientsView, onClickListByIngredient, onMealClickListener.onMealClickListenerIngreident,IsearchMealView.IsearchAllViewsMeals, onAddFavMealClickListner, onMealPlanningClick {
+public class ingreident extends Fragment implements IsearchMealView.IgetMealFilterIngredientsView,IsearchMealView.IgetMealIngredientsView, onClickListByIngredient, onMealClickListener.onMealClickListenerIngreident,IsearchMealView.IsearchAllViewsMeals, onAddFavMealClickListner, onMealPlanningClick, onClickRemoveFavourite {
 RecyclerView ingreidentRec;
 IngredientAdapter ingredientAdapter;
 MealsIngredientPresenter ingredientPresenter;
@@ -54,6 +60,8 @@ private DataSrcRepository repo;
 private boolean isDetailRequest=true;
 private MealDateDao mealDateDao;
 private calAppDataBase plannedDbObj;
+private FavMealPresenter presenter;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -63,16 +71,14 @@ private calAppDataBase plannedDbObj;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_ingridents, container, false);
+        return inflater.inflate(R.layout.fragment_category, container, false);
     }
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ingreidentRec=view.findViewById(R.id.ingredientRecycler);
+        ingreidentRec=view.findViewById(R.id.categoryRec);
         ingreidentRec.setHasFixedSize(true);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this.getContext());
-        layoutManager.setOrientation(ingreidentRec.VERTICAL);
-        ingreidentRec.setLayoutManager(layoutManager);
+        ingreidentRec.setLayoutManager(new GridLayoutManager(getContext(),2));
         dataSource= MealsRemoteDataSource.getRemoteSrcClient();
         ingredientPresenter = new MealsIngredientPresenter(dataSource,(IsearchMealView.IgetMealIngredientsView)ingreident.this);
         ingredientPresenter.reqMealsIngredients();
@@ -91,7 +97,8 @@ private calAppDataBase plannedDbObj;
 
     @Override
     public void displayFilterMealsIngredients(List<Meal> meals) {
-        filterIngAdapter = new FilterByIngredientAdapter(ingreident.this.getContext(),meals,this,this,this);
+        ingreidentRec.setLayoutManager(new GridLayoutManager(getContext(),1));
+        filterIngAdapter = new FilterByIngredientAdapter(ingreident.this.getContext(),meals,this,this,this,this);
         ingreidentRec.setAdapter(filterIngAdapter);
         ingredientAdapter.notifyDataSetChanged();
     }
@@ -207,8 +214,14 @@ private calAppDataBase plannedDbObj;
                 day == today.get(Calendar.DAY_OF_MONTH);
     }
     private void saveMealToDate(Meal meal, String date, String time) {
-        // Create a new MealDate object with separate date and time
-        MealDate mealDate = new MealDate(meal, date, time);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate localDate = LocalDate.parse(date, formatter);
+
+        // Get the day of the week from LocalDate
+        String dayOfWeek = localDate.getDayOfWeek().toString(); // e.g., "SUNDAY", "MONDAY"
+        String formattedDayOfWeek = dayOfWeek.substring(0, 1).toUpperCase() + dayOfWeek.substring(1).toLowerCase(); // e.g., "Sunday"
+
+        MealDate mealDate = new MealDate(meal, date, time,formattedDayOfWeek);
 
         plannedDbObj = calAppDataBase.getDbInstance(ingreident.this.getContext());
         mealDateDao = plannedDbObj.getDateMealsDao();
@@ -216,6 +229,15 @@ private calAppDataBase plannedDbObj;
         new Thread(() -> mealDateDao.insertPlannedMeal(mealDate)).start();
 
         Toast.makeText(ingreident.this.getContext(), "Meal scheduled for " + date + " at " + time, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onFavMealRemove(Meal meal) {
+        dataBaseObj = AppDataBase.getDbInstance(ingreident.this.getContext());
+        dao = dataBaseObj.getMealsDao();
+        repo = new DataSrcRepository(dao);
+        presenter = new FavMealPresenter(repo);
+        presenter.deleteMeal(meal);
     }
 }
 

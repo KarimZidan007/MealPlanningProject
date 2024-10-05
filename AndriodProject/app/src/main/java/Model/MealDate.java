@@ -62,6 +62,16 @@ public class MealDate extends Meal{
     private String date;
     private String time;
 
+    public String getDay() {
+        return day;
+    }
+
+    public void setDay(String day) {
+        this.day = day;
+    }
+
+    private String day;
+
     public String getTime() {
         return time;
     }
@@ -72,7 +82,7 @@ public class MealDate extends Meal{
 
     public MealDate(){}
     // Constructor
-    public MealDate(Meal meal, String date ,String time) {
+    public MealDate(Meal meal, String date ,String time,String day) {
         this.idMeal = meal.idMeal;
         this.strMeal = meal.strMeal;
         this.strCategory = meal.strCategory;
@@ -123,6 +133,7 @@ public class MealDate extends Meal{
         this.strMeasure6 =meal.strMeasure6;
         this.date = date;
         this.time=time;
+        this.day=day;
     }
 
 

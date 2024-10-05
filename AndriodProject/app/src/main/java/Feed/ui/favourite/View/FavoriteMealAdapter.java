@@ -2,10 +2,12 @@ package Feed.ui.favourite.View;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -51,7 +53,7 @@ public class FavoriteMealAdapter extends RecyclerView.Adapter<FavoriteMealAdapte
     @Override
     public MealViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater cusInflater = LayoutInflater.from(parent.getContext());
-        View tempV=cusInflater.inflate(R.layout.meal_card_layout, parent,false);
+        View tempV=cusInflater.inflate(R.layout.container_list_card_withplan, parent,false);
         FavoriteMealAdapter.MealViewHolder tempHolder= new  FavoriteMealAdapter.MealViewHolder(tempV);
         return tempHolder;
     }
@@ -59,10 +61,19 @@ public class FavoriteMealAdapter extends RecyclerView.Adapter<FavoriteMealAdapte
 
     @Override
     public void onBindViewHolder(@NonNull MealViewHolder holder, int position) {
+// Set the image resource
         holder.iconImage.setImageResource(R.drawable.delete);
+
+// Convert dp to pixels
+        int width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 25, context.getResources().getDisplayMetrics());
+        int height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 25, context.getResources().getDisplayMetrics());
+
+// Set the layout params specific to LinearLayout
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(width, height);
+        holder.iconImage.setLayoutParams(params);
         holder.mealName.setText(meals.get(position).getStrMeal());
         Glide.with(this.context).load(meals.get(position).getStrMealThumb())
-                .apply(new RequestOptions().override(350,313)
+                .apply(new RequestOptions().override(80,80)
                         .placeholder(R.drawable.ic_launcher_background)
                         .error(R.drawable.ic_launcher_foreground))
                 .into(holder.mealImage);
@@ -93,8 +104,8 @@ public class FavoriteMealAdapter extends RecyclerView.Adapter<FavoriteMealAdapte
 
         public MealViewHolder(@NonNull View itemView) {
             super(itemView);
-            mealImage = itemView.findViewById(R.id.meal_image);
-            iconImage = itemView.findViewById(R.id.meal_favorite_icon);
+            mealImage = itemView.findViewById(R.id.meal_picture);
+            iconImage = itemView.findViewById(R.id.favIcon);
             mealName = itemView.findViewById(R.id.meal_name);
 
         }

@@ -42,7 +42,7 @@ public class FavouriteFragment extends Fragment implements onMealClickListener.o
 
         View view = inflater.inflate(R.layout.fragment_favourite,container,false);
         recyclerView = view.findViewById(R.id.recycler_favorites);
-        recyclerView.setLayoutManager(new GridLayoutManager(getContext(),2));
+        recyclerView.setLayoutManager(new GridLayoutManager(getContext(),1));
 
         adapter = new FavoriteMealAdapter(new ArrayList<>(), getContext(), FavouriteFragment.this, FavouriteFragment.this);
         recyclerView.setAdapter(adapter);

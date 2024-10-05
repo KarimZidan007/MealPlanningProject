@@ -77,13 +77,13 @@ private final String[] countryCodes = {
     @java.lang.Override
     public ViewHolder onCreateViewHolder(@NonNull android.view.ViewGroup parent, int viewType) {
         LayoutInflater cusInflater = LayoutInflater.from(parent.getContext());
-        View tempV=cusInflater.inflate(R.layout.country_frag_content , parent,false);
+        View tempV=cusInflater.inflate(R.layout.cateogry_frag_content , parent,false);
         CountryAdapter.ViewHolder tempHolder= new CountryAdapter.ViewHolder(tempV);
         return tempHolder;    }
 
     @java.lang.Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.listBtn.setOnClickListener(new View.OnClickListener() {
+        holder.countryImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 listner.onFilterByCountry(values.get(position).getStrArea());
@@ -104,7 +104,7 @@ private final String[] countryCodes = {
 
     class ViewHolder extends RecyclerView.ViewHolder
     {
-        public Button listBtn;
+        //public Button listBtn;
         public View layoutView;
         public TextView countryName;
         public ImageView countryImage;
@@ -112,9 +112,9 @@ private final String[] countryCodes = {
         public ViewHolder(@NonNull View LayoutView) {
             super(LayoutView);
             this.layoutView=LayoutView;
-            countryName=layoutView.findViewById(R.id.IngredientName);
-            listBtn=layoutView.findViewById(R.id.ListMealsI);
-            countryImage= layoutView.findViewById(R.id.imageVI);
+            countryName=layoutView.findViewById(R.id.categoryName);
+           // listBtn=layoutView.findViewById(R.id.ListMealsI);
+            countryImage= layoutView.findViewById(R.id.imageCat);
 
         }
     }
