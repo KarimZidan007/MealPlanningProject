@@ -28,4 +28,6 @@
     <string name="calendar">Calendar</string>
     <string name="titlecalendar">Calendar</string>
     <string name="schedule_icon">Scheduale</string>
+    <string name="continute">Continue as a guest</string>
+    <string name="wifi">No Wi-Fi or internet connection</string>
 </resources>

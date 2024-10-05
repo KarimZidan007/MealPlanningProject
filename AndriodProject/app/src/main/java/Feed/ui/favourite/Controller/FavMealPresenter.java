@@ -10,7 +10,7 @@ import Feed.ui.favourite.View.FavouriteMealView;
 import Model.Meal;
 import Repository.DataSrcRepository;
 
-public class FavMealPresenter implements MealsIPresenter.getFavMeals {
+public class FavMealPresenter implements MealsIPresenter.getFavMeals, MealsIPresenter.addFavMeal {
     private DataSrcRepository Src;
     public FavMealPresenter(DataSrcRepository Src)
     {
@@ -24,5 +24,10 @@ public class FavMealPresenter implements MealsIPresenter.getFavMeals {
     @Override
     public void deleteMeal( Meal meal) {
         Src.delFavMeal(meal);
+    }
+
+    @Override
+    public void insertFavMeal(Meal meal) {
+        Src.insertFavMeal(meal);
     }
 }

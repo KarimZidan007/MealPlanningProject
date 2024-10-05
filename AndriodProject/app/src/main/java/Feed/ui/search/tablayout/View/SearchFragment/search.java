@@ -28,25 +28,42 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import DataBase.Model.AppDataBase;
 import DataBase.Model.calAppDataBase;
+import DataBase.controller.MealDAO;
 import DataBase.controller.MealDateDao;
+import Feed.Controllers.InsertingDBPresenter.addFavMealPresenter;
 import Feed.Controllers.searchFragPresenter;
+import Feed.ui.favourite.Controller.FavMealPresenter;
+import Feed.ui.favourite.Controller.FavoriteManager;
+import Feed.ui.favourite.View.onClickRemoveFavourite;
 import Feed.ui.search.IsearchMealView;
 import Feed.ui.calendar.View.onMealPlanningClick;
+import Feed.ui.search.tablayout.View.CountriesFragment.country;
+import Feed.ui.search.tablayout.View.IngredientsFragment.ingreident;
+import Feed.ui.search.tablayout.View.onAddFavMealClickListner;
 import Feed.ui.search.tablayout.View.onMealClickListener;
 import Model.Meal;
 import Model.MealDate;
 import Network.Model.MealsRemoteDataSource;
+import Repository.DataSrcRepository;
 
-public class search extends Fragment  implements IsearchMealView.IsearchAllViewsMeals, onMealClickListener.onMealClickSearchListener, onMealPlanningClick {
+public class search extends Fragment  implements IsearchMealView.IsearchAllViewsMeals, onMealClickListener.onMealClickSearchListener, onMealPlanningClick, onClickRemoveFavourite, onAddFavMealClickListner {
     private SearchView search;
     private RecyclerView recView;
     private MealsRemoteDataSource  searchSrc ;
     private searchFragPresenter searchMealPresenter;
-    private SearchAdapter searchAdapter;
+    private static SearchAdapter searchAdapter;
     private MealDateDao mealDateDao;
     private calAppDataBase plannedDbObj;
     private List<Meal> searchedMeals=new ArrayList<>();
+    private FavMealPresenter presenter;
+    private AppDataBase dataBaseObj;
+    private MealDAO dao;
+    private DataSrcRepository repo;
+    private boolean isDetailRequest=true;
+    private addFavMealPresenter favMealPresenter;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,7 +76,12 @@ public class search extends Fragment  implements IsearchMealView.IsearchAllViews
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_search2, container, false);
     }
-
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(searchAdapter != null)
+             searchAdapter.notifyDataSetChanged();
+    }
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -105,7 +127,7 @@ public class search extends Fragment  implements IsearchMealView.IsearchAllViews
     @Override
     public void displayFirstLMeals(List<Meal> meals) {
         searchedMeals=meals;
-        searchAdapter = new SearchAdapter(search.this.getContext(),meals,this);
+        searchAdapter = new SearchAdapter(search.this.getContext(),meals,search.this,this,this,this);
         recView.setAdapter(searchAdapter);
         searchAdapter.notifyDataSetChanged();
 
@@ -118,7 +140,7 @@ public class search extends Fragment  implements IsearchMealView.IsearchAllViews
 
     @Override
     public void displayMealsByName(List<Meal> meals) {
-        searchAdapter = new SearchAdapter(search.this.getContext(),meals,this);
+        searchAdapter = new SearchAdapter(search.this.getContext(),meals,this,this,this,this);
         recView.setAdapter(searchAdapter);
         searchAdapter.notifyDataSetChanged();
         Log.i("NAMEEE", "displayMealsByName: ");
@@ -202,5 +224,28 @@ public class search extends Fragment  implements IsearchMealView.IsearchAllViews
         new Thread(() -> mealDateDao.insertPlannedMeal(mealDate)).start();
 
         Toast.makeText(search.this.getContext(), "Meal scheduled for " + date + " at " + time, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onFavMealRemove(Meal meal) {
+        dataBaseObj = AppDataBase.getDbInstance(search.this.getContext());
+        dao = dataBaseObj.getMealsDao();
+        repo = new DataSrcRepository(dao);
+        presenter = new FavMealPresenter(repo);
+        presenter.deleteMeal(meal);
+    }
+
+    @Override
+    public void onFavMealAdd(Meal meal) {
+        dataBaseObj = AppDataBase.getDbInstance(search.this.getContext());
+        dao = dataBaseObj.getMealsDao();
+        repo = new DataSrcRepository(dao);
+        favMealPresenter = new addFavMealPresenter(repo);
+        favMealPresenter.insertFavMeal(meal);
+    }
+    public static void notifyDataChanged() {
+        if (searchAdapter != null) {
+            searchAdapter.notifyDataSetChanged();
+        }
     }
 }

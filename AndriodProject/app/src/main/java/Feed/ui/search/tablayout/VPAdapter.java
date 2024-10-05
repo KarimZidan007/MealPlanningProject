@@ -31,6 +31,7 @@ public class VPAdapter extends FragmentPagerAdapter {
         fragmentTitle.add(title);
     }
 
+
     @Nullable
     @Override
     public CharSequence getPageTitle(int position) {

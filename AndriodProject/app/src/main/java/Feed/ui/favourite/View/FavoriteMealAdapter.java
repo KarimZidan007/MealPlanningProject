@@ -20,6 +20,7 @@ import com.example.sidechefproject.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import Feed.ui.calendar.View.onMealPlanningClick;
 import Feed.ui.search.tablayout.View.CateogiresFragment.CategoriesAdapter;
 import Feed.ui.search.tablayout.View.onMealClickListener;
 import Model.Category;
@@ -31,10 +32,13 @@ public class FavoriteMealAdapter extends RecyclerView.Adapter<FavoriteMealAdapte
     private Context context;
     private onMealClickListener.onMealClickListenerFavourite listner;
     private onClickRemoveFavourite removeListner;
-    public FavoriteMealAdapter(List<Meal> meals, Context context , onMealClickListener.onMealClickListenerFavourite listner,onClickRemoveFavourite removeListner) {
+    private onMealPlanningClick addMealtoPlan;
+
+    public FavoriteMealAdapter(List<Meal> meals, Context context , onMealClickListener.onMealClickListenerFavourite listner,onClickRemoveFavourite removeListner,onMealPlanningClick addMealtoPlan) {
         this.context = context;
         this.listner=listner;
         this.removeListner=removeListner;
+        this.addMealtoPlan=addMealtoPlan;
         if(null != meals)
         {
           meals = new ArrayList<>(meals.size());
@@ -87,6 +91,9 @@ public class FavoriteMealAdapter extends RecyclerView.Adapter<FavoriteMealAdapte
         holder.iconImage.setOnClickListener(v -> {
             removeListner.onFavMealRemove(meals.get(position));
         });
+        holder.schedualeImage.setOnClickListener(v -> {
+                addMealtoPlan.onMealScheduleClicked(meals.get(position));
+        });
     }
 
     @Override
@@ -100,6 +107,7 @@ public class FavoriteMealAdapter extends RecyclerView.Adapter<FavoriteMealAdapte
     public static class MealViewHolder extends RecyclerView.ViewHolder {
         ImageView mealImage;
         ImageView iconImage;
+        ImageView schedualeImage;
         TextView mealName;
 
         public MealViewHolder(@NonNull View itemView) {
@@ -107,7 +115,7 @@ public class FavoriteMealAdapter extends RecyclerView.Adapter<FavoriteMealAdapte
             mealImage = itemView.findViewById(R.id.meal_picture);
             iconImage = itemView.findViewById(R.id.favIcon);
             mealName = itemView.findViewById(R.id.meal_name);
-
+            schedualeImage=itemView.findViewById(R.id.schedualeIcon);
         }
     }
 }

@@ -1,5 +1,6 @@
 package Feed.ui.calendar;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.sidechefproject.MealDetails.MealDetailsActivity;
 import com.example.sidechefproject.R;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
@@ -38,13 +40,19 @@ import Feed.ui.calendar.View.CustomSelectorDecorator;
 import Feed.ui.calendar.View.MealIndicatorDecorator;
 
 import Feed.ui.calendar.View.onDeletePlanMealClick;
+import Feed.ui.favourite.Controller.FavMealPresenter;
+import Feed.ui.favourite.Controller.FavoriteManager;
 import Feed.ui.favourite.View.FavouriteFragment;
+import Feed.ui.favourite.View.onClickRemoveFavourite;
+import Feed.ui.search.tablayout.View.CateogiresFragment.category;
+import Feed.ui.search.tablayout.View.SearchFragment.search;
 import Feed.ui.search.tablayout.View.onAddFavMealClickListner;
 import Feed.ui.search.tablayout.View.onMealClickListener;
 import Model.Meal;
 import Model.MealDate;
+import Repository.DataSrcRepository;
 
-public class CalendarFragment extends Fragment implements onAddFavMealClickListner,onDeletePlanMealClick, onMealClickListener.onMealClickListenerCat {
+public class CalendarFragment extends Fragment implements onAddFavMealClickListner,onDeletePlanMealClick, onMealClickListener.onMealClickSearchListener, onClickRemoveFavourite {
     private MaterialCalendarView calendarView;
     private MealDateDao mealDateDao;
     private calAppDataBase plannedDbObj;
@@ -58,6 +66,12 @@ public class CalendarFragment extends Fragment implements onAddFavMealClickListn
     private AppDataBase dataBaseObj;
     private MealDAO dao;
     private  CustomSelectorDecorator customSelectorDecorator;
+    private DataSrcRepository repo;
+    private FavMealPresenter presenter;
+    private FavoriteManager favManager;
+
+
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -123,7 +137,7 @@ public class CalendarFragment extends Fragment implements onAddFavMealClickListn
             String selectedDate = String.format("%04d-%02d-%02d", year, month, day).trim();
 
             // Set up the adapter for the RecyclerView with an empty list initially
-            adapter = new CalenderAdapter(getContext(), new ArrayList<>(), CalendarFragment.this, CalendarFragment.this, CalendarFragment.this);
+            adapter = new CalenderAdapter(getContext(), new ArrayList<>(), CalendarFragment.this, CalendarFragment.this, CalendarFragment.this,CalendarFragment.this);
             calendarRec.setAdapter(adapter);
 
             // Fetch meals for the selected date and observe changes
@@ -163,6 +177,7 @@ public class CalendarFragment extends Fragment implements onAddFavMealClickListn
                 }
             });
         });
+
 }
 
         @Override
@@ -181,16 +196,28 @@ public class CalendarFragment extends Fragment implements onAddFavMealClickListn
     public void onFavMealAdd(Meal meal) {
         dataBaseObj = AppDataBase.getDbInstance(CalendarFragment.this.getContext());
         dao = dataBaseObj.getMealsDao();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                dao.insertMeal(meal);
-            }
-        }).start();
+        repo = new DataSrcRepository(dao);
+        presenter = new FavMealPresenter(repo);
+        presenter.insertFavMeal(meal);
+
+    }
+
+
+
+    @Override
+    public void onMealClick(Meal meal) {
+        Intent intent = new Intent(getContext(), MealDetailsActivity.class);
+        intent.putExtra("MEAL", meal);
+        startActivity(intent);
     }
 
     @Override
-    public void onMealCatClick(String mealName) {
+    public void onFavMealRemove(Meal meal) {
+        dataBaseObj = AppDataBase.getDbInstance(CalendarFragment.this.getContext());
+        dao = dataBaseObj.getMealsDao();
+        repo = new DataSrcRepository(dao);
+        presenter = new FavMealPresenter(repo);
+        presenter.deleteMeal(meal);
 
     }
 }

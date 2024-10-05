@@ -33,8 +33,6 @@ import DataBase.controller.MealDAO;
 import DataBase.controller.MealDateDao;
 import Feed.Controllers.InsertingDBPresenter.addFavMealPresenter;
 import Feed.ui.favourite.Controller.FavMealPresenter;
-import Feed.ui.search.tablayout.View.CountriesFragment.country;
-import Feed.ui.search.tablayout.View.IngredientsFragment.IngredientAdapter;
 import Model.CountryMapping;
 import Model.IngreidentDetails;
 import Model.Meal;
@@ -152,7 +150,6 @@ public class MealDetailsActivity extends AppCompatActivity {
                             .placeholder(R.drawable.ic_launcher_background)
                             .error(R.drawable.ic_launcher_foreground))
                     .into(mealImage);
-
 
             favIcon.setOnClickListener(v -> {
                 if(!isFav)

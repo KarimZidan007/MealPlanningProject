@@ -1,5 +1,7 @@
 package Feed.ui.search.tablayout.View.CateogiresFragment;
 
+import static Feed.ui.favourite.Controller.FavoriteManager.isFavorite;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -18,6 +20,7 @@ import com.example.sidechefproject.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import Feed.ui.favourite.Controller.FavoriteManager;
 import Feed.ui.favourite.View.onClickRemoveFavourite;
 import Feed.ui.search.tablayout.View.onAddFavMealClickListner;
 import Feed.ui.search.tablayout.View.onMealClickListener;
@@ -33,7 +36,6 @@ public class FilterByCategoriesAdapter extends RecyclerView.Adapter<FilterByCate
     private onMealClickListener.onMealClickListenerCat mealDetailsListner;
     private onAddFavMealClickListner addFavMealListner;
     private onMealPlanningClick addMealtoPlan;
-    private boolean isFav=false;
     private onClickRemoveFavourite removeListner;
 
     public FilterByCategoriesAdapter(Context context, List<Meal> meals , onMealClickListener.onMealClickListenerCat mealDetailsListner, onAddFavMealClickListner addFavMealListner, onMealPlanningClick addMealtoPlan , onClickRemoveFavourite removeListner) {
@@ -57,11 +59,13 @@ public class FilterByCategoriesAdapter extends RecyclerView.Adapter<FilterByCate
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
-        public View layoutView;
-        public TextView mealNameText;
-        public ImageView imageV;
-        ImageView iconImage;
-        ImageView schedualeIcon;
+        private View layoutView;
+        private TextView mealNameText;
+        private ImageView imageV;
+        private ImageView iconImage;
+        private ImageView schedualeIcon;
+        private boolean isFav=false;
+
 
         public ViewHolder(View layoutView) {
             super(layoutView);
@@ -85,6 +89,16 @@ public class FilterByCategoriesAdapter extends RecyclerView.Adapter<FilterByCate
 
     @Override
     public void onBindViewHolder(@NonNull FilterByCategoriesAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
+        if(!isFavorite((values.get(position).getIdMeal())))
+        {
+            holder.iconImage.setImageResource(R.drawable.fav);
+            holder.isFav=false;
+        }
+        else
+        {
+            holder.iconImage.setImageResource(R.drawable.ic_favorite_filled);
+            holder.isFav=true;
+        }
 
         holder.mealNameText.setText(values.get(position).getStrMeal());
         Glide.with(this.context).load(values.get(position).getStrMealThumb())
@@ -102,17 +116,19 @@ public class FilterByCategoriesAdapter extends RecyclerView.Adapter<FilterByCate
         holder.iconImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!isFav)
+                if(!holder.isFav)
                 {
                     addFavMealListner.onFavMealAdd(values.get(position));
-                    holder.iconImage.setImageResource(R.drawable.ic_favorite_filled); // Change to filled heart
-                    isFav=true;
+                    holder.iconImage.setImageResource(R.drawable.ic_favorite_filled);
+                    holder.isFav=true;
+                    FavoriteManager.toggleFavorite(values.get(position));
                 }
                 else
                 {
                     removeListner.onFavMealRemove(values.get(position));
                     holder.iconImage.setImageResource(R.drawable.fav);
-                    isFav=false;
+                    holder.isFav=false;
+                    FavoriteManager.toggleFavorite(values.get(position));
                 }
             }
         });

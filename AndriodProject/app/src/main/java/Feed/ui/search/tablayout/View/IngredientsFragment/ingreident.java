@@ -33,9 +33,11 @@ import Feed.Controllers.InsertingDBPresenter.addFavMealPresenter;
 import Feed.Controllers.MealsByIngredient.MealsIngredientPresenter;
 import Feed.Controllers.searchFragPresenter;
 import Feed.ui.favourite.Controller.FavMealPresenter;
+import Feed.ui.favourite.Controller.FavoriteManager;
 import Feed.ui.favourite.View.onClickRemoveFavourite;
 import Feed.ui.search.IsearchMealView;
 import Feed.ui.calendar.View.onMealPlanningClick;
+import Feed.ui.search.SearchFragment;
 import Feed.ui.search.tablayout.View.CateogiresFragment.category;
 import Feed.ui.search.tablayout.View.onAddFavMealClickListner;
 import Feed.ui.search.tablayout.View.onMealClickListener;
@@ -47,12 +49,12 @@ import Repository.DataSrcRepository;
 
 
 public class ingreident extends Fragment implements IsearchMealView.IgetMealFilterIngredientsView,IsearchMealView.IgetMealIngredientsView, onClickListByIngredient, onMealClickListener.onMealClickListenerIngreident,IsearchMealView.IsearchAllViewsMeals, onAddFavMealClickListner, onMealPlanningClick, onClickRemoveFavourite {
-RecyclerView ingreidentRec;
-IngredientAdapter ingredientAdapter;
-MealsIngredientPresenter ingredientPresenter;
-MealsRemoteDataSource dataSource;
-FilterByIngredientAdapter filterIngAdapter;
-searchFragPresenter searchMealPresenter;
+private RecyclerView ingreidentRec;
+private IngredientAdapter ingredientAdapter;
+private MealsIngredientPresenter ingredientPresenter;
+private MealsRemoteDataSource dataSource;
+private static FilterByIngredientAdapter filterIngAdapter;
+private searchFragPresenter searchMealPresenter;
 private addFavMealPresenter favMealPresenter;
 private AppDataBase dataBaseObj;
 private MealDAO dao;
@@ -61,6 +63,7 @@ private boolean isDetailRequest=true;
 private MealDateDao mealDateDao;
 private calAppDataBase plannedDbObj;
 private FavMealPresenter presenter;
+private FavoriteManager favManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -83,6 +86,7 @@ private FavMealPresenter presenter;
         ingredientPresenter = new MealsIngredientPresenter(dataSource,(IsearchMealView.IgetMealIngredientsView)ingreident.this);
         ingredientPresenter.reqMealsIngredients();
     }
+
     @Override
     public void displayMealsIngredients(List<Ingredient> ingredients) {
         ingredientAdapter = new IngredientAdapter(ingreident.this.getContext(),ingredients,this);
@@ -172,26 +176,19 @@ private FavMealPresenter presenter;
         // Trigger a date picker dialog restricted to future dates
         DatePickerDialog datePickerDialog = new DatePickerDialog(ingreident.this.getContext(),
                 (view, year, monthOfYear, dayOfMonth) -> {
-                    // Format the selected date
-                    //String selectedDate = year + "-" + (monthOfYear + 1) + "-" + dayOfMonth;
                     String selectedDate = String.format("%04d-%02d-%02d", year, monthOfYear+1 , dayOfMonth);
 
-                    // After selecting the date, show the time picker dialog restricted to future times
                     TimePickerDialog timePickerDialog = new TimePickerDialog(ingreident.this.getContext(),
                             (timeView, hourOfDay, minute) -> {
-                                // Format the selected time
                                 String selectedTime = String.format("%02d:%02d", hourOfDay, minute);
 
-                                // Combine date and time
 
-                                // Insert the meal with the selected date and time into the database
                                 saveMealToDate(meal, selectedDate , selectedTime);
                             },
                             calendar.get(Calendar.HOUR_OF_DAY),
                             calendar.get(Calendar.MINUTE),
-                            true); // Use 24-hour format
+                            true);
 
-                    // Ensure the time picker shows future times if the selected date is today
                     if (isToday(year, monthOfYear, dayOfMonth)) {
                         timePickerDialog.updateTime(calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE));
                     }
@@ -202,7 +199,6 @@ private FavMealPresenter presenter;
                 calendar.get(Calendar.MONTH),
                 calendar.get(Calendar.DAY_OF_MONTH));
 
-        // Set the minimum date to today (restrict past dates)
         datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis());
 
         datePickerDialog.show();
@@ -238,6 +234,12 @@ private FavMealPresenter presenter;
         repo = new DataSrcRepository(dao);
         presenter = new FavMealPresenter(repo);
         presenter.deleteMeal(meal);
+    }
+
+    public static void notifyDataChanged() {
+        if (filterIngAdapter != null) {
+            filterIngAdapter.notifyDataSetChanged();
+        }
     }
 }
 

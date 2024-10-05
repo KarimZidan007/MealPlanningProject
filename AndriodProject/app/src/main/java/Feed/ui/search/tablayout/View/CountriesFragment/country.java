@@ -33,9 +33,11 @@ import Feed.Controllers.InsertingDBPresenter.addFavMealPresenter;
 import Feed.Controllers.MealsByCountry.MealsCountriesPresenter;
 import Feed.Controllers.searchFragPresenter;
 import Feed.ui.favourite.Controller.FavMealPresenter;
+import Feed.ui.favourite.Controller.FavoriteManager;
 import Feed.ui.favourite.View.onClickRemoveFavourite;
 import Feed.ui.search.IsearchMealView;
 import Feed.ui.calendar.View.onMealPlanningClick;
+import Feed.ui.search.tablayout.View.CateogiresFragment.category;
 import Feed.ui.search.tablayout.View.onAddFavMealClickListner;
 import Feed.ui.search.tablayout.View.onMealClickListener;
 import Model.Country;
@@ -49,7 +51,7 @@ public class country extends Fragment implements onClickListByCountry,IsearchMea
     private  CountryAdapter countryAdapter;
     private  MealsCountriesPresenter countryPresenter;
     private  MealsRemoteDataSource dataSource;
-    private FilterByCountryAdapter filterAdapter;
+    private static FilterByCountryAdapter filterAdapter;
     private searchFragPresenter searchMealPresenter;
     private addFavMealPresenter favMealPresenter;
     private FavMealPresenter presenter;
@@ -59,6 +61,8 @@ public class country extends Fragment implements onClickListByCountry,IsearchMea
     private boolean isDetailRequest=true;
     private MealDateDao mealDateDao;
     private calAppDataBase plannedDbObj;
+    private FavoriteManager favManager;
+
     //create adapter
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -71,7 +75,6 @@ public class country extends Fragment implements onClickListByCountry,IsearchMea
         return inflater.inflate(R.layout.fragment_category, container, false);
     }
 
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -82,6 +85,7 @@ public class country extends Fragment implements onClickListByCountry,IsearchMea
         countryPresenter = new MealsCountriesPresenter(dataSource,(IsearchMealView.IgetMealCountriesView)country.this);
         countryPresenter.reqMealsCountries();
     }
+
 
 
 
@@ -146,6 +150,7 @@ public class country extends Fragment implements onClickListByCountry,IsearchMea
             favMealPresenter = new addFavMealPresenter(repo);
             favMealPresenter.insertFavMeal(tempMeal);
             isDetailRequest=true;
+
         }
     }
 
@@ -184,29 +189,20 @@ public class country extends Fragment implements onClickListByCountry,IsearchMea
         // Get the current date and time
         Calendar calendar = Calendar.getInstance();
 
-        // Trigger a date picker dialog restricted to future dates
         DatePickerDialog datePickerDialog = new DatePickerDialog(country.this.getContext(),
                 (view, year, monthOfYear, dayOfMonth) -> {
-                    // Format the selected date
-                    //String selectedDate = year + "-" + (monthOfYear + 1) + "-" + dayOfMonth;
                     String selectedDate = String.format("%04d-%02d-%02d", year, monthOfYear+1 , dayOfMonth);
 
-                    // After selecting the date, show the time picker dialog restricted to future times
                     TimePickerDialog timePickerDialog = new TimePickerDialog(country.this.getContext(),
                             (timeView, hourOfDay, minute) -> {
-                                // Format the selected time
                                 String selectedTime = String.format("%02d:%02d", hourOfDay, minute);
 
-                                // Combine date and time
-
-                                // Insert the meal with the selected date and time into the database
                                 saveMealToDate(meal, selectedDate , selectedTime);
                             },
                             calendar.get(Calendar.HOUR_OF_DAY),
                             calendar.get(Calendar.MINUTE),
-                            true); // Use 24-hour format
+                            true);
 
-                    // Ensure the time picker shows future times if the selected date is today
                     if (isToday(year, monthOfYear, dayOfMonth)) {
                         timePickerDialog.updateTime(calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE));
                     }
@@ -217,7 +213,6 @@ public class country extends Fragment implements onClickListByCountry,IsearchMea
                 calendar.get(Calendar.MONTH),
                 calendar.get(Calendar.DAY_OF_MONTH));
 
-        // Set the minimum date to today (restrict past dates)
         datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis());
 
         datePickerDialog.show();
@@ -244,5 +239,12 @@ public class country extends Fragment implements onClickListByCountry,IsearchMea
         new Thread(() -> mealDateDao.insertPlannedMeal(mealDate)).start();
 
         Toast.makeText(country.this.getContext(), "Meal scheduled for " + date + " at " + time, Toast.LENGTH_SHORT).show();
+    }
+
+
+    public static void notifyDataChanged() {
+        if (filterAdapter != null) {
+            filterAdapter.notifyDataSetChanged();
+        }
     }
 }

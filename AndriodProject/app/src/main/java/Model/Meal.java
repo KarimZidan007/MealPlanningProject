@@ -57,6 +57,8 @@ public class Meal implements Serializable {
     public String strMeasure18;
     public String strMeasure19;
     public String strMeasure20;
+    public boolean isFavorite; // Add this field
+
 
     public String strSource;
 
@@ -109,6 +111,7 @@ public class Meal implements Serializable {
         this.strMeasure8 =meal.strMeasure8;
         this.strMeasure7 =meal.strMeasure7;
         this.strMeasure6 =meal.strMeasure6;
+        this.isFavorite=meal.isFavorite;
     }
 
     public Meal() {
@@ -242,7 +245,13 @@ public class Meal implements Serializable {
     public void setStrIngredient9(String strIngredient9) {
         this.strIngredient9 = strIngredient9;
     }
+    public boolean isFavorite() {
+        return isFavorite;
+    }
 
+    public void setFavorite(boolean favorite) {
+        isFavorite = favorite;
+    }
     public String getStrIngredient10() {
         return strIngredient10;
     }

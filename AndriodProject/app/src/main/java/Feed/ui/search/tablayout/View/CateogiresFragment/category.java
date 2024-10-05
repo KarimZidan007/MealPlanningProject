@@ -1,5 +1,8 @@
 package Feed.ui.search.tablayout.View.CateogiresFragment;
 
+import static Feed.ui.favourite.Controller.FavoriteManager.isFavorite;
+import static Feed.ui.favourite.Controller.FavoriteManager.loadFavoritesFromDatabase;
+
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
@@ -32,9 +35,11 @@ import Feed.Controllers.InsertingDBPresenter.addFavMealPresenter;
 import Feed.Controllers.MealsCategoriesPresenter;
 import Feed.Controllers.searchFragPresenter;
 import Feed.ui.favourite.Controller.FavMealPresenter;
+import Feed.ui.favourite.Controller.FavoriteManager;
 import Feed.ui.favourite.View.onClickRemoveFavourite;
 import Feed.ui.home.HomeFragment;
 import Feed.ui.search.IsearchMealView;
+import Feed.ui.search.tablayout.View.SearchFragment.search;
 import Feed.ui.search.tablayout.View.onAddFavMealClickListner;
 import Feed.ui.search.tablayout.View.onMealClickListener;
 import Feed.ui.calendar.View.onMealPlanningClick;
@@ -48,7 +53,7 @@ import DataBase.controller.MealDateDao;
 public class category extends Fragment  implements IsearchMealView.IgetMealCategoriesView ,IsearchMealView.IgetMealFilterCategoriesView ,onClickFilterByCateogryListner, onMealClickListener.onMealClickListenerCat,IsearchMealView.IsearchAllViewsMeals, onAddFavMealClickListner, onMealPlanningClick, onClickRemoveFavourite {
 private RecyclerView catRec;
 private CategoriesAdapter catAdapter;
-private FilterByCategoriesAdapter filterAdapter;
+private static FilterByCategoriesAdapter filterAdapter;
 private MealsCategoriesPresenter catPresenter;
 private MealsRemoteDataSource dataSource;
 private searchFragPresenter searchMealPresenter;
@@ -59,7 +64,7 @@ private DataSrcRepository repo;
 private MealDateDao mealDateDao;
 private calAppDataBase plannedDbObj;
 private FavMealPresenter presenter;
-
+private FavoriteManager favManager;
 
 
     private enum  requestType{
@@ -80,6 +85,7 @@ private requestType mealRequest = requestType.isDetailRequest;
         return inflater.inflate(R.layout.fragment_category, container, false);
     }
 
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -90,6 +96,7 @@ private requestType mealRequest = requestType.isDetailRequest;
         dataSource= MealsRemoteDataSource.getRemoteSrcClient();
         catPresenter = new MealsCategoriesPresenter(dataSource,(IsearchMealView.IgetMealCategoriesView)category.this);
         catPresenter.reqMealsCategories();
+
     }
 
     @Override
@@ -165,7 +172,6 @@ private requestType mealRequest = requestType.isDetailRequest;
 
     }
 
-
     @Override
     public void onMealCatClick(String mealName) {
         dataSource= MealsRemoteDataSource.getRemoteSrcClient();
@@ -175,8 +181,16 @@ private requestType mealRequest = requestType.isDetailRequest;
 
     @Override
     public void onFavMealAdd(Meal meal) {
-        mealRequest=requestType.addToFavDbRequest;
-        onMealCatClick(meal.getStrMeal());
+        if(!isFavorite(meal.idMeal))
+        {
+            mealRequest=requestType.addToFavDbRequest;
+            onMealCatClick(meal.getStrMeal());
+
+        }
+        else
+        {
+            Toast.makeText(this.getContext(), "Meal Already on Favourite", Toast.LENGTH_SHORT).show();
+        }
     }
     @Override
     public void onFavMealRemove(Meal meal) {
@@ -185,6 +199,7 @@ private requestType mealRequest = requestType.isDetailRequest;
         repo = new DataSrcRepository(dao);
         presenter = new FavMealPresenter(repo);
         presenter.deleteMeal(meal);
+        search.notifyDataChanged();
     }
     @Override
     public void onMealScheduleClicked(Meal meal) {
@@ -255,6 +270,12 @@ private requestType mealRequest = requestType.isDetailRequest;
         new Thread(() -> mealDateDao.insertPlannedMeal(mealDate)).start();
 
         Toast.makeText(category.this.getContext(), "Meal scheduled for " + date + " at " + time, Toast.LENGTH_SHORT).show();
+    }
+
+    public static void notifyDataChanged() {
+        if (filterAdapter != null) {
+            filterAdapter.notifyDataSetChanged();
+        }
     }
 }
 

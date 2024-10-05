@@ -10,14 +10,14 @@ import DataBase.controller.MealDAO;
 import Model.Meal;
 
 
-@Database(entities = {Meal.class},version=1)
+@Database(entities = {Meal.class},version=2)
 public abstract class AppDataBase extends RoomDatabase {
     private static AppDataBase dataBaseInstance = null;
     public abstract MealDAO getMealsDao();
     public static synchronized AppDataBase getDbInstance(Context context) {
         if (dataBaseInstance == null)
         {
-            dataBaseInstance = Room.databaseBuilder( context,AppDataBase.class,"MealDAO").build();
+            dataBaseInstance = Room.databaseBuilder( context,AppDataBase.class,"MealDAO").fallbackToDestructiveMigration().build();
         }
         return dataBaseInstance;
     }

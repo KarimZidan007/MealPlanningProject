@@ -1,7 +1,10 @@
 package Feed.ui.calendar.View;
 
+import static Feed.ui.favourite.Controller.FavoriteManager.isFavorite;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +21,8 @@ import com.example.sidechefproject.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import Feed.ui.favourite.Controller.FavoriteManager;
+import Feed.ui.favourite.View.onClickRemoveFavourite;
 import Feed.ui.search.tablayout.View.onAddFavMealClickListner;
 import Feed.ui.search.tablayout.View.onMealClickListener;
 import Model.Meal;
@@ -30,12 +35,16 @@ public class CalenderAdapter extends RecyclerView.Adapter<CalenderAdapter.ViewHo
     private List<MealDate> values ;
     private onAddFavMealClickListner addFavMealListner;
     private onDeletePlanMealClick delMealFromPLanListner;
-    private onMealClickListener.onMealClickListenerCat mealDetailsListner;
-    public CalenderAdapter(Context context, List<MealDate> meals ,onDeletePlanMealClick delMealFromPLanListner ,onMealClickListener.onMealClickListenerCat mealDetailsListner,onAddFavMealClickListner addFavMealListner) {
+    private onMealClickListener.onMealClickSearchListener listener;
+    private onClickRemoveFavourite removeListner;
+
+    public CalenderAdapter(Context context, List<MealDate> meals ,onDeletePlanMealClick delMealFromPLanListner ,onMealClickListener.onMealClickSearchListener listener,onAddFavMealClickListner addFavMealListner, onClickRemoveFavourite removeListner) {
         this.context = context;
         this.addFavMealListner=addFavMealListner;
-        this.mealDetailsListner=mealDetailsListner;
+        this.listener=listener;
         this.delMealFromPLanListner=delMealFromPLanListner;
+        this.removeListner=removeListner;
+
         if(null != meals)
         {
             this.values = new ArrayList<MealDate>(meals.size());
@@ -57,6 +66,7 @@ public class CalenderAdapter extends RecyclerView.Adapter<CalenderAdapter.ViewHo
         private ImageView imageV;
         private ImageView favIcon;
         private ImageView delIcon;
+        private boolean isFav=false;
 
         public ViewHolder(View layoutView) {
             super(layoutView);
@@ -82,7 +92,19 @@ public class CalenderAdapter extends RecyclerView.Adapter<CalenderAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull CalenderAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
+        if(!isFavorite((values.get(position).getIdMeal())))
+        {
+            holder.favIcon.setImageResource(R.drawable.fav);
 
+            holder.isFav=false;
+            Log.i("NAMEEE", "false: ");
+
+        }
+        else
+        {
+            Log.i("NAMEEE", "true: ");
+            holder.favIcon.setImageResource(R.drawable.ic_favorite_filled);
+        }
         holder.mealNameText.setText(values.get(position).getStrMeal());
         holder.mealTimeText.setText(values.get(position).getTime());
 
@@ -93,18 +115,35 @@ public class CalenderAdapter extends RecyclerView.Adapter<CalenderAdapter.ViewHo
                         .placeholder(R.drawable.ic_launcher_background)
                         .error(R.drawable.ic_launcher_foreground))
                 .into(holder.imageV);
-        holder.layoutView.setOnClickListener(new View.OnClickListener() {
+
+        holder.imageV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mealDetailsListner.onMealCatClick(values.get(position).getStrMeal());
+                Meal temp =  new Meal(values.get(position));
+
+                listener.onMealClick(temp);
             }
         });
+
         holder.favIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Meal temp =  new Meal(values.get(position));
-                addFavMealListner.onFavMealAdd(temp);
-                holder.favIcon.setImageResource(R.drawable.ic_favorite_filled); // Change to filled heart
+
+                if(!holder.isFav)
+                {
+                    addFavMealListner.onFavMealAdd(temp);
+                    holder.favIcon.setImageResource(R.drawable.ic_favorite_filled); // Change to filled heart
+                    holder.isFav=true;
+                    FavoriteManager.toggleFavorite(values.get(position));
+                }
+                else
+                {
+                    holder.favIcon.setImageResource(R.drawable.fav);
+                    removeListner.onFavMealRemove(temp);
+                    holder.isFav=false;
+                    FavoriteManager.toggleFavorite(values.get(position));
+                }
             }
         });
         holder.delIcon.setOnClickListener(v -> {
