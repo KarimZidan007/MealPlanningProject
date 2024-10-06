@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData;
 
 import java.util.List;
 
+import DataBase.Model.localSrcImplementation;
 import DataBase.controller.MealDAO;
 import DataBase.controller.MealDateDao;
 import Model.Meal;
@@ -15,9 +16,9 @@ import Network.Model.MealsRemoteDataSource;
 import Network.Model.NetworkCallback.NetworkCallback;
 
 public class DataSrcRepository implements MealsRepository {
-    MealsRemoteDataSource remoteSrc;
-    MealDAO localSrc;
-    MealDateDao plannerSrc;
+    private MealsRemoteDataSource remoteSrc;
+    private MealDAO localSrc;
+    private MealDateDao plannerSrc;
     public DataSrcRepository(MealsRemoteDataSource remoteSrc)
     {
         this.remoteSrc=remoteSrc;
@@ -30,6 +31,7 @@ public class DataSrcRepository implements MealsRepository {
     {
         this.plannerSrc=plannerSrc;
     }
+
 
     @Override
     public void getRandomMeal(NetworkCallback.NetworkCallbackRandom networkCallback) {

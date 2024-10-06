@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.LiveData;
@@ -75,7 +76,6 @@ public class CalendarFragment extends Fragment implements onAddFavMealClickListn
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_calendar, container, false);
         return view;
     }
@@ -180,22 +180,24 @@ public class CalendarFragment extends Fragment implements onAddFavMealClickListn
 
 }
 
-
     @Override
     public void onDeleteMealScheduleClicked(MealDate meal) {
-        plannedDbObj = calAppDataBase.getDbInstance(CalendarFragment.this.getContext());
-        mealDateDao = plannedDbObj.getDateMealsDao();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                mealDateDao.deletePlannedMeal(meal);
-            }
-        }).start();
+        new AlertDialog.Builder(CalendarFragment.this.getContext())
+                .setTitle("Delete Meal")
+                .setMessage("Are you sure you want to delete this scheduled meal?")
+                .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+                    plannedDbObj = calAppDataBase.getDbInstance(CalendarFragment.this.getContext());
+                    mealDateDao = plannedDbObj.getDateMealsDao();
+                    new Thread(() -> {
+                        mealDateDao.deletePlannedMeal(meal);
+                    }).start();
+                    Toast.makeText(getContext(), "Meal has been deleted.", Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton(android.R.string.no, (dialog, which) -> {
+                    dialog.dismiss();
+                })
+                .show();
     }
-
-
-
-
 
     @Override
     public void onFavMealAdd(Meal meal) {
@@ -207,8 +209,6 @@ public class CalendarFragment extends Fragment implements onAddFavMealClickListn
         FavoriteManager.loadFavoritesFromDatabase();
     }
 
-
-
     @Override
     public void onMealClick(Meal meal) {
         Intent intent = new Intent(getContext(), MealDetailsActivity.class);
@@ -218,11 +218,21 @@ public class CalendarFragment extends Fragment implements onAddFavMealClickListn
 
     @Override
     public void onFavMealRemove(Meal meal) {
-        dataBaseObj = AppDataBase.getDbInstance(CalendarFragment.this.getContext());
-        dao = dataBaseObj.getMealsDao();
-        repo = new DataSrcRepository(dao);
-        presenter = new FavMealPresenter(repo);
-        presenter.deleteMeal(meal);
-        FavoriteManager.loadFavoritesFromDatabase();
+        new AlertDialog.Builder(CalendarFragment.this.getContext())
+                .setTitle("Delete Meal")
+                .setMessage("Are you sure you want to remove this meal from favorites?")
+                .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+                    dataBaseObj = AppDataBase.getDbInstance(CalendarFragment.this.getContext());
+                    dao = dataBaseObj.getMealsDao();
+                    repo = new DataSrcRepository(dao);
+                    presenter = new FavMealPresenter(repo);
+                    presenter.deleteMeal(meal);
+                    FavoriteManager.loadFavoritesFromDatabase();
+                    Toast.makeText(getContext(), "Meal removed from favorites.", Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton(android.R.string.no, (dialog, which) -> {
+                    dialog.dismiss();
+                })
+                .show();
     }
 }

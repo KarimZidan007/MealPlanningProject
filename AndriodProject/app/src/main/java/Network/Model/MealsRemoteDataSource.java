@@ -158,7 +158,6 @@ public class MealsRemoteDataSource {
             }
         });
     }
-    //method provide only one retrofitclient
     public static MealsRemoteDataSource getRemoteSrcClient() {
         if(MealsRemoteDataSourceClient == null)
         {

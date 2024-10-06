@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -94,14 +95,10 @@ public class MealDetailsActivity extends AppCompatActivity {
             webView.getSettings().setJavaScriptEnabled(true);
             webView.setWebViewClient(new WebViewClient());
 
+
             mealName.setText(meal.getStrMeal());
-
-            String instructions = meal.getStrInstructions(); // Assuming this method retrieves the instructions
-
-// Split the instructions by periods followed by optional whitespace
+            String instructions = meal.getStrInstructions();
             String[] steps = instructions.split("\\.\\s*");
-
-// Build the formatted string using HTML
             StringBuilder formattedSteps = new StringBuilder();
             for (int i = 0; i < steps.length; i++) {
                 formattedSteps.append("<b>STEP ").append(i + 1).append(": </b>");
@@ -177,14 +174,25 @@ public class MealDetailsActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    dataBaseObj = AppDataBase.getDbInstance(this);
-                    dao = dataBaseObj.getMealsDao();
-                    repo = new DataSrcRepository(dao);
-                    presenter = new FavMealPresenter(repo);
-                    presenter.deleteMeal(meal);
-                    favIcon.setImageResource(R.drawable.fav);
-                    isFav=false;
-                    FavoriteManager.toggleFavorite(meal);
+                    new AlertDialog.Builder(this)
+                            .setTitle("Remove from Favorites")
+                            .setMessage("Are you sure you want to remove this meal from your favorites?")
+                            .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+                                // User confirmed deletion
+                                dataBaseObj = AppDataBase.getDbInstance(this);
+                                dao = dataBaseObj.getMealsDao();
+                                repo = new DataSrcRepository(dao);
+                                presenter = new FavMealPresenter(repo);
+                                presenter.deleteMeal(meal);
+                                favIcon.setImageResource(R.drawable.fav);
+                                isFav = false;
+                                FavoriteManager.toggleFavorite(meal);
+                                Toast.makeText(this, "Meal removed from favorites.", Toast.LENGTH_SHORT).show();
+                            })
+                            .setNegativeButton(android.R.string.no, (dialog, which) -> {
+                                dialog.dismiss();
+                            })
+                            .show();
                 }});
 
             schedualeIcon.setOnClickListener(v -> {

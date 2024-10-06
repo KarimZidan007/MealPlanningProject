@@ -61,7 +61,6 @@ public class search extends Fragment  implements IsearchMealView.IsearchAllViews
     private AppDataBase dataBaseObj;
     private MealDAO dao;
     private DataSrcRepository repo;
-    private boolean isDetailRequest=true;
     private addFavMealPresenter favMealPresenter;
 
     @Override
@@ -132,33 +131,26 @@ public class search extends Fragment  implements IsearchMealView.IsearchAllViews
         searchAdapter.notifyDataSetChanged();
 
     }
-
     @Override
     public void displayError(String errorMsg) {
         Toast.makeText(search.this.getContext(), errorMsg, Toast.LENGTH_SHORT).show();
     }
-
     @Override
     public void displayMealsByName(List<Meal> meals) {
         searchAdapter = new SearchAdapter(search.this.getContext(),meals,this,this,this,this);
         recView.setAdapter(searchAdapter);
         searchAdapter.notifyDataSetChanged();
-        Log.i("NAMEEE", "displayMealsByName: ");
     }
-
     @Override
     public void displayErrorByName(String errorMsg) {
         Toast.makeText(search.this.getContext(), errorMsg, Toast.LENGTH_SHORT).show();
-
     }
-    //call back method when i press on a meal
     @Override
     public void onMealClick(Meal meal) {
         Intent mealDetailsIntent = new Intent(this.getContext(),MealDetailsActivity.class);
         mealDetailsIntent.putExtra("MEAL",meal);
         startActivity(mealDetailsIntent);
     }
-
     @Override
     public void onMealScheduleClicked(Meal meal) {
         // Get the current date and time
@@ -225,7 +217,6 @@ public class search extends Fragment  implements IsearchMealView.IsearchAllViews
 
         Toast.makeText(search.this.getContext(), "Meal scheduled for " + date + " at " + time, Toast.LENGTH_SHORT).show();
     }
-
     @Override
     public void onFavMealRemove(Meal meal) {
         dataBaseObj = AppDataBase.getDbInstance(search.this.getContext());
@@ -234,7 +225,6 @@ public class search extends Fragment  implements IsearchMealView.IsearchAllViews
         presenter = new FavMealPresenter(repo);
         presenter.deleteMeal(meal);
     }
-
     @Override
     public void onFavMealAdd(Meal meal) {
         dataBaseObj = AppDataBase.getDbInstance(search.this.getContext());

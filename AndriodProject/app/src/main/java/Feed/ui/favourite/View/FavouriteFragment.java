@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
@@ -32,6 +33,7 @@ import DataBase.controller.MealDAO;
 import DataBase.controller.MealDateDao;
 import Feed.ui.calendar.View.onMealPlanningClick;
 import Feed.ui.favourite.Controller.FavMealPresenter;
+import Feed.ui.home.HomeFragment;
 import Feed.ui.search.tablayout.View.CountriesFragment.country;
 import Feed.ui.search.tablayout.View.onMealClickListener;
 import Model.Meal;
@@ -65,7 +67,6 @@ public class FavouriteFragment extends Fragment implements onMealClickListener.o
         dao = dataBaseObj.getMealsDao();
         repo = new DataSrcRepository(dao);
         presenter = new FavMealPresenter(repo);
-
 
         return view;
     }
@@ -103,7 +104,17 @@ public class FavouriteFragment extends Fragment implements onMealClickListener.o
 
     @Override
     public void onFavMealRemove(Meal meal) {
-        presenter.deleteMeal(meal);
+        new AlertDialog.Builder(FavouriteFragment.this.getContext())
+                .setTitle("Delete Meal")
+                .setMessage("Are you sure you want to remove this meal from favorites?")
+                .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+                    presenter.deleteMeal(meal);
+                    Toast.makeText(getContext(), "Meal removed from favorites.", Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton(android.R.string.no, (dialog, which) -> {
+                    dialog.dismiss();
+                })
+                .show();
     }
 
     @Override

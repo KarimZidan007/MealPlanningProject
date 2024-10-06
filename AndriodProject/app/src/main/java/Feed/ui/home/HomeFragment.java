@@ -1,5 +1,6 @@
 package Feed.ui.home;
 
+import static java.security.AccessController.getContext;
 import static Feed.ui.favourite.Controller.FavoriteManager.isFavorite;
 
 import android.app.DatePickerDialog;
@@ -90,6 +91,8 @@ public class HomeFragment extends Fragment implements IRandomMealView , onClickR
     private TextView ingText;
     private ImageView countryImage;
     private ImageView ingImage;
+    private TextView t1, t2, t3, t4;
+
     private MealsIngredientPresenter ingredientPresenter;
     private  MealsCountriesPresenter countryPresenter;
     private Button logoutButton;
@@ -146,14 +149,16 @@ public class HomeFragment extends Fragment implements IRandomMealView , onClickR
         ingImage=root.findViewById(R.id.ingredient_image);
         ingText=root.findViewById(R.id.ingredient_text);
         logoutButton = root.findViewById(R.id.logout_button);
-
+        t1 = root.findViewById(R.id.t1);
+        t2 = root.findViewById(R.id.t2);
+        t3 = root.findViewById(R.id.t3);
+        t4 = root.findViewById(R.id.t4);
         return root;
     }
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         if (isNetworkAvailable(getContext())) {
-
             logoutButton.setOnClickListener(v -> {
                 new AlertDialog.Builder(getContext())
                         .setTitle("Logout")
@@ -190,8 +195,28 @@ public class HomeFragment extends Fragment implements IRandomMealView , onClickR
 
         } else {
 
-            Toast.makeText(getContext(), "No internet connection", Toast.LENGTH_SHORT).show();
-        }
+            // Set the static image
+            Glide.with(this).load(R.drawable.nointernet) // Add your static image resource here
+                    .apply(new RequestOptions().override(350, 350)
+                            .placeholder(R.drawable.ic_launcher_background)
+                            .error(R.drawable.ic_launcher_foreground))
+                    .into(imageV);
+
+            t1.setText("Visit your favourite or planned meals");
+            t2.setVisibility(View.GONE);
+            t3.setVisibility(View.GONE);
+            t4.setVisibility(View.GONE);
+            mealNameText.setVisibility(View.GONE);
+            iconImage.setVisibility(View.GONE);
+            schedualeIcon.setVisibility(View.GONE);
+            categoryImage.setVisibility(View.GONE);
+            categoryText.setVisibility(View.GONE);
+            countryImage.setVisibility(View.GONE);
+            countryText.setVisibility(View.GONE);
+            ingImage.setVisibility(View.GONE);
+            ingText.setVisibility(View.GONE);
+
+            Toast.makeText(getContext(), "No internet connection", Toast.LENGTH_SHORT).show();        }
 
 
     }
@@ -328,7 +353,6 @@ public class HomeFragment extends Fragment implements IRandomMealView , onClickR
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate localDate = LocalDate.parse(date, formatter);
 
-        // Get the day of the week from LocalDate
         String dayOfWeek = localDate.getDayOfWeek().toString(); // e.g., "SUNDAY", "MONDAY"
         String formattedDayOfWeek = dayOfWeek.substring(0, 1).toUpperCase() + dayOfWeek.substring(1).toLowerCase(); // e.g., "Sunday"
 
@@ -341,14 +365,13 @@ public class HomeFragment extends Fragment implements IRandomMealView , onClickR
 
         Toast.makeText(HomeFragment.this.getContext(), "Meal scheduled for " + date + " at " + time, Toast.LENGTH_SHORT).show();
     }
+
     public boolean isNetworkAvailable(Context context) {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
-
-
 
     @Override
     public void displayMealsCateogries(List<Category> categories) {
