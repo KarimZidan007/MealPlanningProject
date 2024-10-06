@@ -92,18 +92,15 @@ public class CalenderAdapter extends RecyclerView.Adapter<CalenderAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull CalenderAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
-        if(!isFavorite((values.get(position).getIdMeal())))
+
+        holder.isFav = isFavorite(values.get(0).getIdMeal());
+        if(holder.isFav)
         {
-            holder.favIcon.setImageResource(R.drawable.fav);
-
-            holder.isFav=false;
-            Log.i("NAMEEE", "false: ");
-
+            holder.favIcon.setImageResource(R.drawable.ic_favorite_filled);
         }
         else
         {
-            Log.i("NAMEEE", "true: ");
-            holder.favIcon.setImageResource(R.drawable.ic_favorite_filled);
+            holder.favIcon.setImageResource(R.drawable.fav);
         }
         holder.mealNameText.setText(values.get(position).getStrMeal());
         holder.mealTimeText.setText(values.get(position).getTime());
@@ -129,7 +126,6 @@ public class CalenderAdapter extends RecyclerView.Adapter<CalenderAdapter.ViewHo
             @Override
             public void onClick(View v) {
                 Meal temp =  new Meal(values.get(position));
-
                 if(!holder.isFav)
                 {
                     addFavMealListner.onFavMealAdd(temp);

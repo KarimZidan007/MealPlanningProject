@@ -180,7 +180,8 @@ public class CalendarFragment extends Fragment implements onAddFavMealClickListn
 
 }
 
-        @Override
+
+    @Override
     public void onDeleteMealScheduleClicked(MealDate meal) {
         plannedDbObj = calAppDataBase.getDbInstance(CalendarFragment.this.getContext());
         mealDateDao = plannedDbObj.getDateMealsDao();
@@ -192,6 +193,10 @@ public class CalendarFragment extends Fragment implements onAddFavMealClickListn
         }).start();
     }
 
+
+
+
+
     @Override
     public void onFavMealAdd(Meal meal) {
         dataBaseObj = AppDataBase.getDbInstance(CalendarFragment.this.getContext());
@@ -199,7 +204,7 @@ public class CalendarFragment extends Fragment implements onAddFavMealClickListn
         repo = new DataSrcRepository(dao);
         presenter = new FavMealPresenter(repo);
         presenter.insertFavMeal(meal);
-
+        FavoriteManager.loadFavoritesFromDatabase();
     }
 
 
@@ -218,6 +223,6 @@ public class CalendarFragment extends Fragment implements onAddFavMealClickListn
         repo = new DataSrcRepository(dao);
         presenter = new FavMealPresenter(repo);
         presenter.deleteMeal(meal);
-
+        FavoriteManager.loadFavoritesFromDatabase();
     }
 }

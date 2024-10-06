@@ -34,26 +34,26 @@ public class FavoriteManager {
     }
 
     public static synchronized void loadFavoritesFromDatabase() {
-
         LiveData<List<Meal>> liveData = presenter.getFavouriteMeals();
-        Observer<List<Meal>> observer=  new Observer<List<Meal>>()
-        {
+
+        favoriteMealIds.clear();
+        liveData.observe(owner, new Observer<List<Meal>>() {
             @Override
             public void onChanged(List<Meal> meals) {
-                if(meals!=null)
-                {
-                    for(Meal i : meals)
-                    {
-                        favoriteMealIds.add(i.idMeal);
+                if (meals != null) {
+                    for (Meal meal : meals) {
+                        favoriteMealIds.add(meal.getIdMeal());
                     }
+                    Log.i("NAMEEE", "Favorites loaded: " + favoriteMealIds);
                 }
             }
-        };
-        liveData.observe(owner,observer);
-
+        });
     }
 
+
     public static synchronized boolean isFavorite(String mealId) {
+        Log.i("NAMEEE", "state : " + String.valueOf(favoriteMealIds.contains(mealId)));
+
         return favoriteMealIds.contains(mealId);
     }
 

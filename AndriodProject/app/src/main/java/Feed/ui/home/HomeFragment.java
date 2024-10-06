@@ -12,12 +12,14 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -28,6 +30,8 @@ import com.bumptech.glide.request.RequestOptions;
 import com.example.sidechefproject.MealDetails.MealDetailsActivity;
 import com.example.sidechefproject.R;
 import com.example.sidechefproject.databinding.FragmentHomeBinding;
+import com.example.sidechefproject.login.Login.SignIn;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -44,6 +48,7 @@ import Feed.Controllers.MealsByCountry.MealsCountriesPresenter;
 import Feed.Controllers.MealsByIngredient.MealsIngredientPresenter;
 import Feed.Controllers.MealsCategoriesPresenter;
 import Feed.Controllers.RandomMealPresenter;
+import Feed.NavActivity;
 import Feed.ui.favourite.Controller.FavMealPresenter;
 import Feed.ui.favourite.Controller.FavoriteManager;
 import Feed.ui.favourite.View.onClickRemoveFavourite;
@@ -87,6 +92,7 @@ public class HomeFragment extends Fragment implements IRandomMealView , onClickR
     private ImageView ingImage;
     private MealsIngredientPresenter ingredientPresenter;
     private  MealsCountriesPresenter countryPresenter;
+    private Button logoutButton;
     private final String BASELINK = "https://raw.githubusercontent.com/hjnilsson/country-flags/master/svg/";
     private final String[] countryCodes = {
             "us", // American
@@ -139,12 +145,30 @@ public class HomeFragment extends Fragment implements IRandomMealView , onClickR
         countryText=root.findViewById(R.id.country_text);
         ingImage=root.findViewById(R.id.ingredient_image);
         ingText=root.findViewById(R.id.ingredient_text);
+        logoutButton = root.findViewById(R.id.logout_button);
+
         return root;
     }
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         if (isNetworkAvailable(getContext())) {
+
+            logoutButton.setOnClickListener(v -> {
+                new AlertDialog.Builder(getContext())
+                        .setTitle("Logout")
+                        .setMessage("Are you sure you want to logout?")
+                        .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+                            FirebaseAuth.getInstance().signOut();
+                            Intent intent = new Intent(HomeFragment.this.getContext(), SignIn.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
+                            getActivity().finish();
+                        })
+                        .setNegativeButton(android.R.string.no, null)
+                        .show();
+            });
+
             randomSrc= MealsRemoteDataSource.getRemoteSrcClient();
             randomPresenter = new RandomMealPresenter(randomSrc,this);
             randomPresenter.getRandomMealRemotly();
@@ -165,7 +189,7 @@ public class HomeFragment extends Fragment implements IRandomMealView , onClickR
             ingredientPresenter.reqMealsIngredients();
 
         } else {
-            // Show a message to the user
+
             Toast.makeText(getContext(), "No internet connection", Toast.LENGTH_SHORT).show();
         }
 

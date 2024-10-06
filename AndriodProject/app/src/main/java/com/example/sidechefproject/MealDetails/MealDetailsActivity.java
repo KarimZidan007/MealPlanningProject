@@ -1,5 +1,7 @@
 package com.example.sidechefproject.MealDetails;
 
+import static Feed.ui.favourite.Controller.FavoriteManager.isFavorite;
+
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
@@ -33,6 +35,7 @@ import DataBase.controller.MealDAO;
 import DataBase.controller.MealDateDao;
 import Feed.Controllers.InsertingDBPresenter.addFavMealPresenter;
 import Feed.ui.favourite.Controller.FavMealPresenter;
+import Feed.ui.favourite.Controller.FavoriteManager;
 import Model.CountryMapping;
 import Model.IngreidentDetails;
 import Model.Meal;
@@ -150,7 +153,16 @@ public class MealDetailsActivity extends AppCompatActivity {
                             .placeholder(R.drawable.ic_launcher_background)
                             .error(R.drawable.ic_launcher_foreground))
                     .into(mealImage);
-
+            if(!isFavorite(meal.getIdMeal()))
+            {
+                favIcon.setImageResource(R.drawable.fav);
+               isFav=false;
+            }
+            else
+            {
+                favIcon.setImageResource(R.drawable.ic_favorite_filled);
+               isFav=true;
+            }
             favIcon.setOnClickListener(v -> {
                 if(!isFav)
                 {
@@ -161,6 +173,7 @@ public class MealDetailsActivity extends AppCompatActivity {
                     favMealPresenter.insertFavMeal(meal);
                     favIcon.setImageResource(R.drawable.ic_favorite_filled);
                     isFav=true;
+                    FavoriteManager.toggleFavorite(meal);
                 }
                 else
                 {
@@ -171,6 +184,7 @@ public class MealDetailsActivity extends AppCompatActivity {
                     presenter.deleteMeal(meal);
                     favIcon.setImageResource(R.drawable.fav);
                     isFav=false;
+                    FavoriteManager.toggleFavorite(meal);
                 }});
 
             schedualeIcon.setOnClickListener(v -> {

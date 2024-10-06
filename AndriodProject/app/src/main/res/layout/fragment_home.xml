@@ -10,6 +10,21 @@
         android:orientation="vertical"
         android:padding="16dp">
 
+        <!-- Logout Button -->
+
+        <Button
+            android:id="@+id/logout_button"
+            android:layout_width="118dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="@color/colorPrimary"
+            android:elevation="4dp"
+            android:fontFamily="sans-serif-medium"
+            android:padding="12dp"
+            android:text="Logout"
+            android:textColor="@android:color/white"
+            android:textSize="18sp" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -35,8 +50,8 @@
                 <ImageView
                     android:id="@+id/random_image"
                     android:layout_width="350dp"
-                    android:layout_height="200dp"
-                    android:scaleType="centerCrop" />
+                    android:layout_height="313dp"
+                    android:scaleType="fitCenter" />
 
                 <TextView
                     android:id="@+id/random_text"
@@ -97,9 +112,9 @@
 
                 <ImageView
                     android:id="@+id/category_image"
-                    android:layout_width="350dp"
-                    android:layout_height="200dp"
-                    android:scaleType="centerCrop" />
+                    android:layout_width="match_parent"
+                    android:layout_height="313dp"
+                    android:scaleType="fitCenter" />
 
                 <TextView
                     android:id="@+id/category_text"
@@ -139,9 +154,9 @@
 
                 <ImageView
                     android:id="@+id/country_image"
-                    android:layout_width="350dp"
-                    android:layout_height="200dp"
-                    android:scaleType="centerCrop" />
+                    android:layout_width="match_parent"
+                    android:layout_height="313dp"
+                    android:scaleType="fitCenter" />
 
                 <TextView
                     android:id="@+id/country_text"
@@ -181,9 +196,9 @@
 
                 <ImageView
                     android:id="@+id/ingredient_image"
-                    android:layout_width="350dp"
-                    android:layout_height="200dp"
-                    android:scaleType="centerCrop" />
+                    android:layout_width="match_parent"
+                    android:layout_height="313dp"
+                    android:scaleType="fitCenter" />
 
                 <TextView
                     android:id="@+id/ingredient_text"
