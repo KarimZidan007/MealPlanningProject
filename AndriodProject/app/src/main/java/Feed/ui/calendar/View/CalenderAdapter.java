@@ -93,7 +93,7 @@ public class CalenderAdapter extends RecyclerView.Adapter<CalenderAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull CalenderAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
 
-        holder.isFav = isFavorite(values.get(0).getIdMeal());
+        holder.isFav = isFavorite(values.get(position).getIdMeal());
         if(holder.isFav)
         {
             holder.favIcon.setImageResource(R.drawable.ic_favorite_filled);

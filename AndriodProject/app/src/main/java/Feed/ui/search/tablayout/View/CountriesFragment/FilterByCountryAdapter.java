@@ -89,7 +89,8 @@ public class FilterByCountryAdapter extends RecyclerView.Adapter<FilterByCountry
 
     @Override
     public void onBindViewHolder(@NonNull FilterByCountryAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
-        if(!isFavorite((values.get(position).getIdMeal())))
+        holder.isFav = isFavorite(values.get(position).getIdMeal());
+        if(holder.isFav)
         {
             holder.isFav=false;
         }

@@ -89,7 +89,8 @@ public class FilterByIngredientAdapter extends RecyclerView.Adapter<FilterByIngr
 
     @Override
     public void onBindViewHolder(@NonNull FilterByIngredientAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
-        if(!isFavorite((values.get(position).getIdMeal())))
+        holder.isFav = isFavorite(values.get(position).getIdMeal());
+        if(holder.isFav)
         {
             holder.isFav=false;
         }
