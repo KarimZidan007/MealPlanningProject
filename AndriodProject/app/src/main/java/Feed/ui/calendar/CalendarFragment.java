@@ -34,6 +34,7 @@ import java.util.Set;
 
 import DataBase.Model.AppDataBase;
 import DataBase.Model.calAppDataBase;
+import DataBase.Model.localSrcImplementation;
 import DataBase.controller.MealDAO;
 import DataBase.controller.MealDateDao;
 import Feed.ui.calendar.View.CalenderAdapter;
@@ -66,10 +67,11 @@ public class CalendarFragment extends Fragment implements onAddFavMealClickListn
     private CalendarDay selectedCalendarDay;
     private AppDataBase dataBaseObj;
     private MealDAO dao;
-    private  CustomSelectorDecorator customSelectorDecorator;
+    private CustomSelectorDecorator customSelectorDecorator;
     private DataSrcRepository repo;
     private FavMealPresenter presenter;
     private FavoriteManager favManager;
+    private localSrcImplementation localSrc;
 
 
 
@@ -203,7 +205,8 @@ public class CalendarFragment extends Fragment implements onAddFavMealClickListn
     public void onFavMealAdd(Meal meal) {
         dataBaseObj = AppDataBase.getDbInstance(CalendarFragment.this.getContext());
         dao = dataBaseObj.getMealsDao();
-        repo = new DataSrcRepository(dao);
+        localSrc =new localSrcImplementation(null,dao,null);
+        repo = new DataSrcRepository (null,localSrc);
         presenter = new FavMealPresenter(repo);
         presenter.insertFavMeal(meal);
         FavoriteManager.loadFavoritesFromDatabase();
@@ -224,7 +227,8 @@ public class CalendarFragment extends Fragment implements onAddFavMealClickListn
                 .setPositiveButton(android.R.string.yes, (dialog, which) -> {
                     dataBaseObj = AppDataBase.getDbInstance(CalendarFragment.this.getContext());
                     dao = dataBaseObj.getMealsDao();
-                    repo = new DataSrcRepository(dao);
+                    localSrc =new localSrcImplementation(null,dao,null);
+                    repo = new DataSrcRepository (null,localSrc);
                     presenter = new FavMealPresenter(repo);
                     presenter.deleteMeal(meal);
                     FavoriteManager.loadFavoritesFromDatabase();

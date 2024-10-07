@@ -1,5 +1,9 @@
 package DataBase.Model;
 
+import android.content.Context;
+import android.util.Log;
+import android.widget.Toast;
+
 import androidx.lifecycle.LiveData;
 
 import java.util.List;
@@ -12,16 +16,15 @@ import Model.MealDate;
 public class localSrcImplementation implements  localSrcInterface{
     MealDAO localSrc;
     MealDateDao plannerSrc;
-
-    public localSrcImplementation(MealDAO localSrc)
+    Context context;
+    public localSrcImplementation(MealDateDao plannerSrc,MealDAO localSrc, Context context)
     {
+        this.context=context;
         this.localSrc=localSrc;
+        this.plannerSrc = plannerSrc;
     }
 
-    public localSrcImplementation(MealDateDao plannerSrc)
-    {
-        this.plannerSrc=plannerSrc;
-    }
+
 
     @Override
     public LiveData<List<Meal>> getAllFavouriteMeals() {
@@ -63,12 +66,11 @@ public class localSrcImplementation implements  localSrcInterface{
                 plannerSrc.insertPlannedMeal(mealDate);
             }
         }.start();
-
     }
 
     @Override
     public LiveData<List<MealDate>> getAllPlannedMeals() {
-        return null;
+        return plannerSrc.getAllMealsForDate();
     }
 
     @Override

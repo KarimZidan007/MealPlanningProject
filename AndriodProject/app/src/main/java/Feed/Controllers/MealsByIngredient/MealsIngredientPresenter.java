@@ -12,26 +12,25 @@ import Network.Model.NetworkCallback.NetworkCallback;
 import Repository.DataSrcRepository;
 
 public class MealsIngredientPresenter implements NetworkCallback.NetworkCallbackGetIngredients,NetworkCallback.NetworkCallbackFilterByIngredient, MealsIPresenter.getIngredientsPresenterContract, MealsIPresenter.getMealsFilterdByIngredient {
-    private MealsRemoteDataSource remoteSrc;
     private DataSrcRepository searchRepo;
     private IsearchMealView.IgetMealIngredientsView iViewOne;
     private IsearchMealView.IgetMealFilterIngredientsView iViewTwo;
-    public MealsIngredientPresenter(MealsRemoteDataSource remoteSrc, IsearchMealView.IgetMealIngredientsView iViewOne)
+
+    public MealsIngredientPresenter(DataSrcRepository remoteSrc, IsearchMealView.IgetMealIngredientsView iViewOne)
     {
         this.iViewOne=iViewOne;
-        this.remoteSrc=remoteSrc;
+        this.searchRepo=remoteSrc;
     }
-    public MealsIngredientPresenter(MealsRemoteDataSource remoteSrc , IsearchMealView.IgetMealFilterIngredientsView iViewTwo)
+    public MealsIngredientPresenter(DataSrcRepository remoteSrc , IsearchMealView.IgetMealFilterIngredientsView iViewTwo)
     {
         this.iViewTwo=iViewTwo;
-        this.remoteSrc=remoteSrc;
+        this.searchRepo=remoteSrc;
     }
     /***********************************************************************************/
 
     //Ask for Meals Ingredients
     @Override
     public void reqMealsIngredients() {
-        searchRepo = new DataSrcRepository(remoteSrc);
         searchRepo.getMealsIngredients(this);
     }
     @Override
@@ -51,7 +50,6 @@ public class MealsIngredientPresenter implements NetworkCallback.NetworkCallback
 
     @Override
     public void reqFilteringByIngredient(String ingredient) {
-        searchRepo = new DataSrcRepository(remoteSrc);
         searchRepo.FilterMealsByIngredient(ingredient,this);
     }
 

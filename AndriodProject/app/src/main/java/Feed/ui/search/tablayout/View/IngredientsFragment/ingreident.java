@@ -27,13 +27,16 @@ import java.util.List;
 
 import DataBase.Model.AppDataBase;
 import DataBase.Model.calAppDataBase;
+import DataBase.Model.localSrcImplementation;
 import DataBase.controller.MealDAO;
 import DataBase.controller.MealDateDao;
 import Feed.Controllers.InsertingDBPresenter.addFavMealPresenter;
 import Feed.Controllers.MealsByIngredient.MealsIngredientPresenter;
 import Feed.Controllers.searchFragPresenter;
+import Feed.ui.calendar.Controller.CalendarPresenter;
 import Feed.ui.favourite.Controller.FavMealPresenter;
 import Feed.ui.favourite.Controller.FavoriteManager;
+import Feed.ui.favourite.View.FavouriteFragment;
 import Feed.ui.favourite.View.onClickRemoveFavourite;
 import Feed.ui.search.IsearchMealView;
 import Feed.ui.calendar.View.onMealPlanningClick;
@@ -64,6 +67,7 @@ private MealDateDao mealDateDao;
 private calAppDataBase plannedDbObj;
 private FavMealPresenter presenter;
 private FavoriteManager favManager;
+private localSrcImplementation localSrc;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -83,7 +87,8 @@ private FavoriteManager favManager;
         ingreidentRec.setHasFixedSize(true);
         ingreidentRec.setLayoutManager(new GridLayoutManager(getContext(),2));
         dataSource= MealsRemoteDataSource.getRemoteSrcClient();
-        ingredientPresenter = new MealsIngredientPresenter(dataSource,(IsearchMealView.IgetMealIngredientsView)ingreident.this);
+        repo = new DataSrcRepository(dataSource,null);
+        ingredientPresenter = new MealsIngredientPresenter(repo,(IsearchMealView.IgetMealIngredientsView)ingreident.this);
         ingredientPresenter.reqMealsIngredients();
     }
 
@@ -117,14 +122,16 @@ private FavoriteManager favManager;
     @Override
     public void onFilterByIngredient(String ingreident) {
           dataSource = MealsRemoteDataSource.getRemoteSrcClient();
-          ingredientPresenter = new MealsIngredientPresenter(dataSource,(IsearchMealView.IgetMealFilterIngredientsView)ingreident.this);
+        repo = new DataSrcRepository(dataSource,null);
+        ingredientPresenter = new MealsIngredientPresenter(repo,(IsearchMealView.IgetMealFilterIngredientsView)ingreident.this);
           ingredientPresenter.reqFilteringByIngredient(ingreident);
     }
 
     @Override
     public void onMealIngreidentClick(String mealName) {
         dataSource= MealsRemoteDataSource.getRemoteSrcClient();
-        searchMealPresenter = new searchFragPresenter(dataSource,  ingreident.this);
+        repo = new DataSrcRepository(dataSource,null);
+        searchMealPresenter = new searchFragPresenter(repo,  ingreident.this);
         searchMealPresenter.getMealByNameRemotly(mealName);
     }
 
@@ -150,7 +157,7 @@ private FavoriteManager favManager;
         {
             dataBaseObj = AppDataBase.getDbInstance(ingreident.this.getContext());
             dao = dataBaseObj.getMealsDao();
-            repo = new DataSrcRepository(dao);
+            repo = new DataSrcRepository(dataSource,null);
             favMealPresenter = new addFavMealPresenter(repo);
             favMealPresenter.insertFavMeal(tempMeal);
             isDetailRequest=true;
@@ -221,9 +228,10 @@ private FavoriteManager favManager;
 
         plannedDbObj = calAppDataBase.getDbInstance(ingreident.this.getContext());
         mealDateDao = plannedDbObj.getDateMealsDao();
-
-        new Thread(() -> mealDateDao.insertPlannedMeal(mealDate)).start();
-
+        localSrcImplementation plannedLocalSrc=new localSrcImplementation (mealDateDao,null,null);
+        repo =new DataSrcRepository(null,plannedLocalSrc) ;
+        CalendarPresenter calendarPresenter = new CalendarPresenter(repo);
+        repo.insertPlannedMeal(mealDate);
         Toast.makeText(ingreident.this.getContext(), "Meal scheduled for " + date + " at " + time, Toast.LENGTH_SHORT).show();
     }
 
@@ -231,7 +239,7 @@ private FavoriteManager favManager;
     public void onFavMealRemove(Meal meal) {
         dataBaseObj = AppDataBase.getDbInstance(ingreident.this.getContext());
         dao = dataBaseObj.getMealsDao();
-        repo = new DataSrcRepository(dao);
+        repo = new DataSrcRepository(dataSource,null);
         presenter = new FavMealPresenter(repo);
         presenter.deleteMeal(meal);
     }

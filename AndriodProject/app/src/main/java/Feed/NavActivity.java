@@ -6,6 +6,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -24,6 +25,7 @@ import com.example.sidechefproject.R;
 import com.example.sidechefproject.databinding.ActivityNavBinding;
 
 import DataBase.Model.AppDataBase;
+import DataBase.Model.localSrcImplementation;
 import DataBase.controller.MealDAO;
 import Feed.ui.favourite.Controller.FavMealPresenter;
 import Feed.ui.favourite.Controller.FavoriteManager;
@@ -37,6 +39,7 @@ public class NavActivity extends AppCompatActivity {
     private MealDAO dao;
     private DataSrcRepository repo;
     private ActivityNavBinding binding;
+    private localSrcImplementation localSrc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,9 +57,11 @@ public class NavActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_nav);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
+
         dataBaseObj = AppDataBase.getDbInstance(this);
         dao = dataBaseObj.getMealsDao();
-        repo = new DataSrcRepository(dao);
+        localSrc = new  localSrcImplementation(null,dao,null);
+        repo = new DataSrcRepository (null,localSrc);
         presenter = new FavMealPresenter(repo);
         favManager=FavoriteManager.getInstance(presenter,this);
         FavoriteManager.loadFavoritesFromDatabase();

@@ -32,11 +32,14 @@ import java.util.List;
 
 import DataBase.Model.AppDataBase;
 import DataBase.Model.calAppDataBase;
+import DataBase.Model.localSrcImplementation;
 import DataBase.controller.MealDAO;
 import DataBase.controller.MealDateDao;
 import Feed.Controllers.InsertingDBPresenter.addFavMealPresenter;
+import Feed.ui.calendar.Controller.CalendarPresenter;
 import Feed.ui.favourite.Controller.FavMealPresenter;
 import Feed.ui.favourite.Controller.FavoriteManager;
+import Feed.ui.favourite.View.FavouriteFragment;
 import Model.CountryMapping;
 import Model.IngreidentDetails;
 import Model.Meal;
@@ -64,6 +67,7 @@ public class MealDetailsActivity extends AppCompatActivity {
     private FavMealPresenter presenter;
     private calAppDataBase plannedDbObj;
     private MealDateDao mealDateDao;
+    private localSrcImplementation localSrc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,19 +86,26 @@ public class MealDetailsActivity extends AppCompatActivity {
             favIcon=findViewById(R.id.addToFavIcon);
             schedualeIcon=findViewById(R.id.addToPlanIcon);
             meal = (Meal) intent.getSerializableExtra("MEAL");
+
             String youtubeUrl = meal.getStrYoutube();
             String videoId = "";
-            if (youtubeUrl.contains("v=")) {
-                videoId = youtubeUrl.split("v=")[1].split("&")[0];
-            } else if (youtubeUrl.contains("youtu.be/")) {
-                videoId = youtubeUrl.split("youtu.be/")[1];
+            if (youtubeUrl != null) {
+                if (youtubeUrl.contains("v=")) {
+                    videoId = youtubeUrl.split("v=")[1].split("&")[0];
+                } else if (youtubeUrl.contains("youtu.be/")) {
+                    videoId = youtubeUrl.split("youtu.be/")[1];
+                }
             }
-            String embedUrl = "https://www.youtube.com/embed/" + videoId;
-            String videoUrl = "<html><body style=\"margin:0;padding:0;\"><iframe width=\"100%\" height=\"100%\" src=\"" + embedUrl + "\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe></body></html>";
-            webView.loadData(videoUrl, "text/html", "UTF-8");
-            webView.getSettings().setJavaScriptEnabled(true);
-            webView.setWebViewClient(new WebViewClient());
-
+            if (!videoId.isEmpty()) {
+                String embedUrl = "https://www.youtube.com/embed/" + videoId;
+                String videoUrl = "<html><body style=\"margin:0;padding:0;\"><iframe width=\"100%\" height=\"100%\" src=\"" + embedUrl + "\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe></body></html>";
+                webView.loadData(videoUrl, "text/html", "UTF-8");
+                webView.getSettings().setJavaScriptEnabled(true);
+                webView.setWebViewClient(new WebViewClient());
+            }
+            else {
+                    Toast.makeText(this, "No video available for this meal.", Toast.LENGTH_SHORT).show();
+                }
 
             mealName.setText(meal.getStrMeal());
             String instructions = meal.getStrInstructions();
@@ -165,7 +176,8 @@ public class MealDetailsActivity extends AppCompatActivity {
                 {
                     dataBaseObj = AppDataBase.getDbInstance(this);
                     dao = dataBaseObj.getMealsDao();
-                    repo = new DataSrcRepository(dao);
+                    localSrc= new localSrcImplementation(null,dao,null);
+                    repo = new DataSrcRepository(null,localSrc);
                     favMealPresenter = new addFavMealPresenter(repo);
                     favMealPresenter.insertFavMeal(meal);
                     favIcon.setImageResource(R.drawable.ic_favorite_filled);
@@ -181,7 +193,8 @@ public class MealDetailsActivity extends AppCompatActivity {
                                 // User confirmed deletion
                                 dataBaseObj = AppDataBase.getDbInstance(this);
                                 dao = dataBaseObj.getMealsDao();
-                                repo = new DataSrcRepository(dao);
+                                localSrc = new localSrcImplementation(null,dao,null);
+                                repo = new DataSrcRepository (null,localSrc);
                                 presenter = new FavMealPresenter(repo);
                                 presenter.deleteMeal(meal);
                                 favIcon.setImageResource(R.drawable.fav);
@@ -240,12 +253,13 @@ public class MealDetailsActivity extends AppCompatActivity {
 
         MealDate mealDate = new MealDate(meal, date, time,formattedDayOfWeek);
 
-        plannedDbObj = calAppDataBase.getDbInstance(this);
+        plannedDbObj = calAppDataBase.getDbInstance(MealDetailsActivity.this);
         mealDateDao = plannedDbObj.getDateMealsDao();
-
-        new Thread(() -> mealDateDao.insertPlannedMeal(mealDate)).start();
-
-        Toast.makeText(this, "Meal scheduled for " + date + " at " + time, Toast.LENGTH_SHORT).show();
+        localSrcImplementation plannedLocalSrc=new localSrcImplementation (mealDateDao,null,null);
+        repo =new DataSrcRepository(null,plannedLocalSrc) ;
+        CalendarPresenter calendarPresenter = new CalendarPresenter(repo);
+        repo.insertPlannedMeal(mealDate);
+        Toast.makeText(MealDetailsActivity.this, "Meal scheduled for " + date + " at " + time, Toast.LENGTH_SHORT).show();
     }
     }
 

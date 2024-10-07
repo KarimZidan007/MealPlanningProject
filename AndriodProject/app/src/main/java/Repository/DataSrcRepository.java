@@ -17,21 +17,12 @@ import Network.Model.NetworkCallback.NetworkCallback;
 
 public class DataSrcRepository implements MealsRepository {
     private MealsRemoteDataSource remoteSrc;
-    private MealDAO localSrc;
-    private MealDateDao plannerSrc;
-    public DataSrcRepository(MealsRemoteDataSource remoteSrc)
+    private localSrcImplementation localSrc;
+    public DataSrcRepository(MealsRemoteDataSource remoteSrc , localSrcImplementation localSrc)
     {
-        this.remoteSrc=remoteSrc;
+            this.remoteSrc=remoteSrc;
+            this.localSrc=localSrc;
     }
-    public DataSrcRepository(MealDAO localSrc)
-    {
-        this.localSrc=localSrc;
-    }
-    public DataSrcRepository(MealDateDao plannerSrc)
-    {
-        this.plannerSrc=plannerSrc;
-    }
-
 
     @Override
     public void getRandomMeal(NetworkCallback.NetworkCallbackRandom networkCallback) {
@@ -80,51 +71,36 @@ public class DataSrcRepository implements MealsRepository {
 
     @Override
     public LiveData<List<Meal>> getFavMeals() {
-        return localSrc.getAllMeals();
+        return localSrc.getAllFavouriteMeals();
     }
 
     @Override
     public void delFavMeal( Meal meal) {
-        new Thread(){
-            @Override
-            public void run() {
-                localSrc.deleteMeal(meal);
-            }
-        }.start();
+
+        localSrc.deleteFavMeal(meal);
     }
+
 
     @Override
     public void insertFavMeal( Meal meal) {
-        new Thread(){
-            @Override
-            public void run() {
-                localSrc.insertMeal(meal);
-            }
-        }.start();
+
+        localSrc.insertFavMeal(meal);
     }
 
     @Override
     public LiveData<List<MealDate>> getPlannedMeals(String date) {
-        return plannerSrc.getMealsForDate(date);
+        return localSrc.getMealsForDate(date);
     }
 
     @Override
     public void delPlannedMeal(MealDate meal) {
-        new Thread(){
-            @Override
-            public void run() {
-                plannerSrc.deletePlannedMeal(meal);
-            }
-        }.start();
+
+        localSrc.deletePlannedMeal(meal);
     }
 
     @Override
     public void insertPlannedMeal(MealDate meal) {
-        new Thread(){
-            @Override
-            public void run() {
-                plannerSrc.insertPlannedMeal(meal);
-            }
-        }.start();
+
+        localSrc.insertPlannedMeal(meal);
     }
 }

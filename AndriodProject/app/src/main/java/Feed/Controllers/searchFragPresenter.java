@@ -9,19 +9,17 @@ import Network.Model.NetworkCallback.NetworkCallback;
 import Repository.DataSrcRepository;
 
 public class searchFragPresenter implements MealsIPresenter.SearchMealPresenterContract , NetworkCallback.NetworkCallbackByName, NetworkCallback.NetworkCallbackFirstChar {
-    public MealsRemoteDataSource remoteSrc;
     public IsearchMealView.IsearchAllViewsMeals Search;
     private DataSrcRepository searchRepo;
 
-    public searchFragPresenter(MealsRemoteDataSource remoteSrc, IsearchMealView.IsearchAllViewsMeals Iview) {
-        this.remoteSrc = remoteSrc;
+    public searchFragPresenter(DataSrcRepository repository, IsearchMealView.IsearchAllViewsMeals Iview) {
+        this.searchRepo = repository;
         this.Search = Iview;
     }
 
     // Search by First Charachter
     @Override
     public void getMealByFirstCharRemotly(char firstChar) {
-        searchRepo = new DataSrcRepository(remoteSrc);
         searchRepo.getMealsByFirstChar(firstChar, this);
     }
 
@@ -34,14 +32,12 @@ public class searchFragPresenter implements MealsIPresenter.SearchMealPresenterC
     public void onFailureResultFirstChar(String errorMsg) {
         Search.displayError(errorMsg);
     }
-    // Search by First Charachter
 
     /*************************************************************************************/
 
     // Search by Name
     @Override
     public void getMealByNameRemotly(String name) {
-        searchRepo = new DataSrcRepository(remoteSrc);
         searchRepo.getMealsByName(name, this);
     }
 

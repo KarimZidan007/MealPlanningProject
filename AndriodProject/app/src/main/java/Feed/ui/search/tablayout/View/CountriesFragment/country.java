@@ -27,13 +27,16 @@ import java.util.List;
 
 import DataBase.Model.AppDataBase;
 import DataBase.Model.calAppDataBase;
+import DataBase.Model.localSrcImplementation;
 import DataBase.controller.MealDAO;
 import DataBase.controller.MealDateDao;
 import Feed.Controllers.InsertingDBPresenter.addFavMealPresenter;
 import Feed.Controllers.MealsByCountry.MealsCountriesPresenter;
 import Feed.Controllers.searchFragPresenter;
+import Feed.ui.calendar.Controller.CalendarPresenter;
 import Feed.ui.favourite.Controller.FavMealPresenter;
 import Feed.ui.favourite.Controller.FavoriteManager;
+import Feed.ui.favourite.View.FavouriteFragment;
 import Feed.ui.favourite.View.onClickRemoveFavourite;
 import Feed.ui.search.IsearchMealView;
 import Feed.ui.calendar.View.onMealPlanningClick;
@@ -62,6 +65,7 @@ public class country extends Fragment implements onClickListByCountry,IsearchMea
     private MealDateDao mealDateDao;
     private calAppDataBase plannedDbObj;
     private FavoriteManager favManager;
+    private localSrcImplementation localSrc;
 
     //create adapter
     @Override
@@ -82,7 +86,8 @@ public class country extends Fragment implements onClickListByCountry,IsearchMea
         countryRec.setHasFixedSize(true);
         countryRec.setLayoutManager(new GridLayoutManager(getContext(),2));
         dataSource= MealsRemoteDataSource.getRemoteSrcClient();
-        countryPresenter = new MealsCountriesPresenter(dataSource,(IsearchMealView.IgetMealCountriesView)country.this);
+        repo = new DataSrcRepository(dataSource,null);
+        countryPresenter = new MealsCountriesPresenter(repo,(IsearchMealView.IgetMealCountriesView)country.this);
         countryPresenter.reqMealsCountries();
     }
 
@@ -119,7 +124,8 @@ public class country extends Fragment implements onClickListByCountry,IsearchMea
         countryRec.setLayoutManager(layoutManager);
         //req meal details
         dataSource= MealsRemoteDataSource.getRemoteSrcClient();
-        countryPresenter = new MealsCountriesPresenter(dataSource,(IsearchMealView.IgetMealFilterCountriesView)country.this);
+        repo = new DataSrcRepository(dataSource,null);
+        countryPresenter = new MealsCountriesPresenter(repo,(IsearchMealView.IgetMealFilterCountriesView)country.this);
         countryPresenter.reqFilteringByCountry(countryName);
     }
 
@@ -146,7 +152,7 @@ public class country extends Fragment implements onClickListByCountry,IsearchMea
         {
             dataBaseObj = AppDataBase.getDbInstance(country.this.getContext());
             dao = dataBaseObj.getMealsDao();
-            repo = new DataSrcRepository(dao);
+            repo = new  DataSrcRepository(dataSource,null);
             favMealPresenter = new addFavMealPresenter(repo);
             favMealPresenter.insertFavMeal(tempMeal);
             isDetailRequest=true;
@@ -164,7 +170,8 @@ public class country extends Fragment implements onClickListByCountry,IsearchMea
     @Override
     public void onMealCountryClick(String mealName) {
         dataSource= MealsRemoteDataSource.getRemoteSrcClient();
-        searchMealPresenter = new searchFragPresenter(dataSource,  country.this);
+        repo = new DataSrcRepository(dataSource,null);
+        searchMealPresenter = new searchFragPresenter(repo,  country.this);
         searchMealPresenter.getMealByNameRemotly(mealName);
     }
 
@@ -178,7 +185,7 @@ public class country extends Fragment implements onClickListByCountry,IsearchMea
     public void onFavMealRemove(Meal meal) {
         dataBaseObj = AppDataBase.getDbInstance(country.this.getContext());
         dao = dataBaseObj.getMealsDao();
-        repo = new DataSrcRepository(dao);
+        repo = new DataSrcRepository(dataSource,null);
         presenter = new FavMealPresenter(repo);
         presenter.deleteMeal(meal);
 
@@ -235,9 +242,10 @@ public class country extends Fragment implements onClickListByCountry,IsearchMea
 
         plannedDbObj = calAppDataBase.getDbInstance(country.this.getContext());
         mealDateDao = plannedDbObj.getDateMealsDao();
-
-        new Thread(() -> mealDateDao.insertPlannedMeal(mealDate)).start();
-
+        localSrcImplementation plannedLocalSrc=new localSrcImplementation (mealDateDao,null,null);
+        repo =new DataSrcRepository(null,plannedLocalSrc) ;
+        CalendarPresenter calendarPresenter = new CalendarPresenter(repo);
+        repo.insertPlannedMeal(mealDate);
         Toast.makeText(country.this.getContext(), "Meal scheduled for " + date + " at " + time, Toast.LENGTH_SHORT).show();
     }
 

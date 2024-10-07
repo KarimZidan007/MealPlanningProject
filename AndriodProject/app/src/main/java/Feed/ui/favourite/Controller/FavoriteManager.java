@@ -44,7 +44,6 @@ public class FavoriteManager {
                     for (Meal meal : meals) {
                         favoriteMealIds.add(meal.getIdMeal());
                     }
-                    Log.i("NAMEEE", "Favorites loaded: " + favoriteMealIds);
                 }
             }
         });
@@ -52,7 +51,7 @@ public class FavoriteManager {
 
 
     public static synchronized boolean isFavorite(String mealId) {
-        Log.i("NAMEEE", "state : " + String.valueOf(favoriteMealIds.contains(mealId)));
+        Log.i("NAMEEE", "111111111: ");
 
         return favoriteMealIds.contains(mealId);
     }
@@ -61,11 +60,9 @@ public class FavoriteManager {
         if (favoriteMealIds.contains(meal.getIdMeal())) {
             favoriteMealIds.remove(meal.getStrMeal());
             meal.setFavorite(false);
-            Log.i("NAMEEE", "removed: ");
         } else {
             favoriteMealIds.add(meal.getStrMeal());
             meal.setFavorite(true);
-            Log.i("NAMEEE", "added: ");
         }
     }
 }

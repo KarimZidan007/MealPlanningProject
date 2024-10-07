@@ -42,6 +42,7 @@ import java.util.Random;
 
 import DataBase.Model.AppDataBase;
 import DataBase.Model.calAppDataBase;
+import DataBase.Model.localSrcImplementation;
 import DataBase.controller.MealDAO;
 import DataBase.controller.MealDateDao;
 import Feed.Controllers.InsertingDBPresenter.addFavMealPresenter;
@@ -50,8 +51,10 @@ import Feed.Controllers.MealsByIngredient.MealsIngredientPresenter;
 import Feed.Controllers.MealsCategoriesPresenter;
 import Feed.Controllers.RandomMealPresenter;
 import Feed.NavActivity;
+import Feed.ui.calendar.Controller.CalendarPresenter;
 import Feed.ui.favourite.Controller.FavMealPresenter;
 import Feed.ui.favourite.Controller.FavoriteManager;
+import Feed.ui.favourite.View.FavouriteFragment;
 import Feed.ui.favourite.View.onClickRemoveFavourite;
 import Feed.ui.search.IsearchMealView;
 import Feed.ui.search.tablayout.View.CateogiresFragment.category;
@@ -92,6 +95,7 @@ public class HomeFragment extends Fragment implements IRandomMealView , onClickR
     private ImageView countryImage;
     private ImageView ingImage;
     private TextView t1, t2, t3, t4;
+    private localSrcImplementation localSrc;
 
     private MealsIngredientPresenter ingredientPresenter;
     private  MealsCountriesPresenter countryPresenter;
@@ -175,22 +179,26 @@ public class HomeFragment extends Fragment implements IRandomMealView , onClickR
             });
 
             randomSrc= MealsRemoteDataSource.getRemoteSrcClient();
-            randomPresenter = new RandomMealPresenter(randomSrc,this);
+            repo = new DataSrcRepository (randomSrc,null);
+            randomPresenter = new RandomMealPresenter(repo,this);
             randomPresenter.getRandomMealRemotly();
 
 
             dataSource= MealsRemoteDataSource.getRemoteSrcClient();
-            catPresenter = new MealsCategoriesPresenter(dataSource,(IsearchMealView.IgetMealCategoriesView)HomeFragment.this);
+            repo = new DataSrcRepository (randomSrc,null);
+            catPresenter = new MealsCategoriesPresenter(repo,(IsearchMealView.IgetMealCategoriesView)HomeFragment.this);
             catPresenter.reqMealsCategories();
 
 
             dataSource= MealsRemoteDataSource.getRemoteSrcClient();
-            countryPresenter = new MealsCountriesPresenter(dataSource,(IsearchMealView.IgetMealCountriesView)HomeFragment.this);
+            repo = new DataSrcRepository(randomSrc,null);
+            countryPresenter = new MealsCountriesPresenter(repo,(IsearchMealView.IgetMealCountriesView)HomeFragment.this);
             countryPresenter.reqMealsCountries();
 
 
             dataSource= MealsRemoteDataSource.getRemoteSrcClient();
-            ingredientPresenter = new MealsIngredientPresenter(dataSource,(IsearchMealView.IgetMealIngredientsView) HomeFragment.this);
+            repo = new DataSrcRepository(randomSrc,null);
+            ingredientPresenter = new MealsIngredientPresenter(repo,(IsearchMealView.IgetMealIngredientsView) HomeFragment.this);
             ingredientPresenter.reqMealsIngredients();
 
         } else {
@@ -328,7 +336,8 @@ public class HomeFragment extends Fragment implements IRandomMealView , onClickR
     public void onFavMealRemove(Meal meal) {
         dataBaseObj = AppDataBase.getDbInstance(HomeFragment.this.getContext());
         dao = dataBaseObj.getMealsDao();
-        repo = new DataSrcRepository(dao);
+        localSrc=new localSrcImplementation(null,dao,null);
+        repo = new DataSrcRepository(null,localSrc);
         presenter = new FavMealPresenter(repo);
         presenter.deleteMeal(meal);
     }
@@ -337,7 +346,8 @@ public class HomeFragment extends Fragment implements IRandomMealView , onClickR
     public void onFavMealAdd(Meal meal) {
         dataBaseObj = AppDataBase.getDbInstance(HomeFragment.this.getContext());
         dao = dataBaseObj.getMealsDao();
-        repo = new DataSrcRepository(dao);
+        localSrc=new localSrcImplementation(null,dao,null);
+        repo = new DataSrcRepository(null,localSrc);
         favMealPresenter = new addFavMealPresenter(repo);
         favMealPresenter.insertFavMeal(meal);
     }
@@ -360,9 +370,10 @@ public class HomeFragment extends Fragment implements IRandomMealView , onClickR
 
         plannedDbObj = calAppDataBase.getDbInstance(HomeFragment.this.getContext());
         mealDateDao = plannedDbObj.getDateMealsDao();
-
-        new Thread(() -> mealDateDao.insertPlannedMeal(mealDate)).start();
-
+        localSrcImplementation plannedLocalSrc=new localSrcImplementation (mealDateDao,null,null);
+        repo =new DataSrcRepository(null,plannedLocalSrc) ;
+        CalendarPresenter calendarPresenter = new CalendarPresenter(repo);
+        repo.insertPlannedMeal(mealDate);
         Toast.makeText(HomeFragment.this.getContext(), "Meal scheduled for " + date + " at " + time, Toast.LENGTH_SHORT).show();
     }
 

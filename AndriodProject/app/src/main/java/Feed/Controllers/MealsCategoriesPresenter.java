@@ -12,25 +12,22 @@ import Network.Model.NetworkCallback.NetworkCallback;
 import Repository.DataSrcRepository;
 
 public class MealsCategoriesPresenter implements MealsIPresenter.getCategoriesPresenterContract, NetworkCallback.NetworkCallbackGetCateogries ,NetworkCallback.NetworkCallbackFilterByCateogry,MealsIPresenter.getMealsFilterdByCateogry {
-    public MealsRemoteDataSource remoteSrc;
     public IsearchMealView.IgetMealCategoriesView Search;
     private DataSrcRepository searchRepo;
     public IsearchMealView.IgetMealFilterCategoriesView filter;
 
-   public MealsCategoriesPresenter(MealsRemoteDataSource remoteSrc , IsearchMealView.IgetMealCategoriesView Iview )
+   public MealsCategoriesPresenter(DataSrcRepository remoteSrc , IsearchMealView.IgetMealCategoriesView Iview )
     {
-        this.remoteSrc=remoteSrc;
+        this.searchRepo=remoteSrc;
         this.Search=Iview;
     }
-    public MealsCategoriesPresenter(MealsRemoteDataSource remoteSrc , IsearchMealView.IgetMealFilterCategoriesView Iview )
+    public MealsCategoriesPresenter(DataSrcRepository remoteSrc , IsearchMealView.IgetMealFilterCategoriesView Iview )
     {
-        this.remoteSrc=remoteSrc;
+        this.searchRepo=remoteSrc;
         this.filter=Iview;
     }
-        //Ask for Meals Categories
     @Override
     public void reqMealsCategories() {
-        searchRepo = new DataSrcRepository(remoteSrc);
         searchRepo.getMealsCategories(this);
     }
 
@@ -55,7 +52,6 @@ public class MealsCategoriesPresenter implements MealsIPresenter.getCategoriesPr
     //Req Filter By Cateogry
     @Override
     public void reqFilteringByCateogry(String category) {
-        searchRepo = new DataSrcRepository(remoteSrc);
         searchRepo.FilterMealsByCateogry(category,this);
     }
     @Override

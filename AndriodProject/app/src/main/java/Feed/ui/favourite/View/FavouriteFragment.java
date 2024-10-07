@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,8 +30,10 @@ import com.example.sidechefproject.MealDetails.MealDetailsActivity;
 
 import DataBase.Model.AppDataBase;
 import DataBase.Model.calAppDataBase;
+import DataBase.Model.localSrcImplementation;
 import DataBase.controller.MealDAO;
 import DataBase.controller.MealDateDao;
+import Feed.ui.calendar.Controller.CalendarPresenter;
 import Feed.ui.calendar.View.onMealPlanningClick;
 import Feed.ui.favourite.Controller.FavMealPresenter;
 import Feed.ui.home.HomeFragment;
@@ -39,6 +42,7 @@ import Feed.ui.search.tablayout.View.onMealClickListener;
 import Model.Meal;
 import Model.MealDate;
 import Repository.DataSrcRepository;
+import Repository.MealsRepository;
 
 public class FavouriteFragment extends Fragment implements onMealClickListener.onMealClickListenerFavourite,FavouriteMealView,onClickRemoveFavourite, onMealPlanningClick  {
 
@@ -52,6 +56,7 @@ public class FavouriteFragment extends Fragment implements onMealClickListener.o
     private LiveData<List<Meal>> liveData;
     private calAppDataBase plannedDbObj;
     private MealDateDao mealDateDao;
+    private localSrcImplementation localSrc;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -65,7 +70,8 @@ public class FavouriteFragment extends Fragment implements onMealClickListener.o
 
         dataBaseObj = AppDataBase.getDbInstance(FavouriteFragment.this.getContext());
         dao = dataBaseObj.getMealsDao();
-        repo = new DataSrcRepository(dao);
+        localSrc = new localSrcImplementation(null,dao,null);
+        repo = new DataSrcRepository (null,localSrc);
         presenter = new FavMealPresenter(repo);
 
         return view;
@@ -165,12 +171,13 @@ public class FavouriteFragment extends Fragment implements onMealClickListener.o
         String formattedDayOfWeek = dayOfWeek.substring(0, 1).toUpperCase() + dayOfWeek.substring(1).toLowerCase(); // e.g., "Sunday"
 
         MealDate mealDate = new MealDate(meal, date, time,formattedDayOfWeek);
-
+        
         plannedDbObj = calAppDataBase.getDbInstance(FavouriteFragment.this.getContext());
         mealDateDao = plannedDbObj.getDateMealsDao();
-
-        new Thread(() -> mealDateDao.insertPlannedMeal(mealDate)).start();
-
+        localSrcImplementation plannedLocalSrc=new localSrcImplementation (mealDateDao,null,null);
+         repo =new DataSrcRepository(null,plannedLocalSrc) ;
+        CalendarPresenter calendarPresenter = new CalendarPresenter(repo);
+        repo.insertPlannedMeal(mealDate);
         Toast.makeText(FavouriteFragment.this.getContext(), "Meal scheduled for " + date + " at " + time, Toast.LENGTH_SHORT).show();
     }
 }

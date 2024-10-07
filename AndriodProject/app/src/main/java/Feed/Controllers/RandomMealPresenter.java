@@ -13,15 +13,14 @@ public class RandomMealPresenter implements MealsIPresenter.RandomMealPresenterC
 public MealsRemoteDataSource remoteSrc;
 public IRandomMealView  RandomMealView;
 public MealsRepository mealsRepo;
-    public RandomMealPresenter(MealsRemoteDataSource remoteSrc , IRandomMealView RandomMealView)
+    public RandomMealPresenter(MealsRepository remoteSrc , IRandomMealView RandomMealView)
             {
                 this.RandomMealView=RandomMealView;
-                this.remoteSrc=remoteSrc;
+                this.mealsRepo=remoteSrc;
             }
     @Override
     public void getRandomMealRemotly()
     {
-        mealsRepo = new DataSrcRepository(remoteSrc);
         mealsRepo.getRandomMeal(this);
     }
 

@@ -12,26 +12,24 @@ import Repository.DataSrcRepository;
 import java.util.List;
 
 public class MealsCountriesPresenter implements NetworkCallback.NetworkCallbackGetCountries,NetworkCallback.NetworkCallbackFilterByCountry, MealsIPresenter.getCountriesPresenterContract, MealsIPresenter.getMealsFilterdByCountry {
-    private MealsRemoteDataSource remoteSrc;
     private DataSrcRepository searchRepo;
     private IsearchMealView.IgetMealCountriesView iViewOne;
     private IsearchMealView.IgetMealFilterCountriesView iViewTwo;
-    public MealsCountriesPresenter(MealsRemoteDataSource remoteSrc, IsearchMealView.IgetMealCountriesView iViewOne)
+    public MealsCountriesPresenter(DataSrcRepository remoteSrc, IsearchMealView.IgetMealCountriesView iViewOne)
     {
         this.iViewOne=iViewOne;
-        this.remoteSrc=remoteSrc;
+        this.searchRepo=remoteSrc;
     }
-    public MealsCountriesPresenter(MealsRemoteDataSource remoteSrc , IsearchMealView.IgetMealFilterCountriesView iViewTwo)
+    public MealsCountriesPresenter(DataSrcRepository remoteSrc , IsearchMealView.IgetMealFilterCountriesView iViewTwo)
     {
         this.iViewTwo=iViewTwo;
-        this.remoteSrc=remoteSrc;
+        this.searchRepo=remoteSrc;
     }
 
 
     //Ask for Meals Countries
     @Override
     public void reqMealsCountries() {
-        searchRepo = new DataSrcRepository(remoteSrc);
         searchRepo.getMealsCountries(this);
     }
     @Override
@@ -51,7 +49,6 @@ public class MealsCountriesPresenter implements NetworkCallback.NetworkCallbackG
 
     @Override
     public void reqFilteringByCountry(String country) {
-        searchRepo = new DataSrcRepository(remoteSrc);
         searchRepo.FilterMealsByCountry(country,this);
     }
 

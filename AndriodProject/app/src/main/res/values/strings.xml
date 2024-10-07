@@ -30,4 +30,5 @@
     <string name="schedule_icon">Scheduale</string>
     <string name="continute">Continue as a guest</string>
     <string name="wifi">No Wi-Fi or internet connection</string>
+    <string name="con">Continute Offline</string>
 </resources>

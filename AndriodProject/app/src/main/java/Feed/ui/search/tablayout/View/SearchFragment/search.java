@@ -30,12 +30,15 @@ import java.util.List;
 
 import DataBase.Model.AppDataBase;
 import DataBase.Model.calAppDataBase;
+import DataBase.Model.localSrcImplementation;
 import DataBase.controller.MealDAO;
 import DataBase.controller.MealDateDao;
 import Feed.Controllers.InsertingDBPresenter.addFavMealPresenter;
 import Feed.Controllers.searchFragPresenter;
+import Feed.ui.calendar.Controller.CalendarPresenter;
 import Feed.ui.favourite.Controller.FavMealPresenter;
 import Feed.ui.favourite.Controller.FavoriteManager;
+import Feed.ui.favourite.View.FavouriteFragment;
 import Feed.ui.favourite.View.onClickRemoveFavourite;
 import Feed.ui.search.IsearchMealView;
 import Feed.ui.calendar.View.onMealPlanningClick;
@@ -62,6 +65,7 @@ public class search extends Fragment  implements IsearchMealView.IsearchAllViews
     private MealDAO dao;
     private DataSrcRepository repo;
     private addFavMealPresenter favMealPresenter;
+    private localSrcImplementation localSrc;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -92,7 +96,8 @@ public class search extends Fragment  implements IsearchMealView.IsearchAllViews
             @Override
             public boolean onQueryTextSubmit(String query) {
                 searchSrc= MealsRemoteDataSource.getRemoteSrcClient();
-                searchMealPresenter = new searchFragPresenter(searchSrc,  search.this);
+                repo = new DataSrcRepository(searchSrc,null);
+                searchMealPresenter = new searchFragPresenter(repo,  search.this);
                 searchMealPresenter.getMealByNameRemotly(query);
                 return false;
             }
@@ -101,7 +106,8 @@ public class search extends Fragment  implements IsearchMealView.IsearchAllViews
             public boolean onQueryTextChange(String newText) {
                 if (newText.length() == 1) {
                     searchSrc= MealsRemoteDataSource.getRemoteSrcClient();
-                    searchMealPresenter = new searchFragPresenter(searchSrc,search.this);
+                    repo = new DataSrcRepository(searchSrc,null);
+                    searchMealPresenter = new searchFragPresenter(repo,search.this);
                     char firstCharacter = newText.charAt(0);
                     searchMealPresenter.getMealByFirstCharRemotly(firstCharacter);
                 }
@@ -209,19 +215,20 @@ public class search extends Fragment  implements IsearchMealView.IsearchAllViews
         String formattedDayOfWeek = dayOfWeek.substring(0, 1).toUpperCase() + dayOfWeek.substring(1).toLowerCase(); // e.g., "Sunday"
 
         MealDate mealDate = new MealDate(meal, date, time,formattedDayOfWeek);
-
         plannedDbObj = calAppDataBase.getDbInstance(search.this.getContext());
         mealDateDao = plannedDbObj.getDateMealsDao();
-
-        new Thread(() -> mealDateDao.insertPlannedMeal(mealDate)).start();
-
+        localSrcImplementation plannedLocalSrc=new localSrcImplementation (mealDateDao,null,null);
+        repo =new DataSrcRepository(null,plannedLocalSrc) ;
+        CalendarPresenter calendarPresenter = new CalendarPresenter(repo);
+        repo.insertPlannedMeal(mealDate);
         Toast.makeText(search.this.getContext(), "Meal scheduled for " + date + " at " + time, Toast.LENGTH_SHORT).show();
     }
     @Override
     public void onFavMealRemove(Meal meal) {
         dataBaseObj = AppDataBase.getDbInstance(search.this.getContext());
         dao = dataBaseObj.getMealsDao();
-        repo = new DataSrcRepository(dao);
+        localSrc =new localSrcImplementation(null,dao,null);
+        repo =new DataSrcRepository(null,localSrc);
         presenter = new FavMealPresenter(repo);
         presenter.deleteMeal(meal);
     }
@@ -229,7 +236,8 @@ public class search extends Fragment  implements IsearchMealView.IsearchAllViews
     public void onFavMealAdd(Meal meal) {
         dataBaseObj = AppDataBase.getDbInstance(search.this.getContext());
         dao = dataBaseObj.getMealsDao();
-        repo = new DataSrcRepository(dao);
+        localSrc =new localSrcImplementation(null,dao,null);
+        repo = new DataSrcRepository(null,localSrc);
         favMealPresenter = new addFavMealPresenter(repo);
         favMealPresenter.insertFavMeal(meal);
     }

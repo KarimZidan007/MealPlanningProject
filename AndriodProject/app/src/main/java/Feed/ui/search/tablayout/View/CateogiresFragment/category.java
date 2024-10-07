@@ -30,12 +30,15 @@ import java.util.List;
 
 import DataBase.Model.AppDataBase;
 import DataBase.Model.calAppDataBase;
+import DataBase.Model.localSrcImplementation;
 import DataBase.controller.MealDAO;
 import Feed.Controllers.InsertingDBPresenter.addFavMealPresenter;
 import Feed.Controllers.MealsCategoriesPresenter;
 import Feed.Controllers.searchFragPresenter;
+import Feed.ui.calendar.Controller.CalendarPresenter;
 import Feed.ui.favourite.Controller.FavMealPresenter;
 import Feed.ui.favourite.Controller.FavoriteManager;
+import Feed.ui.favourite.View.FavouriteFragment;
 import Feed.ui.favourite.View.onClickRemoveFavourite;
 import Feed.ui.home.HomeFragment;
 import Feed.ui.search.IsearchMealView;
@@ -64,8 +67,7 @@ private DataSrcRepository repo;
 private MealDateDao mealDateDao;
 private calAppDataBase plannedDbObj;
 private FavMealPresenter presenter;
-private FavoriteManager favManager;
-
+private localSrcImplementation localSrc;
 
     private enum  requestType{
     isDetailRequest,
@@ -94,7 +96,8 @@ private requestType mealRequest = requestType.isDetailRequest;
         catRec.setLayoutManager(new GridLayoutManager(getContext(),2));
 
         dataSource= MealsRemoteDataSource.getRemoteSrcClient();
-        catPresenter = new MealsCategoriesPresenter(dataSource,(IsearchMealView.IgetMealCategoriesView)category.this);
+        repo = new DataSrcRepository(dataSource,null);
+        catPresenter = new MealsCategoriesPresenter(repo,(IsearchMealView.IgetMealCategoriesView)category.this);
         catPresenter.reqMealsCategories();
 
     }
@@ -136,7 +139,8 @@ private requestType mealRequest = requestType.isDetailRequest;
         {
             dataBaseObj = AppDataBase.getDbInstance(category.this.getContext());
             dao = dataBaseObj.getMealsDao();
-            repo = new DataSrcRepository(dao);
+            localSrc =new localSrcImplementation(null,dao,null);
+            repo = new DataSrcRepository(null,localSrc);
             favMealPresenter = new addFavMealPresenter(repo);
             favMealPresenter.insertFavMeal(tempMeal);
             mealRequest=requestType.isDetailRequest;
@@ -151,7 +155,8 @@ private requestType mealRequest = requestType.isDetailRequest;
     @Override
     public void onFilterByCateogry(String cateogryName) {
         dataSource= MealsRemoteDataSource.getRemoteSrcClient();
-        catPresenter = new MealsCategoriesPresenter(dataSource,(IsearchMealView.IgetMealFilterCategoriesView)category.this);
+        repo = new DataSrcRepository(dataSource,null);
+        catPresenter = new MealsCategoriesPresenter(repo,(IsearchMealView.IgetMealFilterCategoriesView)category.this);
         catPresenter.reqFilteringByCateogry(cateogryName);
     }
 
@@ -175,7 +180,8 @@ private requestType mealRequest = requestType.isDetailRequest;
     @Override
     public void onMealCatClick(String mealName) {
         dataSource= MealsRemoteDataSource.getRemoteSrcClient();
-        searchMealPresenter = new searchFragPresenter(dataSource,  category.this);
+        repo = new DataSrcRepository(dataSource,null);
+        searchMealPresenter = new searchFragPresenter(repo,  category.this);
         searchMealPresenter.getMealByNameRemotly(mealName);
     }
 
@@ -196,7 +202,8 @@ private requestType mealRequest = requestType.isDetailRequest;
     public void onFavMealRemove(Meal meal) {
         dataBaseObj = AppDataBase.getDbInstance(category.this.getContext());
         dao = dataBaseObj.getMealsDao();
-        repo = new DataSrcRepository(dao);
+        localSrc=new localSrcImplementation(null,dao,null);
+        repo = new DataSrcRepository(null,localSrc);
         presenter = new FavMealPresenter(repo);
         presenter.deleteMeal(meal);
         search.notifyDataChanged();
@@ -266,9 +273,10 @@ private requestType mealRequest = requestType.isDetailRequest;
 
         plannedDbObj = calAppDataBase.getDbInstance(category.this.getContext());
         mealDateDao = plannedDbObj.getDateMealsDao();
-
-        new Thread(() -> mealDateDao.insertPlannedMeal(mealDate)).start();
-
+        localSrcImplementation plannedLocalSrc=new localSrcImplementation (mealDateDao,null,null);
+        repo =new DataSrcRepository(null,plannedLocalSrc) ;
+        CalendarPresenter calendarPresenter = new CalendarPresenter(repo);
+        repo.insertPlannedMeal(mealDate);
         Toast.makeText(category.this.getContext(), "Meal scheduled for " + date + " at " + time, Toast.LENGTH_SHORT).show();
     }
 
