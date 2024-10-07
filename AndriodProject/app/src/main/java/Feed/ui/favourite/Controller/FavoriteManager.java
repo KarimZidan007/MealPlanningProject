@@ -51,7 +51,6 @@ public class FavoriteManager {
 
 
     public static synchronized boolean isFavorite(String mealId) {
-        Log.i("NAMEEE", "111111111: ");
 
         return favoriteMealIds.contains(mealId);
     }

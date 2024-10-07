@@ -171,7 +171,7 @@ public class FavouriteFragment extends Fragment implements onMealClickListener.o
         String formattedDayOfWeek = dayOfWeek.substring(0, 1).toUpperCase() + dayOfWeek.substring(1).toLowerCase(); // e.g., "Sunday"
 
         MealDate mealDate = new MealDate(meal, date, time,formattedDayOfWeek);
-        
+
         plannedDbObj = calAppDataBase.getDbInstance(FavouriteFragment.this.getContext());
         mealDateDao = plannedDbObj.getDateMealsDao();
         localSrcImplementation plannedLocalSrc=new localSrcImplementation (mealDateDao,null,null);
